@@ -19,18 +19,16 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Wrapper to mimic iPhone 15 Pro Max curved edges and padding */
-        #app-wrapper {
+        /* Wrapper to frame the canvas with iPhone 15 Pro Max-inspired design */
+        #canvas-frame {
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #1e1e1e; /* Build environment background */
-            border-radius: 50px; /* Mimic iPhone curved edges */
-            overflow: hidden;
             padding: calc(2.5vw * 9 / 19.5) calc(2.5vw * 19.5 / 9); /* Proportional padding based on 19.5:9 ratio */
             box-sizing: border-box;
+            background-color: #1e1e1e; /* Build environment background */
         }
 
         /* Ensure safe area padding in standalone mode */
@@ -41,7 +39,7 @@
                 padding-left: env(safe-area-inset-left);
                 padding-right: env(safe-area-inset-right);
             }
-            #app-wrapper {
+            #canvas-frame {
                 height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
                 padding-top: calc(2.5vw * 9 / 19.5 + env(safe-area-inset-top));
                 padding-bottom: calc(2.5vw * 9 / 19.5 + env(safe-area-inset-bottom));
@@ -49,17 +47,10 @@
                 padding-right: calc(2.5vw * 19.5 / 9 + env(safe-area-inset-right));
             }
         }
-
-        #build-environment {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
     </style>
 </head>
 <body>
-    <div id="app-wrapper">
+    <div id="canvas-frame">
         <main id="build-environment"></main>
     </div>
     <script src="engine/motherboard.js" type="module"></script>
