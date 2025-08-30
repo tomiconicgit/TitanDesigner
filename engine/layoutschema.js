@@ -1,7 +1,7 @@
 // This module will hold the "single source of truth" for the UI design.
 // Every component on the canvas will be represented as an object in this array.
 
-export let layoutSchema =;
+export let layoutSchema = [];
 
 /**
  * Adds a new component object to the central layout schema.
