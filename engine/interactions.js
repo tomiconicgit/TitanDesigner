@@ -1,4 +1,5 @@
 import { updateComponent } from './layoutSchema.js';
+import { populateTools } from './inspector.js';
 
 let activeElement = null; // The element being interacted with
 let isDragging = false;
@@ -34,27 +35,22 @@ contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
     if (!action || !activeElement) return;
 
-    // --- UPDATED: Handle the "Tools" action ---
     if (action === 'tools') {
+        populateTools(activeElement.id);
+
         const elementRect = activeElement.getBoundingClientRect();
         const canvasRect = canvas.getBoundingClientRect();
-        
-        // Calculate the vertical midpoint of the element and the canvas
         const elementMidY = elementRect.top + (elementRect.height / 2);
         const canvasMidY = canvasRect.top + (canvasRect.height / 2);
         
-        // Reset classes before showing
         toolsPanel.className = 'hidden';
 
         if (elementMidY > canvasMidY) {
-            // If element is in the bottom half, show panel from the top
             toolsPanel.classList.add('slide-from-top');
         } else {
-            // If element is in the top half, show panel from the bottom
             toolsPanel.classList.add('slide-from-bottom');
         }
 
-        // Make the panel and overlay visible
         toolsPanel.classList.add('visible');
         toolsOverlay.classList.add('visible');
     }
@@ -62,7 +58,6 @@ contextMenu.addEventListener('click', (e) => {
     console.log(`Action: ${action} on element ${activeElement.id}`);
     contextMenu.classList.add('hidden'); // Hide context menu after action
 });
-
 
 function showContextMenu(element) {
     const elementRect = element.getBoundingClientRect();
@@ -82,7 +77,6 @@ function showContextMenu(element) {
     contextMenu.style.top = `${menuY}px`;
     contextMenu.classList.remove('hidden');
 }
-
 
 export function makeInteractive(element) {
     let offsetX, offsetY;
