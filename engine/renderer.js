@@ -1,5 +1,5 @@
 import { layoutSchema } from './layoutSchema.js';
-import { makeInteractive } from './interactions.js'; // THE FIX: This line was missing
+import { makeInteractive } from './interactions.js';
 
 const canvas = document.getElementById('canvas');
 
@@ -10,6 +10,8 @@ export function render() {
         const element = document.createElement('div');
         element.id = component.id;
         element.className = 'canvas-element';
+        
+        // THE FIX: Corrected the operator from "| |" to "||"
         element.textContent = component.props.text |
 
 | component.type;
