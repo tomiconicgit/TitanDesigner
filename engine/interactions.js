@@ -11,12 +11,32 @@ const canvas = document.getElementById('canvas');
 const contextMenu = document.getElementById('context-menu');
 const toolsPanel = document.getElementById('tools-panel');
 const toolsOverlay = document.getElementById('tools-overlay');
+let scrollY = 0;
 
-// UPDATED: Simplified function to hide the tools panel
+// --- Robust Scroll Locking Functions ---
+const lockScroll = () => {
+    scrollY = window.scrollY;
+    const body = document.body;
+    body.style.position = 'fixed';
+    body.style.width = '100%';
+    body.style.top = `-${scrollY}px`;
+    body.classList.add('noscroll');
+};
+
+const unlockScroll = () => {
+    const body = document.body;
+    body.style.position = '';
+    body.style.width = '';
+    body.style.top = '';
+    body.classList.remove('noscroll');
+    window.scrollTo(0, scrollY);
+};
+
+// Function to hide the tools panel and remove the scroll lock
 function hideToolsPanel() {
     toolsPanel.classList.remove('visible');
     toolsOverlay.classList.remove('visible');
-    document.body.classList.remove('noscroll'); // Simply remove the class
+    unlockScroll();
     setTimeout(() => {
         toolsPanel.classList.add('hidden');
     }, 300);
@@ -27,9 +47,6 @@ document.addEventListener('click', (e) => {
         contextMenu.classList.add('hidden');
     }
 });
-
-// REMOVED: The touchstart and touchmove listeners on toolsPanel are gone.
-// The browser will now handle scrolling natively thanks to our CSS.
 
 toolsOverlay.addEventListener('click', hideToolsPanel);
 
@@ -53,8 +70,7 @@ contextMenu.addEventListener('click', (e) => {
             toolsPanel.classList.add('slide-from-bottom');
         }
         
-        // UPDATED: Simply add the noscroll class.
-        document.body.classList.add('noscroll');
+        lockScroll();
         toolsPanel.classList.add('visible');
         toolsOverlay.classList.add('visible');
     }
@@ -121,7 +137,7 @@ export function makeInteractive(element) {
         }
 
         if (isDragging) {
-            if (e.cancelable) e.preventDefault(); // Prevent scroll while dragging canvas elements
+            if (e.cancelable) e.preventDefault(); // Prevent scroll while dragging
 
             const canvasRect = canvas.getBoundingClientRect();
             let newX = touch.clientX - canvasRect.left - offsetX;
