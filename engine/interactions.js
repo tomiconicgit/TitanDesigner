@@ -2,35 +2,38 @@ import { updateComponent } from './layoutSchema.js';
 import { populateTools } from './inspector.js';
 
 let activeElement = null;
-let isDragging = false;
-let startX, startY, startTime;
-const tapThreshold = 5;
-const longPressDuration = 250;
-
 const canvas = document.getElementById('canvas');
 const contextMenu = document.getElementById('context-menu');
 const toolsPanel = document.getElementById('tools-panel');
 const toolsOverlay = document.getElementById('tools-overlay');
 
-/* --- SAFE ZONE: make scrollable panels ignore propagation so touches there won't start canvas drag --- */
-function initScrollableSafeZones() {
-    const selectors = ['#ui-library', '.tools-content'];
-    selectors.forEach(sel => {
-        document.querySelectorAll(sel).forEach(el => {
-            // stop propagation so touchstart inside these elements won't bubble to other listeners
-            el.addEventListener('touchstart', (e) => {
-                // We keep this passive to allow native scrolling, but we stop propagation
-                e.stopPropagation();
-            }, { passive: true });
-
-            // Also stop pointer events for pointer-based browsers
-            el.addEventListener('pointerdown', (e) => {
-                e.stopPropagation();
-            }, { passive: true });
-        });
-    });
+// Your original, robust scroll-locking functions
+let scrollPosition = 0;
+function lockScroll() {
+    scrollPosition = window.pageYOffset;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = '100%';
+    document.body.classList.add('noscroll');
 }
-initScrollableSafeZones();
+
+function unlockScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollPosition);
+    document.body.classList.remove('noscroll');
+}
+
+// Function to hide the tools panel and remove the scroll lock
+function hideToolsPanel() {
+    toolsPanel.classList.remove('visible');
+    toolsOverlay.classList.remove('visible');
+    unlockScroll();
+    setTimeout(() => {
+        toolsPanel.classList.add('hidden');
+    }, 300);
+}
 
 document.addEventListener('click', (e) => {
     if (!contextMenu.contains(e.target) && !e.target.classList.contains('canvas-element')) {
@@ -38,13 +41,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
-toolsOverlay.addEventListener('click', () => {
-    toolsPanel.classList.remove('visible');
-    toolsOverlay.classList.remove('visible');
-    setTimeout(() => {
-        toolsPanel.classList.add('hidden');
-    }, 300);
-});
+toolsOverlay.addEventListener('click', hideToolsPanel);
 
 contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
@@ -65,12 +62,12 @@ contextMenu.addEventListener('click', (e) => {
         } else {
             toolsPanel.classList.add('slide-from-bottom');
         }
-
+        
+        lockScroll();
         toolsPanel.classList.add('visible');
         toolsOverlay.classList.add('visible');
     }
 
-    console.log(`Action: ${action} on element ${activeElement.id}`);
     contextMenu.classList.add('hidden');
 });
 
@@ -93,23 +90,18 @@ function showContextMenu(element) {
     contextMenu.classList.remove('hidden');
 }
 
+// REWRITTEN: The core interaction logic is now properly scoped
 export function makeInteractive(element) {
+    let isDragging = false;
+    let startX, startY, startTime;
     let offsetX, offsetY;
+    const tapThreshold = 5;
+    const longPressDuration = 250;
 
     const dragStart = (e) => {
         activeElement = element;
         isDragging = false;
         
-        // If the initial target is inside a scrollable panel, do nothing (safe-guard)
-        // This is defensive — the safe-zone listeners should have already stopped propagation,
-        // but keep the check to be robust.
-        const origin = (e.touches ? e.touches[0] : e).target || e.target;
-        if (origin && origin.closest && (origin.closest('#ui-library') || origin.closest('.tools-content'))) {
-            return;
-        }
-
-        // For touch, we want to prevent the native page scroll ONLY when dragging.
-        // So register non-passive listeners and call preventDefault during dragMove.
         const touch = e.touches ? e.touches[0] : e;
         startX = touch.clientX;
         startY = touch.clientY;
@@ -119,12 +111,12 @@ export function makeInteractive(element) {
         offsetX = touch.clientX - rect.left;
         offsetY = touch.clientY - rect.top;
 
-        // Add listeners with explicit options so we can preventDefault when dragging
-        document.addEventListener('mousemove', dragMove);
-        document.addEventListener('mouseup', dragEnd, { once: true });
-        
-        document.addEventListener('touchmove', dragMove, { passive: false });
-        document.addEventListener('touchend', dragEnd, { once: true });
+        // Add move/end listeners to the window to capture the drag globally
+        // These will be REMOVED on drag end.
+        window.addEventListener('mousemove', dragMove);
+        window.addEventListener('mouseup', dragEnd, { once: true });
+        window.addEventListener('touchmove', dragMove, { passive: false });
+        window.addEventListener('touchend', dragEnd, { once: true });
     };
 
     const dragMove = (e) => {
@@ -132,13 +124,14 @@ export function makeInteractive(element) {
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
 
-        if (deltaX > tapThreshold || deltaY > tapThreshold) {
+        if (!isDragging && (deltaX > tapThreshold || deltaY > tapThreshold)) {
             isDragging = true;
             contextMenu.classList.add('hidden');
         }
 
         if (isDragging) {
-            // stop native scroll while actively dragging an element
+            // This preventDefault is now ONLY called during an actual drag
+            // and won't interfere with anything else.
             if (e.cancelable) e.preventDefault();
 
             const canvasRect = canvas.getBoundingClientRect();
@@ -150,7 +143,12 @@ export function makeInteractive(element) {
         }
     };
 
-    const dragEnd = (e) => {
+    const dragEnd = () => {
+        // CRITICAL: Remove the listeners from the window so they don't
+        // interfere with other UI interactions like clicking or scrolling.
+        window.removeEventListener('mousemove', dragMove);
+        window.removeEventListener('touchmove', dragMove);
+        
         const elapsedTime = Date.now() - startTime;
         
         if (isDragging) {
@@ -162,12 +160,8 @@ export function makeInteractive(element) {
         }
 
         isDragging = false;
-        document.removeEventListener('mousemove', dragMove);
-        document.removeEventListener('touchmove', dragMove, { passive: false });
     };
 
-    // mouse: regular
     element.addEventListener('mousedown', dragStart);
-    // touch: non-passive so we can preventDefault during drag
-    element.addEventListener('touchstart', dragStart, { passive: false });
+    element.addEventListener('touchstart', dragStart, { passive: true });
 }
