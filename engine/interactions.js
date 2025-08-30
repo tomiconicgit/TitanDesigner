@@ -12,23 +12,21 @@ const contextMenu = document.getElementById('context-menu');
 const toolsPanel = document.getElementById('tools-panel');
 const toolsOverlay = document.getElementById('tools-overlay');
 
-// Function to hide the tools panel and remove the scroll lock
-function hideToolsPanel() {
-    toolsPanel.classList.remove('visible');
-    toolsOverlay.classList.remove('visible');
-    document.body.classList.remove('noscroll'); // Remove scroll lock
-    setTimeout(() => {
-        toolsPanel.classList.add('hidden');
-    }, 300);
-}
-
 document.addEventListener('click', (e) => {
     if (!contextMenu.contains(e.target) && !e.target.classList.contains('canvas-element')) {
         contextMenu.classList.add('hidden');
     }
 });
 
-toolsOverlay.addEventListener('click', hideToolsPanel);
+toolsOverlay.addEventListener('click', () => {
+    toolsPanel.classList.remove('visible');
+    toolsOverlay.classList.remove('visible');
+    // ADDED: Remove noscroll class when tools panel is closed
+    document.body.classList.remove('noscroll');
+    setTimeout(() => {
+        toolsPanel.classList.add('hidden');
+    }, 300);
+});
 
 contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
@@ -49,10 +47,11 @@ contextMenu.addEventListener('click', (e) => {
         } else {
             toolsPanel.classList.add('slide-from-bottom');
         }
-        
-        document.body.classList.add('noscroll'); // Add scroll lock
+
         toolsPanel.classList.add('visible');
         toolsOverlay.classList.add('visible');
+        // ADDED: Add noscroll class when tools panel is opened
+        document.body.classList.add('noscroll');
     }
 
     console.log(`Action: ${action} on element ${activeElement.id}`);
@@ -82,9 +81,6 @@ export function makeInteractive(element) {
     let offsetX, offsetY;
 
     const dragStart = (e) => {
-        // Stop drag from starting if the click is on a scrollbar or UI control
-        if (e.target !== element) return;
-
         activeElement = element;
         isDragging = false;
         
@@ -100,7 +96,7 @@ export function makeInteractive(element) {
         document.addEventListener('mousemove', dragMove);
         document.addEventListener('mouseup', dragEnd, { once: true });
         
-        document.addEventListener('touchmove', dragMove, { passive: false }); // Set passive: false
+        document.addEventListener('touchmove', dragMove);
         document.addEventListener('touchend', dragEnd, { once: true });
     };
 
@@ -109,14 +105,12 @@ export function makeInteractive(element) {
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
 
-        if (!isDragging && (deltaX > tapThreshold || deltaY > tapThreshold)) {
+        if (deltaX > tapThreshold || deltaY > tapThreshold) {
             isDragging = true;
             contextMenu.classList.add('hidden');
         }
 
         if (isDragging) {
-            if (e.cancelable) e.preventDefault(); // Prevent scroll while dragging
-
             const canvasRect = canvas.getBoundingClientRect();
             let newX = touch.clientX - canvasRect.left - offsetX;
             let newY = touch.clientY - canvasRect.top - offsetY;
@@ -134,6 +128,7 @@ export function makeInteractive(element) {
             const newY = parseFloat(element.style.top);
             updateComponent(element.id, { x: newX, y: newY });
         } else if (elapsedTime < longPressDuration) {
+            // This now correctly only shows the context menu
             showContextMenu(element);
         }
 
