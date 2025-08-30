@@ -9,7 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Panel and Toolbar Logic ---
     leftToolbarToggle.addEventListener('click', () => {
-        libraryPanel.classList.toggle('visible');
+        const isVisible = libraryPanel.classList.toggle('visible');
+        if (isVisible) {
+            document.body.classList.add('noscroll');
+        } else {
+            document.body.classList.remove('noscroll');
+        }
     });
 
     // --- Tap-to-Add Component Logic ---
@@ -29,27 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             addComponent(newComponent);
             render();
+            // Close the panel and remove the noscroll class after adding a component
             libraryPanel.classList.remove('visible');
+            document.body.classList.remove('noscroll');
         });
-    });
-
-    // --- SCROLLING BUG FIX ---
-    // This is the definitive fix for the scrolling issue on mobile.
-    // We identify the elements that need to be scrollable.
-    const scrollableElements = document.querySelectorAll('#ui-library, .tools-content');
-
-    // For each scrollable element, we attach a touchstart and mousedown listener.
-    scrollableElements.forEach(el => {
-        const stopEvent = (e) => {
-            // stopPropagation() prevents the event from bubbling up to the document,
-            // where our global drag-and-drop listener would otherwise hijack it.
-            e.stopPropagation();
-        };
-        
-        // This prevents the canvas drag logic from firing when starting a touch on a scrollable area.
-        el.addEventListener('touchstart', stopEvent, { passive: true });
-        
-        // We add this for mousedown as well to ensure consistent behavior on desktop.
-        el.addEventListener('mousedown', stopEvent);
     });
 });
