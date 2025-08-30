@@ -6,7 +6,6 @@ let activeComponent = null;
 const toolsPanel = document.getElementById('tools-panel');
 
 // This function is called when the "Tools" button is clicked.
-// It finds the active component and sets up the tool controls.
 export function populateTools(componentId) {
     activeComponent = layoutSchema.find(c => c.id === componentId);
     if (!activeComponent) return;
@@ -19,7 +18,6 @@ export function populateTools(componentId) {
     content.appendChild(createSlider('width', 'Width', { min: 20, max: 370, step: 2 }));
     content.appendChild(createSlider('height', 'Height', { min: 20, max: 800, step: 2 }));
     content.appendChild(createSlider('borderRadius', 'Corner Radius', { min: 0, max: 100, step: 1 }));
-    // We will add more tools like color pickers here later.
 }
 
 // A helper function to create our custom slider controls
