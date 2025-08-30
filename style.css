@@ -3,9 +3,10 @@ html, body {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
+    height: 100svh; /* Use small viewport height for iOS */
     overflow: hidden;
-    -webkit-overflow-scrolling: touch; /* Improve iOS scrolling control */
+    -webkit-overflow-scrolling: touch;
+    contain: strict; /* Contain layout to prevent overflow */
 }
 
 /* General Body Styling */
@@ -18,7 +19,7 @@ body {
 /* Main Content Area */
 main {
     width: 100vw;
-    height: 100dvh;
+    height: 100svh; /* Use small viewport height */
     position: fixed;
     top: 0;
     left: 0;
@@ -26,6 +27,7 @@ main {
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
+    contain: strict; /* Prevent overflow from children */
 }
 
 /* Toolbar Toggle Button */
@@ -56,7 +58,7 @@ main {
     top: 0;
     left: -100%;
     width: 250px;
-    height: 100dvh;
+    height: 100svh;
     background-color: #1e1e1e;
     border-right: 1px solid #424242;
     transition: left 0.3s ease-in-out;
@@ -96,10 +98,11 @@ main {
 /* Container for the iPhone Canvas */
 #canvas-container {
     width: 100vw;
-    height: calc(100dvh - 40px); /* Space for toggle */
+    height: 100%; /* Fill remaining space */
     position: relative;
     overflow: hidden;
     margin: 0 auto;
+    contain: strict; /* Prevent overflow */
 }
 
 /* The iPhone Canvas */
@@ -120,7 +123,7 @@ main {
 
 @media (max-width: 768px) {
     #canvas-container {
-        height: calc(100dvh - 40px);
+        height: 100%; /* Ensure full height */
     }
 
     #toolbar-panel {
@@ -130,7 +133,7 @@ main {
 
 @media (max-height: 700px) {
     #canvas-container {
-        height: calc(100dvh - 40px);
+        height: 100%; /* Ensure full height */
     }
 }
 
