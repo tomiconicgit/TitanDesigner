@@ -15,9 +15,7 @@ export function render() {
     layoutSchema.forEach(component => {
         const element = document.createElement('div');
         element.id = component.id;
-        element.textContent = component.props.text |
-
-| component.type;
+        element.textContent = component.props.text || component.type;
 
         // Apply basic styles for positioning and appearance
         element.style.position = 'absolute';
