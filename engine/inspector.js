@@ -33,139 +33,42 @@ export function populateTools(componentId) {
         content.appendChild(createSlider('shadowOffsetX', 'X Offset', { min: -20, max: 20, step: 1, unit: 'px' }));
         content.appendChild(createSlider('shadowOffsetY', 'Y Offset', { min: -20, max: 20, step: 1, unit: 'px' }));
         content.appendChild(createSlider('shadowBlur', 'Blur', { min: 0, max: 40, step: 1, unit: 'px' }));
-        // We could add a color picker for shadowColor here later
     }
-}
 
-// NEW: Function to create a toggle switch
-function createToggleSwitch(property, label) {
-    const currentValue = activeComponent.props[property];
-
-    const control = document.createElement('div');
-    control.className = 'tool-control toggle-control';
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'toggle-wrapper';
-    control.appendChild(wrapper);
-
-    const labelEl = document.createElement('label');
-    labelEl.textContent = label;
-    wrapper.appendChild(labelEl);
-
-    const switchLabel = document.createElement('label');
-    switchLabel.className = 'switch';
-    wrapper.appendChild(switchLabel);
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = currentValue;
-    switchLabel.appendChild(checkbox);
-
-    const sliderSpan = document.createElement('span');
-    sliderSpan.className = 'slider';
-    switchLabel.appendChild(sliderSpan);
-    
-    checkbox.addEventListener('change', (e) => {
-        const newValue = e.target.checked;
-        updateComponent(activeComponent.id, { [property]: newValue });
-        render();
-        // Repopulate the tools panel to show/hide the sliders
-        populateTools(activeComponent.id);
-    });
-
-    return control;
-}
-
-// Function to create the color control
-function createColorControl(property, label) {
-    const currentValue = activeComponent.props[property] || '#000000';
-
-    const control = document.createElement('div');
-    control.className = 'tool-control color-control';
-
-    const labelEl = document.createElement('label');
-    labelEl.textContent = label;
-    control.appendChild(labelEl);
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'color-control-wrapper';
-    control.appendChild(wrapper);
-
-    const colorInput = document.createElement('input');
-    colorInput.type = 'color';
-    colorInput.value = currentValue;
-    wrapper.appendChild(colorInput);
-
-    const valueEl = document.createElement('span');
-    valueEl.className = 'slider-value';
-    valueEl.textContent = currentValue;
-    wrapper.appendChild(valueEl);
-    
-    colorInput.addEventListener('input', (e) => {
-        const newColor = e.target.value;
-        updateComponent(activeComponent.id, { [property]: newColor });
-        valueEl.textContent = newColor;
-        render();
-    });
-
-    return control;
-}
-
-// A helper function to create our custom slider controls
-function createSlider(property, label, opts) {
-    const currentValue = activeComponent.props[property];
-
-    const control = document.createElement('div');
-    control.className = 'tool-control slider-control';
-
-    const labelEl = document.createElement('label');
-    labelEl.textContent = label;
-    control.appendChild(labelEl);
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'slider-wrapper';
-    control.appendChild(wrapper);
-
-    const minusBtn = document.createElement('button');
-    minusBtn.className = 'slider-btn minus';
-    minusBtn.textContent = '−';
-    wrapper.appendChild(minusBtn);
-
-    const track = document.createElement('div');
-    track.className = 'slider-track';
-    const progress = document.createElement('div');
-    progress.className = 'slider-progress';
-    track.appendChild(progress);
-    wrapper.appendChild(track);
-
-    const plusBtn = document.createElement('button');
-    plusBtn.className = 'slider-btn plus';
-    plusBtn.textContent = '+';
-    wrapper.appendChild(plusBtn);
-
-    const valueEl = document.createElement('span');
-    valueEl.className = 'slider-value';
-    wrapper.appendChild(valueEl);
-    
-    const updateSlider = (newValue) => {
-        const value = Math.max(opts.min, Math.min(opts.max, newValue));
-        updateComponent(activeComponent.id, { [property]: value });
-        
-        if (opts.unit === '%') {
-            valueEl.textContent = `${Math.round(value * 100)}%`;
-        } else {
-            valueEl.textContent = `${Math.round(value)}${opts.unit}`;
+    // Temporary: Add dummy controls to force scrolling (remove after testing)
+    for (let i = 0; i < 5; i++) {
+        content.appendChild(createSlider(`dummy${ length} else {
+            document.body.classList.remove('noscroll');
         }
-
-        const percent = ((value - opts.min) / (opts.max - opts.min)) * 100;
-        progress.style.width = `${percent}%`;
-        render();
     };
 
-    updateSlider(currentValue);
+    leftToolbarToggle.addEventListener('click', toggleLibraryPanel);
+    leftToolbarToggle.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent default touch behaviors
+        console.log('Touchstart on toggle'); // Debug log
+        toggleLibraryPanel();
+    }, { passive: false });
 
-    minusBtn.addEventListener('click', () => updateSlider(activeComponent.props[property] - opts.step));
-    plusBtn.addEventListener('click', () => updateSlider(activeComponent.props[property] + opts.step));
+    // --- Tap-to-Add Component Logic ---
+    components.forEach(component => {
+        component.addEventListener('click', () => {
+            const componentType = component.getAttribute('data-type');
+            
+            const newComponent = {
+                id: generateId(),
+                type: componentType,
+                props: {
+                    text: `New ${componentType}`,
+                    x: 150, 
+                    y: 200,
+                }
+            };
 
-    return control;
-}
+            addComponent(newComponent);
+            render();
+            // Close the panel and remove the noscroll class after adding a component
+            libraryPanel.classList.remove('visible');
+            document.body.classList.remove('noscroll');
+        });
+    });
+});
