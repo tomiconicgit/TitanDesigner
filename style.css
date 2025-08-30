@@ -15,10 +15,8 @@ body {
     overflow: hidden;
 }
 
+/* UPDATED: Simplified and more stable noscroll class */
 body.noscroll {
-    position: fixed;
-    width: 100%;
-    height: 100%;
     overflow: hidden;
 }
 
@@ -58,7 +56,8 @@ aside {
     transition: transform 0.3s ease-in-out;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
-    z-index: 200; /* Increased from 100 */
+    z-index: 200;
+    overscroll-behavior: contain; /* ADDED: Prevents scroll from escaping this panel */
 }
 
 #ui-library h2, #property-inspector h2 {
@@ -126,12 +125,13 @@ aside {
         top: 0;
         width: 80vw;
         height: 100vh;
-        z-index: 200; /* Increased from 100 */
+        z-index: 200;
         transform: translateX(-100%);
         border-right: 1px solid #555;
         overflow-y: auto;
         touch-action: pan-y;
         -webkit-overflow-scrolling: touch;
+        /* overscroll-behavior is inherited from the main 'aside' rule */
     }
 
     #ui-library.visible {
@@ -233,7 +233,7 @@ aside {
     width: 100%;
     height: 45vh;
     background-color: #1E1E1E;
-    z-index: 400; /* Increased from 300 */
+    z-index: 400;
     border-top: 1px solid #444;
     border-bottom: 1px solid #444;
     display: flex;
@@ -270,11 +270,12 @@ aside {
     padding: 20px;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain; /* ADDED: Prevents scroll from escaping this panel */
 }
 
 /* Styling for Tool Controls inside the panel */
 .tool-control {
-    margin-bottom: 30px; /* Increased from 20px for more overflow */
+    margin-bottom: 30px;
 }
 
 .tool-control label {
@@ -378,7 +379,7 @@ input[type="color"]::-moz-color-swatch {
     height: 0;
 }
 
-.switch .slider {
+.switch.slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -386,11 +387,11 @@ input[type="color"]::-moz-color-swatch {
     right: 0;
     bottom: 0;
     background-color: #3a3a3c;
-    transition: .4s;
+    transition:.4s;
     border-radius: 31px;
 }
 
-.switch .slider:before {
+.switch.slider:before {
     position: absolute;
     content: "";
     height: 27px;
@@ -398,14 +399,14 @@ input[type="color"]::-moz-color-swatch {
     left: 2px;
     bottom: 2px;
     background-color: white;
-    transition: .4s;
+    transition:.4s;
     border-radius: 50%;
 }
 
-.switch input:checked + .slider {
+.switch input:checked +.slider {
     background-color: #34c759; /* iOS Green */
 }
 
-.switch input:checked + .slider:before {
+.switch input:checked +.slider:before {
     transform: translateX(20px);
 }
