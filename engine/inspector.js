@@ -102,9 +102,9 @@ function createColorControl(property, label) {
     wrapper.appendChild(valueEl);
     
     colorInput.addEventListener('input', (e) => {
-        const newColor = e.target.value;
-        updateComponent(activeComponent.id, { [property]: newColor });
-        valueEl.textContent = newColor;
+        const newValue = e.target.value;
+        updateComponent(activeComponent.id, { [property]: newValue });
+        valueEl.textContent = newValue;
         render();
     });
 
