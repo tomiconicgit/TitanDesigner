@@ -1,56 +1,20 @@
 import { addComponent, generateId } from './engine/layoutSchema.js';
 import { render } from './engine/renderer.js';
 
-let scrollPosition = 0;
-
-// Function to lock body scroll
-function lockScroll() {
-    scrollPosition = window.pageYOffset;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollPosition}px`;
-    document.body.style.width = '100%';
-    document.body.classList.add('noscroll');
-}
-
-// Function to unlock body scroll
-function unlockScroll() {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, scrollPosition);
-    document.body.classList.remove('noscroll');
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('canvas');
     const components = document.querySelectorAll('.component');
     const libraryPanel = document.getElementById('ui-library');
     const leftToolbarToggle = document.getElementById('left-toolbar-toggle');
 
-    // Stop touch events on ui-library to prevent background scrolling
-    libraryPanel.addEventListener('touchstart', (e) => {
-        e.stopPropagation();
-    }, { passive: false });
-
-    libraryPanel.addEventListener('touchmove', (e) => {
-        e.stopPropagation();
-    }, { passive: false });
-
-    // Prevent background scrolling when toolbars are open
-    document.body.addEventListener('touchmove', (e) => {
-        if (document.body.classList.contains('noscroll')) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-    }, { passive: false });
-
     // --- Panel and Toolbar Logic ---
     leftToolbarToggle.addEventListener('click', () => {
         const isVisible = libraryPanel.classList.toggle('visible');
+        // UPDATED: Simply toggle the CSS class. No more complex JS.
         if (isVisible) {
-            lockScroll();
+            document.body.classList.add('noscroll');
         } else {
-            unlockScroll();
+            document.body.classList.remove('noscroll');
         }
     });
 
@@ -73,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             render();
             // Close the panel and remove the noscroll class after adding a component
             libraryPanel.classList.remove('visible');
-            unlockScroll();
+            document.body.classList.remove('noscroll');
         });
     });
 });
