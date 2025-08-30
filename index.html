@@ -26,9 +26,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: calc(2.5vw * 9 / 19.5) calc(2.5vw * 19.5 / 9); /* Proportional padding based on 19.5:9 ratio */
+            padding: calc(4vw * 9 / 19.5) calc(2.5vw * 19.5 / 9); /* Increased vertical padding to 4vw */
             box-sizing: border-box;
             background-color: #1e1e1e; /* Build environment background */
+            border-radius: 50px; /* Mimic iPhone curved edges */
+            overflow: hidden;
         }
 
         /* Ensure safe area padding in standalone mode */
@@ -41,8 +43,8 @@
             }
             #canvas-frame {
                 height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-                padding-top: calc(2.5vw * 9 / 19.5 + env(safe-area-inset-top));
-                padding-bottom: calc(2.5vw * 9 / 19.5 + env(safe-area-inset-bottom));
+                padding-top: calc(4vw * 9 / 19.5 + env(safe-area-inset-top));
+                padding-bottom: calc(4vw * 9 / 19.5 + env(safe-area-inset-bottom));
                 padding-left: calc(2.5vw * 19.5 / 9 + env(safe-area-inset-left));
                 padding-right: calc(2.5vw * 19.5 / 9 + env(safe-area-inset-right));
             }
