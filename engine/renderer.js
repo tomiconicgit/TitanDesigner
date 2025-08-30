@@ -9,9 +9,14 @@ export function render() {
     layoutSchema.forEach(component => {
         const element = document.createElement('div');
         element.id = component.id;
-        element.className = 'canvas-element';
+        element.className = `canvas-element ${component.type.toLowerCase()}-element`;
         
-        element.textContent = component.props.text || component.type;
+        // Set content based on component type
+        if (component.type === 'Image') {
+            element.textContent = component.props.text; // Placeholder for Image
+        } else {
+            element.textContent = component.props.text || component.type;
+        }
         
         // Apply style properties from the schema
         element.style.position = 'absolute';
@@ -23,12 +28,30 @@ export function render() {
         element.style.boxSizing = 'border-box'; 
         element.style.backgroundColor = component.props.backgroundColor;
         element.style.opacity = component.props.opacity;
+        element.style.color = component.props.foregroundColor || '#ffffff';
 
         if (component.props.shadowEnabled) {
             const props = component.props;
             element.style.boxShadow = `${props.shadowOffsetX}px ${props.shadowOffsetY}px ${props.shadowBlur}px ${props.shadowColor}`;
         } else {
             element.style.boxShadow = 'none';
+        }
+
+        // Type-specific styling
+        if (component.type === 'Text') {
+            element.style.fontSize = component.props.font === 'title' ? '24px' : '16px';
+            element.style.fontWeight = component.props.fontWeight;
+        } else if (component.type === 'Button') {
+            element.style.display = 'flex';
+            element.style.alignItems = 'center';
+            element.style.justifyContent = 'center';
+            element.style.border = '1px solid #555';
+            element.style.backgroundColor = '#007AFF'; // iOS-like blue for buttons
+        } else if (component.type === 'Image') {
+            element.style.backgroundColor = '#555'; // Placeholder styling for images
+            element.style.display = 'flex';
+            element.style.alignItems = 'center';
+            element.style.justifyContent = 'center';
         }
 
         makeInteractive(element);
