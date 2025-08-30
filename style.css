@@ -15,8 +15,10 @@ body {
     overflow: hidden;
 }
 
-/* UPDATED: Simplified and more stable noscroll class */
+/* This class will be controlled by JavaScript for a more stable scroll lock */
 body.noscroll {
+    position: fixed;
+    width: 100%;
     overflow: hidden;
 }
 
@@ -100,6 +102,7 @@ aside {
     color: #ccc;
     border: 1px solid #444;
     border-left: none;
+    touch-action: manipulation; /* ADDED: Fixes tap recognition on the toggle */
 }
 
 /* ======================================= */
@@ -131,7 +134,6 @@ aside {
         overflow-y: auto;
         touch-action: pan-y;
         -webkit-overflow-scrolling: touch;
-        /* overscroll-behavior is inherited from the main 'aside' rule */
     }
 
     #ui-library.visible {
