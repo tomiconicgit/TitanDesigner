@@ -1,5 +1,5 @@
 import { layoutSchema } from './layoutSchema.js';
-import { makeDraggable } from './interactions.js';
+import { makeInteractive } from './interactions.js';
 
 const canvas = document.getElementById('canvas');
 
@@ -20,7 +20,7 @@ export function render() {
         element.style.top = `${component.props.y}px`;
 
         // Make the new element interactive.
-        makeDraggable(element);
+        makeInteractive(element);
 
         // 3. Add the new element to the canvas.
         canvas.appendChild(element);
