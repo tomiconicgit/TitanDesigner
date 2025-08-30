@@ -11,14 +11,12 @@ export function render() {
         element.id = component.id;
         element.className = `canvas-element ${component.type.toLowerCase()}-element`;
         
-        // Set content based on component type
         if (component.type === 'Image') {
-            element.textContent = component.props.text; // Placeholder for Image
+            element.textContent = component.props.text;
         } else {
             element.textContent = component.props.text || component.type;
         }
         
-        // Apply style properties from the schema
         element.style.position = 'absolute';
         element.style.left = `${component.props.x}px`;
         element.style.top = `${component.props.y}px`;
@@ -37,7 +35,6 @@ export function render() {
             element.style.boxShadow = 'none';
         }
 
-        // Type-specific styling
         if (component.type === 'Text') {
             element.style.fontSize = component.props.font === 'title' ? '24px' : '16px';
             element.style.fontWeight = component.props.fontWeight;
@@ -46,16 +43,15 @@ export function render() {
             element.style.alignItems = 'center';
             element.style.justifyContent = 'center';
             element.style.border = '1px solid #555';
-            element.style.backgroundColor = '#007AFF'; // iOS-like blue for buttons
+            element.style.backgroundColor = '#007AFF';
         } else if (component.type === 'Image') {
-            element.style.backgroundColor = '#555'; // Placeholder styling for images
+            element.style.backgroundColor = '#555';
             element.style.display = 'flex';
             element.style.alignItems = 'center';
             element.style.justifyContent = 'center';
         }
 
         makeInteractive(element);
-
         canvas.appendChild(element);
     });
 }
