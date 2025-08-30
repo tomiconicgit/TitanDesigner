@@ -4,7 +4,7 @@ html, body {
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden; /* Keep this on body to prevent page bounce */
+    overflow: hidden;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -14,24 +14,33 @@ body {
     background-color: #121212;
     color: #ffffff;
     position: fixed; /* Prevents pull-to-refresh and other gestures */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 /* Main Content Area */
 main {
-    width: 100vw;
-    height: 100vh; /* Use vh for consistency with fixed body */
-    position: relative;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
+    /* Apply padding to respect the safe areas for all content */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 /* Toolbar Toggle Button */
 #toolbar-toggle {
     position: fixed;
-    top: 20px;
-    left: 10px;
+    /* Position relative to the safe area */
+    top: calc(env(safe-area-inset-top) + 20px);
+    left: calc(env(safe-area-inset-left) + 10px);
     z-index: 1001;
     background-color: #3a3a3c;
     color: #ffffff;
@@ -55,13 +64,17 @@ main {
     top: 0;
     left: -100%;
     width: 250px;
-    height: 100vh;
+    height: 100%; /* Full height of the viewport */
     background-color: #1e1e1e;
     border-right: 1px solid #424242;
     transition: left 0.3s ease-in-out;
     z-index: 1000;
     overflow-y: auto; /* Allow vertical scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    box-sizing: border-box;
+    /* Add padding to account for safe areas inside the panel */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 #toolbar-panel.active {
@@ -74,7 +87,6 @@ main {
     flex-direction: column;
     gap: 10px;
     padding: 20px 10px;
-    padding-top: calc(env(safe-area-inset-top) + 20px); /* Respect safe area */
 }
 
 .toolbar-button {
@@ -97,33 +109,29 @@ main {
 /* Container for the iPhone Canvas */
 #canvas-container {
     width: 100%;
-    height: 100%;
+    flex-grow: 1; /* Allow container to fill available vertical space */
     position: relative;
-    overflow: hidden;
-    padding: 20px;
-    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 15px; /* Provides space around the canvas frame */
+    box-sizing: border-box;
 }
 
 /* The iPhone Canvas */
 #canvas {
     width: 100%;
-    max-width: 430px; /* Max width of an iPhone Pro Max */
     height: 100%;
-    max-height: 932px; /* Max height of an iPhone Pro Max */
+    max-width: 430px; /* Max logical width of an iPhone Pro Max */
+    max-height: 932px; /* Max logical height of an iPhone Pro Max */
     background-color: #000000;
     border: 8px solid #424242;
     border-radius: 50px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     position: relative;
     overflow: hidden;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-    box-sizing: border-box;
+    /* Maintain a phone-like aspect ratio */
+    aspect-ratio: 9 / 19.5;
 }
 
 /* Interactive Element Styles */
