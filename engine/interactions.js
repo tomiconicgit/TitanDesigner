@@ -11,7 +11,7 @@ export function makeInteractive(element) {
     const dragStart = (e) => {
         isDragging = false;
         
-        const touch = e.touches? e.touches : e;
+        const touch = e.touches ? e.touches[0] : e;
         startX = touch.clientX;
         startY = touch.clientY;
         
@@ -26,13 +26,11 @@ export function makeInteractive(element) {
     };
 
     const dragMove = (e) => {
-        const touch = e.touches? e.touches : e;
+        const touch = e.touches ? e.touches[0] : e;
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
 
-        if (!isDragging && (deltaX > tapThreshold |
-
-| deltaY > tapThreshold)) {
+        if (!isDragging && (deltaX > tapThreshold || deltaY > tapThreshold)) {
             isDragging = true;
         }
 
