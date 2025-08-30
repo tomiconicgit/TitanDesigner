@@ -2,7 +2,7 @@
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #000000; /* CHANGED: Set to pure black */
+    background-color: #121212; /* CHANGED: Set to a very dark grey */
     color: #ffffff;
     display: flex;
     height: 100vh;
@@ -28,11 +28,8 @@ main {
     height: 844px; /* iPhone 14 Pro height */
     background-color: #000000;
     
-    /* CHANGED: Replaced solid border with a metallic gradient */
-    border-style: solid;
-    border-width: 8px;
-    border-image-source: linear-gradient(145deg, #e0e0e0, #757575);
-    border-image-slice: 1;
+    /* REVERTED: Back to a solid, dark grey border */
+    border: 8px solid #424242;
 
     border-radius: 50px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
@@ -44,7 +41,7 @@ main {
 /* Styling for Asides (Toolbar & Inspector) */
 aside {
     width: 240px;
-    background-color: #1a1a1a; /* CHANGED: Lighter shade of black */
+    background-color: #1E1E1E; /* CHANGED: Darker panel color */
     padding: 15px;
     box-sizing: border-box;
     overflow-y: auto;
@@ -79,7 +76,7 @@ aside {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #1a1a1a; /* CHANGED: Lighter shade of black */
+    background-color: #1E1E1E; /* CHANGED: Darker panel color */
     border-top: 1px solid #444;
     justify-content: space-around;
     padding: 10px 0;
