@@ -1,0 +1,21 @@
+{
+    "name": "Titan Developer",
+    "short_name": "Titan",
+    "start_url": ".",
+    "display": "fullscreen",
+    "background_color": "#1c1c1e",
+    "theme_color": "#1c1c1e",
+    "description": "A visual editor to build native Apple applications.",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
