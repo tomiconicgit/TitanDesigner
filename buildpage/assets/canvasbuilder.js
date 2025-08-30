@@ -6,7 +6,7 @@ const canvasStyles = `
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0; /* Remove padding to rely on page-level padding */
+        padding: 0; /* No additional padding, rely on app-wrapper */
         box-sizing: border-box;
     }
 
@@ -40,7 +40,7 @@ export function createCanvas(parentElement) {
     canvas.id = 'canvas';
 
     canvasContainer.appendChild(canvas);
-    parentElement.appendChild(canvasContainer);
+    parentContainer.appendChild(canvasContainer);
 }
 
 // Export function to update aspect ratio (called from canvasbuilderlayouts.js)
