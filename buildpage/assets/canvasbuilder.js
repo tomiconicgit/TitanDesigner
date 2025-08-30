@@ -6,22 +6,21 @@ const canvasStyles = `
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 15px;
+        padding: 30px; /* Increased padding for more space around the canvas */
         box-sizing: border-box;
     }
 
     #canvas {
         width: 100%;
         height: auto;
-        max-width: 430px;
-        max-height: 932px;
+        max-width: 300px; /* Reduced max-width to make the canvas much smaller */
         background-color: #000000;
         border: 8px solid #424242; /* Realistic iPhone frame color */
         border-radius: 50px; /* Rounded corners like iPhone */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3); /* Enhanced realistic shadow */
         position: relative;
         overflow: hidden;
-        aspect-ratio: 9 / 19.5; /* Default to iPhone-like ratio */
+        aspect-ratio: 131 / 284; /* Default to iPhone 16 ratio */
     }
 `;
 
