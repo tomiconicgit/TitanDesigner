@@ -13,51 +13,33 @@ document.addEventListener('DOMContentLoaded', () => {
         libraryPanel.classList.toggle('visible');
     });
 
-    libraryPanel.addEventListener('dragstart', () => {
-        libraryPanel.classList.remove('visible');
-    });
-
-    // --- Drag and Drop Logic (UPDATED) ---
-    let draggedItem = null;
-
+    // --- Tap-to-Add Component Logic (NEW) ---
     components.forEach(component => {
-        component.addEventListener('dragstart', (e) => {
-            draggedItem = e.target;
+        component.addEventListener('click', () => {
+            const componentType = component.getAttribute('data-type');
+            
+            // 1. Create a new component object for the schema.
+            const newComponent = {
+                id: generateId(),
+                type: componentType,
+                props: {
+                    text: `New ${componentType}`,
+                    // Add it to the center of the canvas view
+                    x: 150, 
+                    y: 200,
+                }
+            };
+
+            // 2. Add the component to the schema.
+            addComponent(newComponent);
+
+            // 3. Re-render the entire canvas.
+            render();
+            
+            // 4. Close the panel for a better UX.
+            libraryPanel.classList.remove('visible');
         });
     });
 
-    canvas.addEventListener('dragover', (e) => {
-        e.preventDefault();
-    });
-
-    canvas.addEventListener('drop', (e) => {
-        e.preventDefault();
-        if (!draggedItem) return;
-
-        const componentType = draggedItem.getAttribute('data-type');
-        
-        // Calculate drop position relative to the canvas
-        const canvasRect = canvas.getBoundingClientRect();
-        const x = e.clientX - canvasRect.left;
-        const y = e.clientY - canvasRect.top;
-
-        // 1. Create a new component object for the schema.
-        const newComponent = {
-            id: generateId(),
-            type: componentType,
-            props: {
-                text: `New ${componentType}`,
-                x: x - 50, // Offset to center the drop
-                y: y - 20,
-            }
-        };
-
-        // 2. Add the component to the schema.
-        addComponent(newComponent);
-
-        // 3. Re-render the entire canvas from the updated schema.
-        render();
-
-        draggedItem = null;
-    });
+    // --- All old drag-and-drop listeners have been removed ---
 });
