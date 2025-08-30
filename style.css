@@ -15,6 +15,13 @@ body {
     overflow: hidden;
 }
 
+/* Class to lock body scroll when a panel is open */
+body.noscroll {
+    position: fixed;
+    width: 100%;
+    overflow: hidden;
+}
+
 /* Main Content Area */
 main {
     flex-grow: 1;
@@ -42,6 +49,64 @@ main {
 }
 
 /* ======================================= */
+/* ====== UI LIBRARY PANEL STYLES ======== */
+/* ======================================= */
+
+#ui-library {
+    background-color: #1E1E1E;
+    padding: 15px;
+    box-sizing: border-box;
+    transition: transform 0.3s ease-in-out;
+    z-index: 200;
+    
+    /* Scrolling Behavior */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
+    overscroll-behavior: contain; /* Prevents scrolling the body */
+}
+
+#ui-library h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.component {
+    padding: 10px 15px;
+    background-color: #3a3a3c;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 500;
+}
+
+.component:active {
+    background-color: #555;
+}
+
+#left-toolbar-toggle {
+    display: none; /* Hidden by default, shown in media query */
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    padding: 15px 5px;
+    background-color: #1E1E1E;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    cursor: pointer;
+    z-index: 150;
+    text-align: center;
+    font-size: 20px;
+    color: #ccc;
+    border: 1px solid #444;
+    border-left: none;
+}
+
+
+/* ======================================= */
 /* ====== MOBILE RESPONSIVE STYLES ======= */
 /* ======================================= */
 
@@ -56,6 +121,25 @@ main {
 
     #canvas {
         transform: scale(0.85);
+    }
+
+    /* Position the panel for mobile */
+    #ui-library {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 80vw;
+        height: 100vh;
+        transform: translateX(-100%); /* Start off-screen */
+        border-right: 1px solid #555;
+    }
+
+    #ui-library.visible {
+        transform: translateX(0); /* Slide into view */
+    }
+    
+    #left-toolbar-toggle {
+        display: block; /* Show the toggle on mobile */
     }
 }
 
