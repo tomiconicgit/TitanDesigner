@@ -12,7 +12,7 @@ export function render() {
         element.className = 'canvas-element';
         element.textContent = component.props.text || component.type;
         
-        // Apply new style properties from the schema
+        // Apply style properties from the schema
         element.style.position = 'absolute';
         element.style.left = `${component.props.x}px`;
         element.style.top = `${component.props.y}px`;
@@ -20,6 +20,8 @@ export function render() {
         element.style.height = `${component.props.height}px`;
         element.style.borderRadius = `${component.props.borderRadius}px`;
         element.style.boxSizing = 'border-box'; 
+        element.style.backgroundColor = component.props.backgroundColor; // ADDED
+        element.style.opacity = component.props.opacity;                 // ADDED
 
         makeInteractive(element);
 
