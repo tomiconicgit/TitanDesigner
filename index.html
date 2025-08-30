@@ -8,8 +8,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-</head>
-<body>
+</head><body>
 
     <aside id="ui-library">
         <h2>Components</h2>
@@ -17,6 +16,8 @@
         <div class="component" draggable="true" data-type="Button">Button</div>
         <div class="component" draggable="true" data-type="VStack">VStack</div>
     </aside>
+
+    <div id="left-toolbar-toggle">&#9776;</div>
 
     <main>
         <div id="canvas-container">
@@ -31,11 +32,6 @@
             <p>Select an element to edit its properties.</p>
         </div>
     </aside>
-
-    <footer id="mobile-toolbar">
-        <button id="toggle-library-btn">Components</button>
-        <button id="toggle-inspector-btn">Properties</button>
-    </footer>
     
     <script src="app.js"></script>
 </body>
