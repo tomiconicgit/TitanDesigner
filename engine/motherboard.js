@@ -1,6 +1,6 @@
-import { addComponent, generateId } from './engine/layoutSchema.js';
-import { render } from './engine/renderer.js';
-import { createCanvas } from './assets/canvasbuilder.js';
+import { addComponent, generateId } from './layoutSchema.js';
+import { render } from './renderer.js';
+import { createCanvas } from '../assets/canvasbuilder.js'; // <-- Path updated
 
 document.addEventListener('DOMContentLoaded', () => {
     const mainElement = document.querySelector('main');
