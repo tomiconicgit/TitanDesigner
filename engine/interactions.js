@@ -48,12 +48,16 @@ document.addEventListener('click', (e) => {
     }
 });
 
-toolsOverlay.addEventListener('click', hideToolsPanel);
+// Stop touch events on tools panel to prevent background scrolling
+toolsPanel.addEventListener('touchstart', (e) => {
+    e.stopPropagation();
+}, { passive: false });
 
-// Stop touchmove propagation on tools panel to prevent background scrolling
 toolsPanel.addEventListener('touchmove', (e) => {
     e.stopPropagation();
 }, { passive: false });
+
+toolsOverlay.addEventListener('click', hideToolsPanel);
 
 contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
