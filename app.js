@@ -2,47 +2,51 @@ import { addComponent, generateId } from './engine/layoutSchema.js';
 import { render } from './engine/renderer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('canvas');
+
+    // Function to center the initial component
+    function getInitialPosition() {
+        const canvasRect = canvas.getBoundingClientRect();
+        const componentWidth = 120; // Default width from layoutSchema
+        const componentHeight = 50; // Default height
+        return {
+            x: (canvasRect.width - componentWidth) / 2,
+            y: (canvasRect.height / 3) // Place it a third of the way down
+        };
+    }
+
+    const initialPosition = getInitialPosition();
+
     // Initialize with a single text component
     const initialComponent = {
         id: generateId(),
         type: 'Text',
         props: {
             text: 'Canvas Ready',
-            x: 100,
-            y: 150,
+            x: initialPosition.x,
+            y: initialPosition.y,
         }
     };
 
     addComponent(initialComponent);
     render();
 
-    // Dynamically adjust canvas size based on visual viewport
-    function adjustCanvasSize() {
-        const canvasContainer = document.getElementById('canvas-container');
-        const toggleHeight = 40; // Approximate height of toggle button + padding
-        const vh = 'visualViewport' in window ? visualViewport.height : window.innerHeight;
-
-        // Set canvas to fit visual viewport, accounting for toggle
-        document.body.style.height = `${vh}px`; // Force body to match viewport
-        canvasContainer.style.height = `${vh - toggleHeight}px`;
-        canvasContainer.style.width = '100vw';
-
-        // Ensure canvas elements stay within bounds
-        render(); // Re-render to adjust component positions
+    // Simplified resize handling
+    function handleResize() {
+        // The CSS handles most of this now, but a re-render can be useful
+        // if component positions need to be recalculated based on new dimensions.
+        render();
     }
 
-    // Adjust on load, resize, and viewport changes
-    adjustCanvasSize();
-    window.addEventListener('resize', adjustCanvasSize);
-    window.addEventListener('orientationchange', adjustCanvasSize);
+    window.addEventListener('resize', handleResize);
     if ('visualViewport' in window) {
-        visualViewport.addEventListener('resize', adjustCanvasSize); // Handle dynamic changes (e.g., keyboard, dynamic island)
+        visualViewport.addEventListener('resize', handleResize);
     }
 
     // Toolbar button event listeners
     const toolbarButtons = document.querySelectorAll('.toolbar-button');
     toolbarButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        const addElement = () => {
             const type = button.dataset.type;
             const newComponent = {
                 id: generateId(),
@@ -50,31 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 props: {
                     x: 50,
                     y: 50,
-                    text: type === 'Text' ? 'New Text' : type === 'Button' ? 'New Button' : 'Image Placeholder',
-                    ...(type === 'Button' ? { buttonStyle: 'borderedProminent', borderShape: 'capsule' } : {}),
-                    ...(type === 'Image' ? { systemName: 'photo' } : {}),
+                    text: type === 'Text'? 'New Text' : type === 'Button'? 'New Button' : 'Image Placeholder',
                 }
             };
             addComponent(newComponent);
             render();
-        });
+        };
 
+        button.addEventListener('click', addElement);
         button.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const type = button.dataset.type;
-            const newComponent = {
-                id: generateId(),
-                type: type,
-                props: {
-                    x: 50,
-                    y: 50,
-                    text: type === 'Text' ? 'New Text' : type === 'Button' ? 'New Button' : 'Image Placeholder',
-                    ...(type === 'Button' ? { buttonStyle: 'borderedProminent', borderShape: 'capsule' } : {}),
-                    ...(type === 'Image' ? { systemName: 'photo' } : {}),
-                }
-            };
-            addComponent(newComponent);
-            render();
+            e.preventDefault(); // Prevents ghost click
+            addElement();
         }, { passive: false });
     });
 
@@ -82,17 +72,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const toolbarToggle = document.getElementById('toolbar-toggle');
     const toolbarPanel = document.getElementById('toolbar-panel');
 
-    toolbarToggle.addEventListener('click', () => {
+    const toggleToolbar = () => {
         toolbarPanel.classList.toggle('active');
-    });
+    };
 
+    toolbarToggle.addEventListener('click', toggleToolbar);
     toolbarToggle.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        toolbarPanel.classList.toggle('active');
+        toggleToolbar();
     }, { passive: false });
 
-    document.addEventListener('touchstart', (e) => {
-        if (!toolbarPanel.contains(e.target) && !toolbarToggle.contains(e.target) && toolbarPanel.classList.contains('active')) {
+    // Close toolbar when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!toolbarPanel.contains(e.target) &&!toolbarToggle.contains(e.target) && toolbarPanel.classList.contains('active')) {
             toolbarPanel.classList.remove('active');
         }
     });
