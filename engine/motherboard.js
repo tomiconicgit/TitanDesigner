@@ -22,12 +22,13 @@ function route() {
     }
 
     // 3. Define and add the initial component to the schema
+    // Note: Positioning is now more robust.
     const initialComponent = {
         id: schema.generateId(),
         type: 'Text',
         props: {
             text: 'Canvas Ready',
-            x: (canvas.offsetWidth / 2) - 75, // Position in the center
+            x: 125, // Centered for a ~400px wide canvas
             y: 150
         }
     };
