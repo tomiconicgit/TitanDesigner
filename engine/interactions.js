@@ -11,48 +11,44 @@ const canvas = document.getElementById('canvas');
 const contextMenu = document.getElementById('context-menu');
 const toolsPanel = document.getElementById('tools-panel');
 const toolsOverlay = document.getElementById('tools-overlay');
-let scrollY = 0;
 
-// --- Robust Scroll Locking Functions ---
-const lockScroll = () => {
-    scrollY = window.scrollY;
-    const body = document.body;
-    body.style.position = 'fixed';
-    body.style.width = '100%';
-    body.style.top = `-${scrollY}px`;
-    body.classList.add('noscroll');
-};
+/* --- SAFE ZONE: make scrollable panels ignore propagation so touches there won't start canvas drag --- */
+function initScrollableSafeZones() {
+    const selectors = ['#ui-library', '.tools-content'];
+    selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+            // stop propagation so touchstart inside these elements won't bubble to other listeners
+            el.addEventListener('touchstart', (e) => {
+                // We keep this passive to allow native scrolling, but we stop propagation
+                e.stopPropagation();
+            }, { passive: true });
 
-const unlockScroll = () => {
-    const body = document.body;
-    body.style.position = '';
-    body.style.width = '';
-    body.style.top = '';
-    body.classList.remove('noscroll');
-    window.scrollTo(0, scrollY);
-};
-
-// Function to hide the tools panel and remove the scroll lock
-function hideToolsPanel() {
-    toolsPanel.classList.remove('visible');
-    toolsOverlay.classList.remove('visible');
-    unlockScroll();
-    setTimeout(() => {
-        toolsPanel.classList.add('hidden');
-    }, 300);
+            // Also stop pointer events for pointer-based browsers
+            el.addEventListener('pointerdown', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
+        });
+    });
 }
+initScrollableSafeZones();
 
 document.addEventListener('click', (e) => {
-    if (!contextMenu.contains(e.target) &&!e.target.classList.contains('canvas-element')) {
+    if (!contextMenu.contains(e.target) && !e.target.classList.contains('canvas-element')) {
         contextMenu.classList.add('hidden');
     }
 });
 
-toolsOverlay.addEventListener('click', hideToolsPanel);
+toolsOverlay.addEventListener('click', () => {
+    toolsPanel.classList.remove('visible');
+    toolsOverlay.classList.remove('visible');
+    setTimeout(() => {
+        toolsPanel.classList.add('hidden');
+    }, 300);
+});
 
 contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
-    if (!action ||!activeElement) return;
+    if (!action || !activeElement) return;
 
     if (action === 'tools') {
         populateTools(activeElement.id);
@@ -69,8 +65,7 @@ contextMenu.addEventListener('click', (e) => {
         } else {
             toolsPanel.classList.add('slide-from-bottom');
         }
-        
-        lockScroll();
+
         toolsPanel.classList.add('visible');
         toolsOverlay.classList.add('visible');
     }
@@ -102,13 +97,20 @@ export function makeInteractive(element) {
     let offsetX, offsetY;
 
     const dragStart = (e) => {
-        // Stop drag from starting if the click is on a scrollbar or UI control
-        if (e.target!== element) return;
-
         activeElement = element;
         isDragging = false;
         
-        const touch = e.touches? e.touches : e;
+        // If the initial target is inside a scrollable panel, do nothing (safe-guard)
+        // This is defensive — the safe-zone listeners should have already stopped propagation,
+        // but keep the check to be robust.
+        const origin = (e.touches ? e.touches[0] : e).target || e.target;
+        if (origin && origin.closest && (origin.closest('#ui-library') || origin.closest('.tools-content'))) {
+            return;
+        }
+
+        // For touch, we want to prevent the native page scroll ONLY when dragging.
+        // So register non-passive listeners and call preventDefault during dragMove.
+        const touch = e.touches ? e.touches[0] : e;
         startX = touch.clientX;
         startY = touch.clientY;
         startTime = Date.now();
@@ -117,6 +119,7 @@ export function makeInteractive(element) {
         offsetX = touch.clientX - rect.left;
         offsetY = touch.clientY - rect.top;
 
+        // Add listeners with explicit options so we can preventDefault when dragging
         document.addEventListener('mousemove', dragMove);
         document.addEventListener('mouseup', dragEnd, { once: true });
         
@@ -125,19 +128,18 @@ export function makeInteractive(element) {
     };
 
     const dragMove = (e) => {
-        const touch = e.touches? e.touches : e;
+        const touch = e.touches ? e.touches[0] : e;
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
 
-        if (!isDragging && (deltaX > tapThreshold |
-
-| deltaY > tapThreshold)) {
+        if (deltaX > tapThreshold || deltaY > tapThreshold) {
             isDragging = true;
             contextMenu.classList.add('hidden');
         }
 
         if (isDragging) {
-            if (e.cancelable) e.preventDefault(); // Prevent scroll while dragging
+            // stop native scroll while actively dragging an element
+            if (e.cancelable) e.preventDefault();
 
             const canvasRect = canvas.getBoundingClientRect();
             let newX = touch.clientX - canvasRect.left - offsetX;
@@ -161,9 +163,11 @@ export function makeInteractive(element) {
 
         isDragging = false;
         document.removeEventListener('mousemove', dragMove);
-        document.removeEventListener('touchmove', dragMove);
+        document.removeEventListener('touchmove', dragMove, { passive: false });
     };
 
+    // mouse: regular
     element.addEventListener('mousedown', dragStart);
-    element.addEventListener('touchstart', dragStart, { passive: true });
+    // touch: non-passive so we can preventDefault during drag
+    element.addEventListener('touchstart', dragStart, { passive: false });
 }
