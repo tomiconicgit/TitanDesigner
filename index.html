@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titan Developer</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
@@ -10,20 +10,22 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
-
     <aside id="ui-library">
         <h2>Components</h2>
         <div class="component" data-type="Text">Text</div>
         <div class="component" data-type="Button">Button</div>
         <div class="component" data-type="VStack">VStack</div>
+        <div class="component" data-type="Image">Image</div>
+        <div class="component" data-type="Icon">Icon</div>
+        <div class="component" data-type="Card">Card</div>
+        <div class="component" data-type="Input">Input</div>
     </aside>
 
     <div id="left-toolbar-toggle">&#9776;</div>
 
     <main>
         <div id="canvas-container">
-            <div id="canvas">
-                </div>
+            <div id="canvas"></div>
         </div>
     </main>
 
@@ -46,8 +48,7 @@
         <div class="tools-header">
             <h3>Component Tools</h3>
         </div>
-        <div class="tools-content">
-            </div>
+        <div class="tools-content"></div>
     </div>
     
     <script src="app.js" type="module"></script>
