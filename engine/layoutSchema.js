@@ -8,8 +8,14 @@ export function addComponent(component) {
         width: 120,
         height: 50,
         borderRadius: 8,
-        backgroundColor: '#3a3a3c', // ADDED
-        opacity: 1,                 // ADDED
+        backgroundColor: '#3a3a3c',
+        opacity: 1,
+        // ADDED: Default shadow properties
+        shadowEnabled: false,
+        shadowOffsetX: 0,
+        shadowOffsetY: 2,
+        shadowBlur: 4,
+        shadowColor: '#00000080',
     };
 
     // Merge the defaults with the component's initial properties
