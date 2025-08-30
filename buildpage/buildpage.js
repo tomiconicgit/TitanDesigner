@@ -4,15 +4,12 @@ import { createCanvas } from './assets/canvasbuilder.js';
  * Initializes the main build page UI.
  */
 export function initBuildPage() {
-    const mainContainer = document.createElement('main');
-    mainContainer.id = 'build-environment';
-    mainContainer.style.width = '100vw';
-    mainContainer.style.height = '100vh';
+    const mainContainer = document.getElementById('build-environment');
+    mainContainer.style.width = '100%';
+    mainContainer.style.height = '100%';
     mainContainer.style.display = 'flex';
     mainContainer.style.flexDirection = 'column';
-
-    // Append the main container to the body
-    document.body.appendChild(mainContainer);
+    mainContainer.style.backgroundColor = 'transparent'; // No additional background, handled by app-wrapper
 
     // Now, create the canvas inside the main container
     createCanvas(mainContainer);
