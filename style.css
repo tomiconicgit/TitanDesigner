@@ -24,14 +24,13 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: env(safe-area-inset-top); /* Account for status bar */
     box-sizing: border-box;
 }
 
 /* Toolbar Toggle Button */
 #toolbar-toggle {
     position: fixed;
-    top: calc(20px + env(safe-area-inset-top)); /* Adjust for status bar */
+    top: 20px;
     left: 10px;
     z-index: 1001; /* Above the panel */
     background-color: #3a3a3c;
@@ -55,14 +54,13 @@ main {
     position: fixed;
     top: 0;
     left: -100%; /* Off-screen initially */
-    width: 250px; /* Width of the panel */
+    width: 250px;
     height: 100dvh; /* Full dynamic viewport height */
     background-color: #1e1e1e;
     border-right: 1px solid #424242;
     transition: left 0.3s ease-in-out;
     z-index: 1000;
     overflow-y: auto; /* Allow scrolling within panel */
-    padding-top: env(safe-area-inset-top); /* Account for status bar */
 }
 
 #toolbar-panel.active {
@@ -97,13 +95,10 @@ main {
 /* Container for the iPhone Canvas */
 #canvas-container {
     width: 100vw; /* Full viewport width */
-    height: calc(100dvh - env(safe-area-inset-top)); /* Full height minus status bar */
-    max-width: 390px; /* Limit to iPhone-like width */
-    max-height: 844px; /* Limit to iPhone-like height */
+    height: calc(100dvh - 40px); /* Adjust height to leave space for toggle, refine with JS */
     position: relative;
     overflow: hidden;
-    margin: 0 auto; /* Center horizontally */
-    transform-origin: center center;
+    margin: 0 auto;
 }
 
 /* The iPhone Canvas */
@@ -124,7 +119,7 @@ main {
 
 @media (max-width: 768px) {
     #canvas-container {
-        transform: scale(0.85);
+        height: calc(100dvh - 40px); /* Adjust for smaller screens */
     }
 
     #toolbar-panel {
@@ -134,7 +129,7 @@ main {
 
 @media (max-height: 700px) {
     #canvas-container {
-        transform: scale(0.7);
+        height: calc(100dvh - 40px); /* Adjust for shorter screens */
     }
 }
 
