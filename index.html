@@ -19,6 +19,18 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
+        /* Container for the entire page with iPhone 15 Pro Max-inspired padding and curves */
+        #build-environment {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: #1e1e1e;
+            border-radius: 50px; /* Mimic iPhone curved edges */
+            overflow: hidden;
+            padding: calc(5% * 9 / 19.5) calc(5% * 19.5 / 9); /* Proportional padding based on 19.5:9 ratio */
+        }
+
         /* Ensure safe area padding in standalone mode */
         @supports (-webkit-overflow-scrolling: touch) {
             body {
@@ -29,6 +41,10 @@
             }
             #build-environment {
                 height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+                padding-top: calc(5% * 9 / 19.5 + env(safe-area-inset-top));
+                padding-bottom: calc(5% * 9 / 19.5 + env(safe-area-inset-bottom));
+                padding-left: calc(5% * 19.5 / 9 + env(safe-area-inset-left));
+                padding-right: calc(5% * 19.5 / 9 + env(safe-area-inset-right));
             }
         }
     </style>
