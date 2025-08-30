@@ -59,7 +59,11 @@ aside {
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
     z-index: 200;
-    overscroll-behavior: contain; /* ADDED: Prevents scroll from escaping this panel */
+    overscroll-behavior: contain;
+}
+
+#ui-library {
+    transform: translateX(-100%); /* Ensure hidden by default on mobile */
 }
 
 #ui-library h2, #property-inspector h2 {
@@ -102,13 +106,12 @@ aside {
     color: #ccc;
     border: 1px solid #444;
     border-left: none;
-    touch-action: manipulation; /* ADDED: Fixes tap recognition on the toggle */
+    touch-action: manipulation;
 }
 
 /* ======================================= */
 /* ====== MOBILE RESPONSIVE STYLES ======= */
 /* ======================================= */
-
 @media (max-width: 768px) {
     body {
         display: block;
@@ -272,7 +275,8 @@ aside {
     padding: 20px;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain; /* ADDED: Prevents scroll from escaping this panel */
+    overscroll-behavior: contain;
+    min-height: 0; /* Prevent flex shrinking issues */
 }
 
 /* Styling for Tool Controls inside the panel */
@@ -381,7 +385,7 @@ input[type="color"]::-moz-color-swatch {
     height: 0;
 }
 
-.switch.slider {
+.switch .slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -389,11 +393,11 @@ input[type="color"]::-moz-color-swatch {
     right: 0;
     bottom: 0;
     background-color: #3a3a3c;
-    transition:.4s;
+    transition: .4s;
     border-radius: 31px;
 }
 
-.switch.slider:before {
+.switch .slider:before {
     position: absolute;
     content: "";
     height: 27px;
@@ -401,14 +405,14 @@ input[type="color"]::-moz-color-swatch {
     left: 2px;
     bottom: 2px;
     background-color: white;
-    transition:.4s;
+    transition: .4s;
     border-radius: 50%;
 }
 
-.switch input:checked +.slider {
+.switch input:checked + .slider {
     background-color: #34c759; /* iOS Green */
 }
 
-.switch input:checked +.slider:before {
+.switch input:checked + .slider:before {
     transform: translateX(20px);
 }
