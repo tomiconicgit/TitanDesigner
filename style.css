@@ -11,7 +11,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #121212;
     color: #ffffff;
-    display: flex;
+    /* display: flex; is removed to prevent layout conflicts with the fixed panel */
     overflow: hidden;
 }
 
@@ -24,10 +24,11 @@ body.noscroll {
 
 /* Main Content Area */
 main {
-    flex-grow: 1;
+    /* flex-grow: 1; is no longer needed */
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%; /* Ensure main takes up full height */
 }
 
 /* Container for the iPhone Canvas */
@@ -53,9 +54,19 @@ main {
 /* ======================================= */
 
 #ui-library {
+    position: fixed; /* Ensures it's an overlay on ALL screen sizes */
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 80vw; /* Default width for mobile */
+    max-width: 320px; /* Set a max-width for larger screens */
+    
     background-color: #1E1E1E;
     padding: 15px;
     box-sizing: border-box;
+    border-right: 1px solid #555;
+    
+    transform: translateX(-100%); /* Start off-screen */
     transition: transform 0.3s ease-in-out;
     z-index: 200;
     
@@ -63,6 +74,10 @@ main {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
     overscroll-behavior: contain; /* Prevents scrolling the body */
+}
+
+#ui-library.visible {
+    transform: translateX(0); /* Slide into view */
 }
 
 #ui-library h2 {
@@ -86,7 +101,7 @@ main {
 }
 
 #left-toolbar-toggle {
-    display: none; /* Hidden by default, shown in media query */
+    display: block; /* Always show the toggle */
     position: fixed;
     left: 0;
     top: 50%;
@@ -121,25 +136,6 @@ main {
 
     #canvas {
         transform: scale(0.85);
-    }
-
-    /* Position the panel for mobile */
-    #ui-library {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 80vw;
-        height: 100vh;
-        transform: translateX(-100%); /* Start off-screen */
-        border-right: 1px solid #555;
-    }
-
-    #ui-library.visible {
-        transform: translateX(0); /* Slide into view */
-    }
-    
-    #left-toolbar-toggle {
-        display: block; /* Show the toggle on mobile */
     }
 }
 
