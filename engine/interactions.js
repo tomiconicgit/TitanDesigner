@@ -12,11 +12,31 @@ const contextMenu = document.getElementById('context-menu');
 const toolsPanel = document.getElementById('tools-panel');
 const toolsOverlay = document.getElementById('tools-overlay');
 
+let scrollPosition = 0;
+
+// Function to lock body scroll
+function lockScroll() {
+    scrollPosition = window.pageYOffset;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = '100%';
+    document.body.classList.add('noscroll');
+}
+
+// Function to unlock body scroll
+function unlockScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollPosition);
+    document.body.classList.remove('noscroll');
+}
+
 // Function to hide the tools panel and remove the scroll lock
 function hideToolsPanel() {
     toolsPanel.classList.remove('visible');
     toolsOverlay.classList.remove('visible');
-    document.body.classList.remove('noscroll'); // Remove scroll lock
+    unlockScroll();
     setTimeout(() => {
         toolsPanel.classList.add('hidden');
     }, 300);
@@ -29,6 +49,11 @@ document.addEventListener('click', (e) => {
 });
 
 toolsOverlay.addEventListener('click', hideToolsPanel);
+
+// Stop touchmove propagation on tools panel to prevent background scrolling
+toolsPanel.addEventListener('touchmove', (e) => {
+    e.stopPropagation();
+}, { passive: false });
 
 contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
@@ -50,7 +75,7 @@ contextMenu.addEventListener('click', (e) => {
             toolsPanel.classList.add('slide-from-bottom');
         }
         
-        document.body.classList.add('noscroll'); // Add scroll lock
+        lockScroll();
         toolsPanel.classList.add('visible');
         toolsOverlay.classList.add('visible');
     }
@@ -100,7 +125,7 @@ export function makeInteractive(element) {
         document.addEventListener('mousemove', dragMove);
         document.addEventListener('mouseup', dragEnd, { once: true });
         
-        document.addEventListener('touchmove', dragMove, { passive: false }); // Set passive: false
+        document.addEventListener('touchmove', dragMove, { passive: false });
         document.addEventListener('touchend', dragEnd, { once: true });
     };
 
