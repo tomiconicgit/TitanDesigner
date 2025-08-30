@@ -3,8 +3,8 @@
     "short_name": "Titan",
     "start_url": ".",
     "display": "fullscreen",
-    "background_color": "#1c1c1e",
-    "theme_color": "#1c1c1e",
+    "background_color": "#121212",
+    "theme_color": "#121212",
     "description": "A visual editor to build native Apple applications.",
     "icons": [
         {
