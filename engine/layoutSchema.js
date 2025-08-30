@@ -3,14 +3,23 @@ export let layoutSchema = [];
 
 // A function to add a new component to the schema.
 export function addComponent(component) {
+    // Default properties for size and style
+    const defaults = {
+        width: 120,
+        height: 50,
+        borderRadius: 8,
+    };
+
+    // Merge the defaults with the component's initial properties
+    component.props = { ...defaults, ...component.props };
+    
     layoutSchema.push(component);
 }
 
-// A function to update a component's properties (like its position).
+// A function to update a component's properties.
 export function updateComponent(id, newProps) {
     const component = layoutSchema.find(c => c.id === id);
     if (component) {
-        // Merge the new properties into the existing props object.
         Object.assign(component.props, newProps);
     }
 }
