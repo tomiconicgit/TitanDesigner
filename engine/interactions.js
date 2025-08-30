@@ -1,35 +1,71 @@
 import { updateComponent } from './layoutSchema.js';
-import { render } from './renderer.js';
 
-let selectedElement = null;
+let activeElement = null; // The element being interacted with
+let isDragging = false;
+let startX, startY, startTime;
+const tapThreshold = 5; // Max pixels to move to be considered a tap
+const longPressDuration = 250; // ms
 
-export function makeDraggable(element) {
+// --- Context Menu ---
+const contextMenu = document.getElementById('context-menu');
+document.addEventListener('click', (e) => {
+    // Hide menu if clicking anywhere else
+    if (!contextMenu.contains(e.target) && !e.target.classList.contains('canvas-element')) {
+        contextMenu.classList.add('hidden');
+        activeElement = null;
+    }
+});
+
+// We'll add logic for the menu buttons later
+contextMenu.addEventListener('click', (e) => {
+    const action = e.target.getAttribute('data-action');
+    if (!action || !activeElement) return;
+
+    console.log(`Action: ${action} on element ${activeElement.id}`);
+    // Future logic for delete, duplicate, tools will go here.
+
+    contextMenu.classList.add('hidden'); // Hide after action
+});
+
+
+function showContextMenu(element, event) {
+    const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    
+    // Position menu to the right of the element
+    let menuX = elementRect.right;
+    let menuY = elementRect.top;
+
+    // Reposition if it overflows the canvas view
+    if (menuX + contextMenu.offsetWidth > canvasRect.right) {
+        menuX = elementRect.left - contextMenu.offsetWidth;
+    }
+    if (menuY + contextMenu.offsetHeight > canvasRect.bottom) {
+        menuY = elementRect.bottom - contextMenu.offsetHeight;
+    }
+
+    contextMenu.style.left = `${menuX}px`;
+    contextMenu.style.top = `${menuY}px`;
+    contextMenu.classList.remove('hidden');
+}
+
+
+export function makeInteractive(element) {
     let offsetX, offsetY;
 
-    // --- Event Handlers ---
     const dragStart = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Deselect any previously selected element
-        if (selectedElement) {
-            selectedElement.classList.remove('selected');
-        }
+        activeElement = element;
+        isDragging = false; // Reset dragging state
         
-        // Select the new element
-        selectedElement = element;
-        selectedElement.classList.add('selected');
-
+        const touch = e.touches ? e.touches[0] : e;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        startTime = Date.now();
+        
         const rect = element.getBoundingClientRect();
-        
-        // Get initial coordinates from either mouse or touch event
-        const startX = e.clientX || e.touches[0].clientX;
-        const startY = e.clientY || e.touches[0].clientY;
-        
-        offsetX = startX - rect.left;
-        offsetY = startY - rect.top;
+        offsetX = touch.clientX - rect.left;
+        offsetY = touch.clientY - rect.top;
 
-        // Add move and end listeners to the document
         document.addEventListener('mousemove', dragMove);
         document.addEventListener('mouseup', dragEnd, { once: true });
         
@@ -38,38 +74,45 @@ export function makeDraggable(element) {
     };
 
     const dragMove = (e) => {
-        if (!selectedElement) return;
+        const touch = e.touches ? e.touches[0] : e;
+        const deltaX = Math.abs(touch.clientX - startX);
+        const deltaY = Math.abs(touch.clientY - startY);
 
-        const canvasRect = document.getElementById('canvas').getBoundingClientRect();
-        
-        // Get move coordinates from either mouse or touch event
-        const moveX = e.clientX || e.touches[0].clientX;
-        const moveY = e.clientY || e.touches[0].clientY;
+        // If moved beyond the tap threshold, it's a drag
+        if (deltaX > tapThreshold || deltaY > tapThreshold) {
+            isDragging = true;
+            contextMenu.classList.add('hidden'); // Hide menu if it was open
+        }
 
-        // Convert mouse position to be relative to the canvas
-        let newX = moveX - canvasRect.left - offsetX;
-        let newY = moveY - canvasRect.top - offsetY;
+        if (isDragging) {
+            const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+            let newX = touch.clientX - canvasRect.left - offsetX;
+            let newY = touch.clientY - canvasRect.top - offsetY;
 
-        // Update the element's style for immediate visual feedback
-        selectedElement.style.left = `${newX}px`;
-        selectedElement.style.top = `${newY}px`;
+            element.style.left = `${newX}px`;
+            element.style.top = `${newY}px`;
+        }
     };
 
-    const dragEnd = () => {
-        if (!selectedElement) return;
+    const dragEnd = (e) => {
+        const elapsedTime = Date.now() - startTime;
         
-        // Remove all document listeners
+        if (isDragging) {
+            // If it was a drag, finalize the position
+            const newX = parseFloat(element.style.left);
+            const newY = parseFloat(element.style.top);
+            updateComponent(element.id, { x: newX, y: newY });
+        } else if (elapsedTime < longPressDuration) {
+            // If it wasn't a drag and it was short, it's a tap
+            showContextMenu(element, e);
+        }
+
+        // Cleanup
+        isDragging = false;
         document.removeEventListener('mousemove', dragMove);
         document.removeEventListener('touchmove', dragMove);
-        
-        // Finalize the position by updating the schema
-        const newX = parseFloat(selectedElement.style.left);
-        const newY = parseFloat(selectedElement.style.top);
-        
-        updateComponent(selectedElement.id, { x: newX, y: newY });
     };
 
-    // --- Attach Initial Listeners ---
     element.addEventListener('mousedown', dragStart);
-    element.addEventListener('touchstart', dragStart);
+    element.addEventListener('touchstart', dragStart, { passive: true });
 }
