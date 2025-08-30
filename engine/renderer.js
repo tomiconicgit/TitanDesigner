@@ -20,8 +20,16 @@ export function render() {
         element.style.height = `${component.props.height}px`;
         element.style.borderRadius = `${component.props.borderRadius}px`;
         element.style.boxSizing = 'border-box'; 
-        element.style.backgroundColor = component.props.backgroundColor; // ADDED
-        element.style.opacity = component.props.opacity;                 // ADDED
+        element.style.backgroundColor = component.props.backgroundColor;
+        element.style.opacity = component.props.opacity;
+
+        // ADDED: Apply box-shadow style if enabled
+        if (component.props.shadowEnabled) {
+            const props = component.props;
+            element.style.boxShadow = `${props.shadowOffsetX}px ${props.shadowOffsetY}px ${props.shadowBlur}px ${props.shadowColor}`;
+        } else {
+            element.style.boxShadow = 'none';
+        }
 
         makeInteractive(element);
 
