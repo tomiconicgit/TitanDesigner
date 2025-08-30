@@ -16,21 +16,22 @@ body {
 
 /* Main Content Area */
 main {
-    width: 100%;
-    height: 100%;
-    position: fixed; /* Fix main to viewport */
+    width: 100vw;
+    height: 100dvh; /* Use dynamic viewport height */
+    position: fixed;
     top: 0;
     left: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Center canvas vertically */
+    padding-top: env(safe-area-inset-top); /* Account for status bar */
+    box-sizing: border-box;
 }
 
 /* Toolbar Toggle Button */
 #toolbar-toggle {
     position: fixed;
-    top: 20px;
+    top: calc(20px + env(safe-area-inset-top)); /* Adjust for status bar */
     left: 10px;
     z-index: 1001; /* Above the panel */
     background-color: #3a3a3c;
@@ -55,12 +56,13 @@ main {
     top: 0;
     left: -100%; /* Off-screen initially */
     width: 250px; /* Width of the panel */
-    height: 100%;
+    height: 100dvh; /* Full dynamic viewport height */
     background-color: #1e1e1e;
     border-right: 1px solid #424242;
     transition: left 0.3s ease-in-out;
     z-index: 1000;
     overflow-y: auto; /* Allow scrolling within panel */
+    padding-top: env(safe-area-inset-top); /* Account for status bar */
 }
 
 #toolbar-panel.active {
@@ -70,7 +72,7 @@ main {
 /* Toolbar Styles */
 #toolbar {
     display: flex;
-    flex-direction: enri;
+    flex-direction: column;
     gap: 10px;
     padding: 20px 10px;
 }
@@ -94,10 +96,14 @@ main {
 
 /* Container for the iPhone Canvas */
 #canvas-container {
-    width: 390px; /* Match canvas width */
-    height: 844px; /* Match canvas height */
+    width: 100vw; /* Full viewport width */
+    height: calc(100dvh - env(safe-area-inset-top)); /* Full height minus status bar */
+    max-width: 390px; /* Limit to iPhone-like width */
+    max-height: 844px; /* Limit to iPhone-like height */
     position: relative;
-    overflow: hidden; /* Prevent scrolling */
+    overflow: hidden;
+    margin: 0 auto; /* Center horizontally */
+    transform-origin: center center;
 }
 
 /* The iPhone Canvas */
@@ -119,7 +125,6 @@ main {
 @media (max-width: 768px) {
     #canvas-container {
         transform: scale(0.85);
-        transform-origin: center center;
     }
 
     #toolbar-panel {
