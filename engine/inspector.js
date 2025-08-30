@@ -35,10 +35,6 @@ export function populateTools(componentId) {
         content.appendChild(createSlider('shadowBlur', 'Blur', { min: 0, max: 40, step: 1, unit: 'px' }));
         // We could add a color picker for shadowColor here later
     }
-
-    // --- Temporary: Add extra sliders for testing overflow ---
-    content.appendChild(createSlider('test1', 'Test Slider 1', { min: 0, max: 100, step: 1, unit: 'px' }));
-    content.appendChild(createSlider('test2', 'Test Slider 2', { min: 0, max: 100, step: 1, unit: 'px' }));
 }
 
 // NEW: Function to create a toggle switch
@@ -106,9 +102,9 @@ function createColorControl(property, label) {
     wrapper.appendChild(valueEl);
     
     colorInput.addEventListener('input', (e) => {
-        const newValue = e.target.value;
-        updateComponent(activeComponent.id, { [property]: newValue });
-        valueEl.textContent = newValue;
+        const newColor = e.target.value;
+        updateComponent(activeComponent.id, { [property]: newColor });
+        valueEl.textContent = newColor;
         render();
     });
 
@@ -117,7 +113,7 @@ function createColorControl(property, label) {
 
 // A helper function to create our custom slider controls
 function createSlider(property, label, opts) {
-    const currentValue = activeComponent.props[property] || 0; // Default to 0 for test sliders
+    const currentValue = activeComponent.props[property];
 
     const control = document.createElement('div');
     control.className = 'tool-control slider-control';
@@ -168,8 +164,8 @@ function createSlider(property, label, opts) {
 
     updateSlider(currentValue);
 
-    minusBtn.addEventListener('click', () => updateSlider(activeComponent.props[property] || 0 - opts.step));
-    plusBtn.addEventListener('click', () => updateSlider(activeComponent.props[property] || 0 + opts.step));
+    minusBtn.addEventListener('click', () => updateSlider(activeComponent.props[property] - opts.step));
+    plusBtn.addEventListener('click', () => updateSlider(activeComponent.props[property] + opts.step));
 
     return control;
 }
