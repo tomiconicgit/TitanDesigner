@@ -1,12 +1,19 @@
+/* NEW: Lock the viewport to prevent scrolling */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
 /* General Body Styling */
 body {
-    margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #121212;
     color: #ffffff;
     display: flex;
-    height: 100vh;
-    overflow: hidden;
+    /* Height and overflow properties are now in the rule above */
 }
 
 /* Main Content Area */
@@ -66,7 +73,7 @@ aside {
     cursor: grabbing;
 }
 
-/* NEW: Styling for the left toolbar toggle button */
+/* Styling for the left toolbar toggle button */
 #left-toolbar-toggle {
     display: none; /* Hidden by default on desktop */
     position: fixed;
@@ -87,8 +94,6 @@ aside {
     border-left: none;
 }
 
-/* REMOVED: All #mobile-toolbar styles are gone */
-
 /* ======================================= */
 /* ====== MOBILE RESPONSIVE STYLES ======= */
 /* ======================================= */
@@ -99,7 +104,6 @@ aside {
         flex-direction: column;
     }
 
-    /* Remove padding that was for the old bottom toolbar */
     main {
         padding-bottom: 0;
     }
@@ -121,7 +125,7 @@ aside {
         border-right: 1px solid #555;
     }
 
-    /* NEW: Controls visibility of the slide-out panel */
+    /* Controls visibility of the slide-out panel */
     #ui-library.visible {
         transform: translateX(0);
     }
