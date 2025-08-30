@@ -12,13 +12,14 @@ body {
     background-color: #121212;
     color: #ffffff;
     display: flex;
-    overflow: hidden; /* RE-ADDED: This is essential to stop the page from scrolling */
+    overflow: hidden;
 }
 
 body.noscroll {
     position: fixed;
     width: 100%;
-    overflow: hidden; /* Redundant but explicit */
+    height: 100%;
+    overflow: hidden;
 }
 
 /* Main Content Area */
@@ -50,13 +51,14 @@ main {
 /* Styling for Asides (Toolbar & Inspector) */
 aside {
     width: 240px;
+    height: 100%; /* Ensure it fills viewport height on desktop */
     background-color: #1E1E1E;
     padding: 15px;
     box-sizing: border-box;
     overflow-y: auto;
     transition: transform 0.3s ease-in-out;
     touch-action: pan-y;
-    -webkit-overflow-scrolling: touch; /* ADDED: Enables momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
     min-height: 0;
 }
 
@@ -122,6 +124,9 @@ aside {
         z-index: 100;
         transform: translateX(-100%);
         border-right: 1px solid #555;
+        overflow-y: auto; /* Explicit for mobile */
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
     }
 
     #ui-library.visible {
@@ -143,7 +148,7 @@ aside {
     }
 }
 
-/* Interactive Elem ent Styles */
+/* Interactive Element Styles */
 .canvas-element {
     padding: 10px;
     border: 1px dashed #555;
@@ -221,7 +226,7 @@ aside {
     position: fixed;
     left: 0;
     width: 100%;
-    height: 45vh;
+    height: 50vh; /* Increased from 45vh for more scrollable space */
     background-color: #1E1E1E;
     z-index: 300;
     border-top: 1px solid #444;
@@ -256,10 +261,11 @@ aside {
 
 .tools-content {
     flex: 1 1 0;
+    min-height: 0; /* Prevent flex shrinkage issues */
     overflow-y: auto;
     padding: 20px;
     touch-action: pan-y;
-    -webkit-overflow-scrolling: touch; /* ADDED: Enables momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Styling for Tool Controls inside the panel */
