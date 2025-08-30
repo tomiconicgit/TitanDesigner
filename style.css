@@ -11,7 +11,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #121212;
     color: #ffffff;
-    /* display: flex; is removed to prevent layout conflicts with the fixed panel */
+    display: flex;
     overflow: hidden;
 }
 
@@ -24,11 +24,11 @@ body.noscroll {
 
 /* Main Content Area */
 main {
-    /* flex-grow: 1; is no longer needed */
+    flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%; /* Ensure main takes up full height */
+    height: 100%;
 }
 
 /* Container for the iPhone Canvas */
@@ -54,30 +54,30 @@ main {
 /* ======================================= */
 
 #ui-library {
-    position: fixed; /* Ensures it's an overlay on ALL screen sizes */
+    position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
-    width: 80vw; /* Default width for mobile */
-    max-width: 320px; /* Set a max-width for larger screens */
+    width: 80vw;
+    max-width: 320px;
     
     background-color: #1E1E1E;
     padding: 15px;
     box-sizing: border-box;
     border-right: 1px solid #555;
     
-    transform: translateX(-100%); /* Start off-screen */
+    transform: translateX(-100%);
     transition: transform 0.3s ease-in-out;
     z-index: 200;
     
     /* Scrolling Behavior */
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
-    overscroll-behavior: contain; /* Prevents scrolling the body */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 #ui-library.visible {
-    transform: translateX(0); /* Slide into view */
+    transform: translateX(0);
 }
 
 #ui-library h2 {
@@ -101,7 +101,7 @@ main {
 }
 
 #left-toolbar-toggle {
-    display: block; /* Always show the toggle */
+    display: block;
     position: fixed;
     left: 0;
     top: 50%;
@@ -118,6 +118,7 @@ main {
     color: #ccc;
     border: 1px solid #444;
     border-left: none;
+    touch-action: manipulation; /* THE FIX: Prevents browser from confusing tap with scroll */
 }
 
 
