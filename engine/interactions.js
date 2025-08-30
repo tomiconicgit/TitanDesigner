@@ -1,9 +1,7 @@
 import { updateComponent } from './layoutSchema.js';
 
-let activeElement = null;
 const canvas = document.getElementById('canvas');
 
-// REWRITTEN: The core interaction logic is now properly scoped and simplified.
 export function makeInteractive(element) {
     let isDragging = false;
     let startX, startY;
@@ -11,7 +9,6 @@ export function makeInteractive(element) {
     const tapThreshold = 5;
 
     const dragStart = (e) => {
-        activeElement = element;
         isDragging = false;
         
         const touch = e.touches? e.touches : e;
@@ -22,7 +19,6 @@ export function makeInteractive(element) {
         offsetX = touch.clientX - rect.left;
         offsetY = touch.clientY - rect.top;
 
-        // Add move/end listeners to the window to capture the drag globally
         window.addEventListener('mousemove', dragMove);
         window.addEventListener('mouseup', dragEnd, { once: true });
         window.addEventListener('touchmove', dragMove, { passive: false });
@@ -53,7 +49,6 @@ export function makeInteractive(element) {
     };
 
     const dragEnd = () => {
-        // Remove the global listeners
         window.removeEventListener('mousemove', dragMove);
         window.removeEventListener('touchmove', dragMove);
         
@@ -62,7 +57,7 @@ export function makeInteractive(element) {
             const newY = parseFloat(element.style.top);
             updateComponent(element.id, { x: newX, y: newY });
         }
-        // All context menu logic has been removed.
+
         isDragging = false;
     };
 
