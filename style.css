@@ -15,10 +15,11 @@ body {
     overflow: hidden;
 }
 
-/* This class will be controlled by JavaScript for a more stable scroll lock */
+/* Your original, robust noscroll class */
 body.noscroll {
     position: fixed;
     width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -54,17 +55,18 @@ aside {
     background-color: #1E1E1E;
     padding: 15px;
     box-sizing: border-box;
-    overflow-y: auto;
     transition: transform 0.3s ease-in-out;
-    touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
     z-index: 200;
-    overscroll-behavior: contain;
 }
 
-#ui-library {
-    transform: translateX(-100%); /* Ensure hidden by default on mobile */
+/* NEW: Centralized rule for all scrollable panels */
+[data-scrollable] {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* For momentum scrolling on iOS */
+    touch-action: pan-y; /* Allows vertical panning/scrolling */
+    overscroll-behavior: contain; /* Prevents scrolling the body */
 }
+
 
 #ui-library h2, #property-inspector h2 {
     margin-top: 0;
@@ -72,7 +74,7 @@ aside {
     padding-bottom: 10px;
 }
 
-/* Draggable Components in the Library */
+/* Components in the Library */
 .component {
     padding: 10px 15px;
     background-color: #3a3a3c;
@@ -106,12 +108,9 @@ aside {
     color: #ccc;
     border: 1px solid #444;
     border-left: none;
-    touch-action: manipulation;
 }
 
-/* ======================================= */
 /* ====== MOBILE RESPONSIVE STYLES ======= */
-/* ======================================= */
 @media (max-width: 768px) {
     body {
         display: block;
@@ -134,9 +133,6 @@ aside {
         z-index: 200;
         transform: translateX(-100%);
         border-right: 1px solid #555;
-        overflow-y: auto;
-        touch-action: pan-y;
-        -webkit-overflow-scrolling: touch;
     }
 
     #ui-library.visible {
@@ -165,10 +161,6 @@ aside {
     background-color: rgba(255, 255, 255, 0.05);
     cursor: move;
     user-select: none;
-}
-
-.canvas-element.selected {
-    /* No longer need a persistent outline */
 }
 
 /* The hidden context menu */
@@ -271,12 +263,8 @@ aside {
 
 .tools-content {
     flex: 1 1 auto;
-    overflow-y: auto;
     padding: 20px;
-    touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    min-height: 0; /* Prevent flex shrinking issues */
+    /* All scrolling logic is now handled by [data-scrollable] */
 }
 
 /* Styling for Tool Controls inside the panel */
