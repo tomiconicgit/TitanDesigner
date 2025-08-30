@@ -27,9 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const libraryPanel = document.getElementById('ui-library');
     const leftToolbarToggle = document.getElementById('left-toolbar-toggle');
 
-    // Stop touchmove propagation on ui-library to prevent background scrolling
+    // Stop touch events on ui-library to prevent background scrolling
+    libraryPanel.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+    }, { passive: false });
+
     libraryPanel.addEventListener('touchmove', (e) => {
         e.stopPropagation();
+    }, { passive: false });
+
+    // Prevent background scrolling when toolbars are open
+    document.body.addEventListener('touchmove', (e) => {
+        if (document.body.classList.contains('noscroll')) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
     }, { passive: false });
 
     // --- Panel and Toolbar Logic ---
