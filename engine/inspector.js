@@ -14,14 +14,66 @@ export function populateTools(componentId) {
     const content = toolsPanel.querySelector('.tools-content');
     content.innerHTML = ''; 
 
-    // Create sliders for Width, Height, and Corner Radius
+    // --- Sizing and Style ---
     content.appendChild(createSlider('width', 'Width', { min: 20, max: 370, step: 2, unit: 'px' }));
     content.appendChild(createSlider('height', 'Height', { min: 20, max: 800, step: 2, unit: 'px' }));
     content.appendChild(createSlider('borderRadius', 'Corner Radius', { min: 0, max: 100, step: 1, unit: 'px' }));
     
-    // Create the color picker and opacity slider
+    // --- Color and Opacity ---
     content.appendChild(createColorControl('backgroundColor', 'Background'));
     content.appendChild(createSlider('opacity', 'Opacity', { min: 0, max: 1, step: 0.05, unit: '%' }));
+
+    // --- ADDED: Shadow Controls ---
+    const divider = document.createElement('div');
+    divider.className = 'tool-divider';
+    content.appendChild(divider);
+
+    content.appendChild(createToggleSwitch('shadowEnabled', 'Drop Shadow'));
+    if (activeComponent.props.shadowEnabled) {
+        content.appendChild(createSlider('shadowOffsetX', 'X Offset', { min: -20, max: 20, step: 1, unit: 'px' }));
+        content.appendChild(createSlider('shadowOffsetY', 'Y Offset', { min: -20, max: 20, step: 1, unit: 'px' }));
+        content.appendChild(createSlider('shadowBlur', 'Blur', { min: 0, max: 40, step: 1, unit: 'px' }));
+        // We could add a color picker for shadowColor here later
+    }
+}
+
+// NEW: Function to create a toggle switch
+function createToggleSwitch(property, label) {
+    const currentValue = activeComponent.props[property];
+
+    const control = document.createElement('div');
+    control.className = 'tool-control toggle-control';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'toggle-wrapper';
+    control.appendChild(wrapper);
+
+    const labelEl = document.createElement('label');
+    labelEl.textContent = label;
+    wrapper.appendChild(labelEl);
+
+    const switchLabel = document.createElement('label');
+    switchLabel.className = 'switch';
+    wrapper.appendChild(switchLabel);
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = currentValue;
+    switchLabel.appendChild(checkbox);
+
+    const sliderSpan = document.createElement('span');
+    sliderSpan.className = 'slider';
+    switchLabel.appendChild(sliderSpan);
+    
+    checkbox.addEventListener('change', (e) => {
+        const newValue = e.target.checked;
+        updateComponent(activeComponent.id, { [property]: newValue });
+        render();
+        // Repopulate the tools panel to show/hide the sliders
+        populateTools(activeComponent.id);
+    });
+
+    return control;
 }
 
 // Function to create the color control
@@ -39,19 +91,16 @@ function createColorControl(property, label) {
     wrapper.className = 'color-control-wrapper';
     control.appendChild(wrapper);
 
-    // Color picker input
     const colorInput = document.createElement('input');
     colorInput.type = 'color';
     colorInput.value = currentValue;
     wrapper.appendChild(colorInput);
 
-    // Text display for hex code
     const valueEl = document.createElement('span');
     valueEl.className = 'slider-value';
     valueEl.textContent = currentValue;
     wrapper.appendChild(valueEl);
     
-    // Event listener to update schema and UI
     colorInput.addEventListener('input', (e) => {
         const newColor = e.target.value;
         updateComponent(activeComponent.id, { [property]: newColor });
