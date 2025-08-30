@@ -5,6 +5,7 @@ import * as renderer from './renderer.js';
 
 // Import page initializers
 import { initBuildPage } from '../buildpage/buildpage.js';
+import { initLayoutToggle } from '../buildpage/assets/canvasbuilderlayouts.js';
 
 /**
  * Main application router.
@@ -23,13 +24,12 @@ function route() {
         }
 
         // 3. Define and add the initial component to the schema
-        // Note: Positioning is now more robust.
         const initialComponent = {
             id: schema.generateId(),
             type: 'Text',
             props: {
                 text: 'Canvas Ready',
-                x: 125, // Centered for a ~400px wide canvas
+                x: 125,
                 y: 150
             }
         };
@@ -37,6 +37,9 @@ function route() {
 
         // 4. Render the initial component
         renderer.render();
+
+        // 5. Initialize the layout toggle
+        initLayoutToggle();
     } catch (error) {
         console.error("Error during route initialization:", error);
     }
