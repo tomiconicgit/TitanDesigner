@@ -2,31 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Titan Developer</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
-        body { background-color: #121212; }
+        /* Basic reset to ensure full-screen experience */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #121212; /* Dark background */
+        }
     </style>
 </head>
 <body>
-    <main>
-        <button id="toolbar-toggle">☰</button>
-        <div id="toolbar-panel">
-            <div id="toolbar">
-                <button class="toolbar-button" data-type="Text">Add Text</button>
-                <button class="toolbar-button" data-type="Button">Add Button</button>
-                <button class="toolbar-button" data-type="Image">Add Image</button>
-            </div>
-        </div>
-        <div id="canvas-container">
-            <div id="canvas"></div>
-        </div>
-    </main>
-    <script src="app.js" type="module"></script>
+    <script src="engine/motherboard.js" type="module"></script>
 </body>
 </html>
