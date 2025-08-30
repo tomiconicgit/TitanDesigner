@@ -2,21 +2,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('canvas');
     const components = document.querySelectorAll('.component');
 
-    // --- Mobile Toolbar Logic ---
+    // --- NEW: Slide-out Toolbar Logic ---
     const libraryPanel = document.getElementById('ui-library');
-    const inspectorPanel = document.getElementById('property-inspector');
-    const toggleLibraryBtn = document.getElementById('toggle-library-btn');
-    const toggleInspectorBtn = document.getElementById('toggle-inspector-btn');
+    const leftToolbarToggle = document.getElementById('left-toolbar-toggle');
 
-    toggleLibraryBtn.addEventListener('click', () => {
+    leftToolbarToggle.addEventListener('click', () => {
         libraryPanel.classList.toggle('visible');
-        inspectorPanel.classList.remove('visible'); // Close inspector if open
     });
-    
-    toggleInspectorBtn.addEventListener('click', () => {
-        inspectorPanel.classList.toggle('visible');
-        libraryPanel.classList.remove('visible'); // Close library if open
+
+    // Close the panel when dragging a component from it
+    libraryPanel.addEventListener('dragstart', () => {
+        libraryPanel.classList.remove('visible');
     });
+
 
     // --- Drag and Drop Logic (Existing Code) ---
     let draggedItem = null;
@@ -44,9 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.addEventListener('drop', (e) => {
         e.preventDefault();
         if (draggedItem) {
-            // Close any open panels on mobile after dropping a component
-            libraryPanel.classList.remove('visible');
-            
             const componentType = draggedItem.getAttribute('data-type');
             const newElement = document.createElement('div');
             newElement.textContent = componentType;
@@ -60,13 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
             let x = e.clientX - canvasRect.left;
             let y = e.clientY - canvasRect.top;
             
-            // Adjust position based on canvas scale
             const style = window.getComputedStyle(canvas);
             const matrix = new DOMMatrixReadOnly(style.transform);
             const scale = matrix.a;
             
-            newElement.style.left = `${x / scale - 50}px`; // Adjust for element width
-            newElement.style.top = `${y / scale - 20}px`;  // Adjust for element height
+            newElement.style.left = `${x / scale - 50}px`;
+            newElement.style.top = `${y / scale - 20}px`;
 
             canvas.appendChild(newElement);
         }
