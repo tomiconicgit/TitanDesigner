@@ -255,6 +255,7 @@ aside {
     flex-grow: 1;
     overflow-y: auto;
     padding: 20px;
+    min-height: 0; /* THE FIX IS HERE */
 }
 
 /* Styling for Tool Controls inside the panel */
@@ -350,12 +351,6 @@ input[type="color"]::-moz-color-swatch {
 }
 
 /* NEW: Toggle Switch Control */
-.toggle-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .switch {
     position: relative;
     display: inline-block;
