@@ -32,6 +32,7 @@ main {
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     position: relative; /* Crucial for positioning elements inside */
     overflow: hidden; /* Hides anything that moves outside the canvas */
+    transform-origin: center center; /* For scaling */
 }
 
 /* Styling for Asides (Toolbar & Inspector) */
@@ -41,6 +42,7 @@ aside {
     padding: 15px;
     box-sizing: border-box;
     overflow-y: auto;
+    transition: transform 0.3s ease-in-out; /* For mobile animation */
 }
 
 #ui-library h2, #property-inspector h2 {
@@ -62,4 +64,79 @@ aside {
 
 .component:active {
     cursor: grabbing;
+}
+
+/* Mobile Toolbar Styling */
+#mobile-toolbar {
+    display: none; /* Hidden by default on desktop */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1c1c1e;
+    border-top: 1px solid #444;
+    justify-content: space-around;
+    padding: 10px 0;
+}
+
+#mobile-toolbar button {
+    background: #007aff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* ======================================= */
+/* ====== MOBILE RESPONSIVE STYLES ======= */
+/* ======================================= */
+
+@media (max-width: 768px) {
+    /* Main layout for mobile */
+    body {
+        flex-direction: column;
+    }
+
+    main {
+        padding-bottom: 60px; /* Make space for the bottom toolbar */
+    }
+
+    /* Scale the canvas down to fit the screen */
+    #canvas {
+        transform: scale(0.85); /* Adjust scale as needed */
+    }
+    
+    /* Reposition side panels to slide up from the bottom */
+    aside {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50%; /* Panels take up half the screen */
+        z-index: 100;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        border-top: 1px solid #555;
+        transform: translateY(100%); /* Start hidden below the screen */
+    }
+
+    /* A class to make the panels visible */
+    aside.visible {
+        transform: translateY(0);
+    }
+    
+    /* Show the mobile toolbar */
+    #mobile-toolbar {
+        display: flex;
+        z-index: 50;
+    }
+}
+
+@media (max-height: 700px) {
+    /* Further scale down canvas for shorter screens */
+    #canvas {
+        transform: scale(0.7);
+    }
 }
