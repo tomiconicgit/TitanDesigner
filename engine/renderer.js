@@ -4,25 +4,25 @@ import { makeInteractive } from './interactions.js';
 const canvas = document.getElementById('canvas');
 
 export function render() {
-    // 1. Clear the canvas completely.
     canvas.innerHTML = '';
 
-    // 2. Loop through the schema and create an element for each component.
     layoutSchema.forEach(component => {
         const element = document.createElement('div');
         element.id = component.id;
         element.className = 'canvas-element';
-        element.textContent = component.props.text || component.type; // Use text prop or type as fallback.
+        element.textContent = component.props.text || component.type;
         
-        // Apply styles from the schema's props.
+        // Apply new style properties from the schema
         element.style.position = 'absolute';
         element.style.left = `${component.props.x}px`;
         element.style.top = `${component.props.y}px`;
+        element.style.width = `${component.props.width}px`;
+        element.style.height = `${component.props.height}px`;
+        element.style.borderRadius = `${component.props.borderRadius}px`;
+        element.style.boxSizing = 'border-box'; 
 
-        // Make the new element interactive.
         makeInteractive(element);
 
-        // 3. Add the new element to the canvas.
         canvas.appendChild(element);
     });
 }
