@@ -1,35 +1,34 @@
 import { updateComponent } from './layoutSchema.js';
 import { populateTools } from './inspector.js';
 
-let activeElement = null; // The element being interacted with
+let activeElement = null;
 let isDragging = false;
 let startX, startY, startTime;
-const tapThreshold = 5; // Max pixels to move to be considered a tap
-const longPressDuration = 250; // ms
+const tapThreshold = 5;
+const longPressDuration = 250;
 
-// --- Get DOM Elements ---
 const canvas = document.getElementById('canvas');
 const contextMenu = document.getElementById('context-menu');
 const toolsPanel = document.getElementById('tools-panel');
 const toolsOverlay = document.getElementById('tools-overlay');
 
-// --- Event Listeners ---
+// Function to hide the tools panel and remove the scroll lock
+function hideToolsPanel() {
+    toolsPanel.classList.remove('visible');
+    toolsOverlay.classList.remove('visible');
+    document.body.classList.remove('noscroll'); // Remove scroll lock
+    setTimeout(() => {
+        toolsPanel.classList.add('hidden');
+    }, 300);
+}
+
 document.addEventListener('click', (e) => {
-    // Hide context menu if clicking anywhere else
     if (!contextMenu.contains(e.target) && !e.target.classList.contains('canvas-element')) {
         contextMenu.classList.add('hidden');
     }
 });
 
-// Close tools panel when clicking the overlay
-toolsOverlay.addEventListener('click', () => {
-    toolsPanel.classList.remove('visible');
-    toolsOverlay.classList.remove('visible');
-    // A small delay to allow the animation to finish before hiding it
-    setTimeout(() => {
-        toolsPanel.classList.add('hidden');
-    }, 300);
-});
+toolsOverlay.addEventListener('click', hideToolsPanel);
 
 contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
@@ -50,13 +49,14 @@ contextMenu.addEventListener('click', (e) => {
         } else {
             toolsPanel.classList.add('slide-from-bottom');
         }
-
+        
+        document.body.classList.add('noscroll'); // Add scroll lock
         toolsPanel.classList.add('visible');
         toolsOverlay.classList.add('visible');
     }
 
     console.log(`Action: ${action} on element ${activeElement.id}`);
-    contextMenu.classList.add('hidden'); // Hide context menu after action
+    contextMenu.classList.add('hidden');
 });
 
 function showContextMenu(element) {
@@ -82,6 +82,9 @@ export function makeInteractive(element) {
     let offsetX, offsetY;
 
     const dragStart = (e) => {
+        // Stop drag from starting if the click is on a scrollbar or UI control
+        if (e.target !== element) return;
+
         activeElement = element;
         isDragging = false;
         
@@ -97,7 +100,7 @@ export function makeInteractive(element) {
         document.addEventListener('mousemove', dragMove);
         document.addEventListener('mouseup', dragEnd, { once: true });
         
-        document.addEventListener('touchmove', dragMove);
+        document.addEventListener('touchmove', dragMove, { passive: false }); // Set passive: false
         document.addEventListener('touchend', dragEnd, { once: true });
     };
 
@@ -106,12 +109,14 @@ export function makeInteractive(element) {
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
 
-        if (deltaX > tapThreshold || deltaY > tapThreshold) {
+        if (!isDragging && (deltaX > tapThreshold || deltaY > tapThreshold)) {
             isDragging = true;
             contextMenu.classList.add('hidden');
         }
 
         if (isDragging) {
+            if (e.cancelable) e.preventDefault(); // Prevent scroll while dragging
+
             const canvasRect = canvas.getBoundingClientRect();
             let newX = touch.clientX - canvasRect.left - offsetX;
             let newY = touch.clientY - canvasRect.top - offsetY;
