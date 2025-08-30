@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('canvas');
     const components = document.querySelectorAll('.component');
     const libraryPanel = document.getElementById('ui-library');
+    const toolsPanel = document.getElementById('tools-panel');
     const leftToolbarToggle = document.getElementById('left-toolbar-toggle');
 
     // --- Panel and Toolbar Logic ---
@@ -32,4 +33,18 @@ document.addEventListener('DOMContentLoaded', () => {
             libraryPanel.classList.remove('visible');
         });
     });
+
+    // ==================================================================
+    // === THIS IS THE FIX TO THE SCROLLING PROBLEM ===
+    // ==================================================================
+    // This stops touch events inside the toolbars from bubbling up
+    // and interfering with the canvas drag-and-drop listeners.
+    const stopPropagation = (e) => e.stopPropagation();
+
+    libraryPanel.addEventListener('touchstart', stopPropagation);
+    toolsPanel.addEventListener('touchstart', stopPropagation);
+    
+    libraryPanel.addEventListener('touchmove', stopPropagation);
+    toolsPanel.addEventListener('touchmove', stopPropagation);
+    // ==================================================================
 });
