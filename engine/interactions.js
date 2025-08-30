@@ -12,56 +12,30 @@ const contextMenu = document.getElementById('context-menu');
 const toolsPanel = document.getElementById('tools-panel');
 const toolsOverlay = document.getElementById('tools-overlay');
 
-let scrollPosition = 0;
-
-// Function to lock body scroll
-function lockScroll() {
-    scrollPosition = window.pageYOffset;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollPosition}px`;
-    document.body.style.width = '100%';
-    document.body.classList.add('noscroll');
-}
-
-// Function to unlock body scroll
-function unlockScroll() {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, scrollPosition);
-    document.body.classList.remove('noscroll');
-}
-
-// Function to hide the tools panel and remove the scroll lock
+// UPDATED: Simplified function to hide the tools panel
 function hideToolsPanel() {
     toolsPanel.classList.remove('visible');
     toolsOverlay.classList.remove('visible');
-    unlockScroll();
+    document.body.classList.remove('noscroll'); // Simply remove the class
     setTimeout(() => {
         toolsPanel.classList.add('hidden');
     }, 300);
 }
 
 document.addEventListener('click', (e) => {
-    if (!contextMenu.contains(e.target) && !e.target.classList.contains('canvas-element')) {
+    if (!contextMenu.contains(e.target) &&!e.target.classList.contains('canvas-element')) {
         contextMenu.classList.add('hidden');
     }
 });
 
-// Stop touch events on tools panel to prevent background scrolling
-toolsPanel.addEventListener('touchstart', (e) => {
-    e.stopPropagation();
-}, { passive: false });
-
-toolsPanel.addEventListener('touchmove', (e) => {
-    e.stopPropagation();
-}, { passive: false });
+// REMOVED: The touchstart and touchmove listeners on toolsPanel are gone.
+// The browser will now handle scrolling natively thanks to our CSS.
 
 toolsOverlay.addEventListener('click', hideToolsPanel);
 
 contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
-    if (!action || !activeElement) return;
+    if (!action ||!activeElement) return;
 
     if (action === 'tools') {
         populateTools(activeElement.id);
@@ -79,7 +53,8 @@ contextMenu.addEventListener('click', (e) => {
             toolsPanel.classList.add('slide-from-bottom');
         }
         
-        lockScroll();
+        // UPDATED: Simply add the noscroll class.
+        document.body.classList.add('noscroll');
         toolsPanel.classList.add('visible');
         toolsOverlay.classList.add('visible');
     }
@@ -112,12 +87,12 @@ export function makeInteractive(element) {
 
     const dragStart = (e) => {
         // Stop drag from starting if the click is on a scrollbar or UI control
-        if (e.target !== element) return;
+        if (e.target!== element) return;
 
         activeElement = element;
         isDragging = false;
         
-        const touch = e.touches ? e.touches[0] : e;
+        const touch = e.touches? e.touches : e;
         startX = touch.clientX;
         startY = touch.clientY;
         startTime = Date.now();
@@ -134,17 +109,19 @@ export function makeInteractive(element) {
     };
 
     const dragMove = (e) => {
-        const touch = e.touches ? e.touches[0] : e;
+        const touch = e.touches? e.touches : e;
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
 
-        if (!isDragging && (deltaX > tapThreshold || deltaY > tapThreshold)) {
+        if (!isDragging && (deltaX > tapThreshold |
+
+| deltaY > tapThreshold)) {
             isDragging = true;
             contextMenu.classList.add('hidden');
         }
 
         if (isDragging) {
-            if (e.cancelable) e.preventDefault(); // Prevent scroll while dragging
+            if (e.cancelable) e.preventDefault(); // Prevent scroll while dragging canvas elements
 
             const canvasRect = canvas.getBoundingClientRect();
             let newX = touch.clientX - canvasRect.left - offsetX;
