@@ -16,9 +16,75 @@ body {
 /* Main Content Area */
 main {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    position: relative; /* For positioning the toggle and panel */
+}
+
+/* Toolbar Toggle Button */
+#toolbar-toggle {
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    z-index: 1001; /* Above the panel */
+    background-color: #3a3a3c;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 20px;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+#toolbar-toggle:hover,
+#toolbar-toggle:focus {
+    background-color: #4a4a4c;
+    outline: none;
+}
+
+/* Toolbar Panel (Sliding from left) */
+#toolbar-panel {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Off-screen initially */
+    width: 250px; /* Width of the panel */
+    height: 100%;
+    background-color: #1e1e1e;
+    border-right: 1px solid #424242;
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+#toolbar-panel.active {
+    left: 0; /* Slide in */
+}
+
+/* Toolbar Styles */
+#toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 10px;
+}
+
+.toolbar-button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #3a3a3c;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    touch-action: manipulation; /* Prevents double-tap zoom on mobile */
+}
+
+.toolbar-button:hover,
+.toolbar-button:focus {
+    background-color: #4a4a4c;
+    outline: none;
 }
 
 /* Container for the iPhone Canvas */
@@ -46,6 +112,10 @@ main {
 @media (max-width: 768px) {
     #canvas {
         transform: scale(0.85);
+    }
+
+    #toolbar-panel {
+        width: 80%; /* Wider on mobile for usability */
     }
 }
 
