@@ -11,10 +11,7 @@ export function render() {
         element.id = component.id;
         element.className = 'canvas-element';
         
-        // THE FIX: Corrected the operator from "| |" to "||"
-        element.textContent = component.props.text |
-
-| component.type;
+        element.textContent = component.props.text || component.type;
         
         // Apply style properties from the schema
         element.style.position = 'absolute';
