@@ -63,13 +63,13 @@ aside {
     background-color: #3a3a3c;
     border-radius: 8px;
     margin-bottom: 10px;
-    cursor: grab;
+    cursor: pointer; /* Changed from grab to pointer */
     text-align: center;
     font-weight: 500;
 }
 
 .component:active {
-    cursor: grabbing;
+    background-color: #555; /* Changed from cursor grabbing */
 }
 
 /* Styling for the left toolbar toggle button */
@@ -99,7 +99,8 @@ aside {
 
 @media (max-width: 768px) {
     body {
-        flex-direction: column;
+        /* THIS IS THE FIX: Changed from flex to block layout on mobile */
+        display: block;
     }
 
     main {
