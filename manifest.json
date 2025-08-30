@@ -5,7 +5,7 @@
     "display": "fullscreen",
     "background_color": "#121212",
     "theme_color": "#121212",
-    "description": "A visual editor to build native Apple applications.",
+    "description": "A visual editor to build native Apple applications. (Development Build - Caching Disabled)",
     "icons": [
         {
             "src": "icon-192.png",
