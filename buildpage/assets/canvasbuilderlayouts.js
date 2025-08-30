@@ -49,12 +49,12 @@ const layoutStyles = `
 `;
 
 const layoutOptions = {
-    'iPhone 16': '9 / 19.5',
-    'iPhone 16 Pro Max': '9 / 19.5',
-    'iPhone 15': '9 / 19.5',
-    'iPhone 15 Pro Max': '9 / 19.5',
-    'iPhone SE': '9 / 16',
-    'iPad (all gens)': '4 / 3'
+    'iPhone 16': '131 / 284',
+    'iPhone 16 Pro Max': '110 / 239',
+    'iPhone 15': '131 / 284',
+    'iPhone 15 Pro Max': '215 / 466',
+    'iPhone SE': '375 / 667',
+    'iPad (all gens)': '3 / 4'  // Vertical (portrait) orientation
 };
 
 /**
