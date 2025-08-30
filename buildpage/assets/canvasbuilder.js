@@ -6,15 +6,22 @@ const canvasStyles = `
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 15px;
         box-sizing: border-box;
     }
 
     #canvas {
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: auto;
+        max-width: 430px;
+        max-height: 932px;
         background-color: #000000;
+        border: 8px solid #424242; /* Realistic iPhone frame color */
+        border-radius: 50px; /* Rounded corners like iPhone */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3); /* Enhanced realistic shadow */
         position: relative;
         overflow: hidden;
+        aspect-ratio: 9 / 19.5; /* Default to iPhone-like ratio */
     }
 `;
 
@@ -35,4 +42,12 @@ export function createCanvas(parentElement) {
 
     canvasContainer.appendChild(canvas);
     parentElement.appendChild(canvasContainer);
+}
+
+// Export function to update aspect ratio (called from canvasbuilderlayouts.js)
+export function updateCanvasAspectRatio(ratio) {
+    const canvas = document.getElementById('canvas');
+    if (canvas) {
+        canvas.style.aspectRatio = ratio;
+    }
 }
