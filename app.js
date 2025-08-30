@@ -16,6 +16,26 @@ document.addEventListener('DOMContentLoaded', () => {
     addComponent(initialComponent);
     render();
 
+    // Dynamically adjust canvas size based on screen dimensions
+    function adjustCanvasSize() {
+        const canvasContainer = document.getElementById('canvas-container');
+        const toggleHeight = 40; // Approximate height of toggle button + padding
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+
+        // Set canvas to fit viewport, accounting for toggle
+        canvasContainer.style.height = `${vh - toggleHeight}px`;
+        canvasContainer.style.width = `${vw}px`;
+
+        // Ensure canvas elements stay within bounds
+        render(); // Re-render to adjust component positions
+    }
+
+    // Adjust on load and resize
+    adjustCanvasSize();
+    window.addEventListener('resize', adjustCanvasSize);
+    window.addEventListener('orientationchange', adjustCanvasSize); // Handle orientation changes
+
     // Toolbar button event listeners
     const toolbarButtons = document.querySelectorAll('.toolbar-button');
     toolbarButtons.forEach(button => {
@@ -28,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     x: 50,
                     y: 50,
                     text: type === 'Text' ? 'New Text' : type === 'Button' ? 'New Button' : 'Image Placeholder',
-                    // Add default properties for specific component types
                     ...(type === 'Button' ? { buttonStyle: 'borderedProminent', borderShape: 'capsule' } : {}),
                     ...(type === 'Image' ? { systemName: 'photo' } : {}),
                 }
@@ -37,9 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
             render();
         });
 
-        // Add touch support for mobile
         button.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent default touch behaviors
+            e.preventDefault();
             const type = button.dataset.type;
             const newComponent = {
                 id: generateId(),
@@ -65,13 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
         toolbarPanel.classList.toggle('active');
     });
 
-    // Add touch support for toggle on mobile
     toolbarToggle.addEventListener('touchstart', (e) => {
         e.preventDefault();
         toolbarPanel.classList.toggle('active');
     }, { passive: false });
 
-    // Optional: Close panel when tapping outside (mobile-friendly)
     document.addEventListener('touchstart', (e) => {
         if (!toolbarPanel.contains(e.target) && !toolbarToggle.contains(e.target) && toolbarPanel.classList.contains('active')) {
             toolbarPanel.classList.remove('active');
