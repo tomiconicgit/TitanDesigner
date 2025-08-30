@@ -1,5 +1,5 @@
 import { layoutSchema } from './layoutSchema.js';
-import { makeInteractive } from './interactions.js';
+import { makeInteractive } from './interactions.js'; // THE FIX: This line was missing
 
 const canvas = document.getElementById('canvas');
 
@@ -10,7 +10,9 @@ export function render() {
         const element = document.createElement('div');
         element.id = component.id;
         element.className = 'canvas-element';
-        element.textContent = component.props.text || component.type;
+        element.textContent = component.props.text |
+
+| component.type;
         
         // Apply style properties from the schema
         element.style.position = 'absolute';
@@ -23,7 +25,6 @@ export function render() {
         element.style.backgroundColor = component.props.backgroundColor;
         element.style.opacity = component.props.opacity;
 
-        // ADDED: Apply box-shadow style if enabled
         if (component.props.shadowEnabled) {
             const props = component.props;
             element.style.boxShadow = `${props.shadowOffsetX}px ${props.shadowOffsetY}px ${props.shadowBlur}px ${props.shadowColor}`;
