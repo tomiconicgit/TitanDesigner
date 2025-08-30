@@ -1,4 +1,4 @@
-/* NEW: Lock the viewport to prevent scrolling */
+/* Lock the viewport to prevent scrolling */
 html, body {
     margin: 0;
     padding: 0;
@@ -13,7 +13,6 @@ body {
     background-color: #121212;
     color: #ffffff;
     display: flex;
-    /* Height and overflow properties are now in the rule above */
 }
 
 /* Main Content Area */
@@ -146,4 +145,18 @@ aside {
     #canvas {
         transform: scale(0.7);
     }
+}
+
+/* Interactive Element Styles */
+.canvas-element {
+    padding: 10px;
+    border: 1px dashed #555;
+    background-color: rgba(255, 255, 255, 0.05);
+    cursor: move;
+    user-select: none; /* Prevents text selection while dragging */
+}
+
+.canvas-element.selected {
+    outline: 2px solid #007aff; /* Highlight color for selected item */
+    border-style: solid;
 }
