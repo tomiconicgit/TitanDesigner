@@ -12,15 +12,14 @@ body {
     background-color: #121212;
     color: #ffffff;
     display: flex;
-    overflow: hidden; 
+    overflow: hidden; /* RE-ADDED: This is essential to stop the page from scrolling */
 }
 
-/* NEW: Class to robustly lock body scroll when panels are open */
 body.noscroll {
     position: fixed;
     width: 100%;
+    overflow: hidden; /* Redundant but explicit */
 }
-
 
 /* Main Content Area */
 main {
@@ -57,17 +56,11 @@ aside {
     overflow-y: auto;
     transition: transform 0.3s ease-in-out;
     touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
-    min-height: 0; /* ADDED: Prevents flex items from overflowing their container */
+    -webkit-overflow-scrolling: touch; /* ADDED: Enables momentum scrolling on iOS */
+    min-height: 0;
 }
 
-#ui-library h2, #property-inspector h2 {
-    margin-top: 0;
-    border-bottom: 1px solid #444;
-    padding-bottom: 10px;
-}
-
-/* Components in the Library */
+/* Draggable Components in the Library */
 .component {
     padding: 10px 15px;
     background-color: #3a3a3c;
@@ -103,7 +96,10 @@ aside {
     border-left: none;
 }
 
+/* ======================================= */
 /* ====== MOBILE RESPONSIVE STYLES ======= */
+/* ======================================= */
+
 @media (max-width: 768px) {
     body {
         display: block;
@@ -147,13 +143,17 @@ aside {
     }
 }
 
-/* Interactive Element Styles */
+/* Interactive Elem ent Styles */
 .canvas-element {
     padding: 10px;
     border: 1px dashed #555;
     background-color: rgba(255, 255, 255, 0.05);
     cursor: move;
     user-select: none;
+}
+
+.canvas-element.selected {
+    /* No longer need a persistent outline */
 }
 
 /* The hidden context menu */
@@ -254,13 +254,12 @@ aside {
     border-bottom: 1px solid #444;
 }
 
-/* UPDATED: tools-content fixed for proper scrolling */
 .tools-content {
-    flex: 1 1 0; /* REPLACED height, min-height, flex-grow */
+    flex: 1 1 0;
     overflow-y: auto;
     padding: 20px;
     touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch; /* ADDED: Enables momentum scrolling on iOS */
 }
 
 /* Styling for Tool Controls inside the panel */
@@ -356,12 +355,6 @@ input[type="color"]::-moz-color-swatch {
 }
 
 /* Toggle Switch Control */
-.toggle-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .switch {
     position: relative;
     display: inline-block;
@@ -400,7 +393,7 @@ input[type="color"]::-moz-color-swatch {
 }
 
 .switch input:checked + .slider {
-    background-color: #34c759;
+    background-color: #34c759; /* iOS Green */
 }
 
 .switch input:checked + .slider:before {
