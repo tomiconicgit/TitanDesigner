@@ -16,14 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
     addComponent(initialComponent);
     render();
 
-    // Dynamically adjust canvas size based on screen dimensions
+    // Dynamically adjust canvas size based on visual viewport
     function adjustCanvasSize() {
         const canvasContainer = document.getElementById('canvas-container');
         const toggleHeight = 40; // Approximate height of toggle button + padding
-        const vh = window.innerHeight;
-        const vw = window.innerWidth;
+        const vh = visualViewport ? visualViewport.height : window.innerHeight;
+        const vw = visualViewport ? visualViewport.width : window.innerWidth;
 
-        // Set canvas to fit viewport, accounting for toggle
+        // Set canvas to fit visual viewport, accounting for toggle
         canvasContainer.style.height = `${vh - toggleHeight}px`;
         canvasContainer.style.width = `${vw}px`;
 
@@ -31,10 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
         render(); // Re-render to adjust component positions
     }
 
-    // Adjust on load and resize
+    // Adjust on load, resize, and viewport changes
     adjustCanvasSize();
     window.addEventListener('resize', adjustCanvasSize);
-    window.addEventListener('orientationchange', adjustCanvasSize); // Handle orientation changes
+    window.addEventListener('orientationchange', adjustCanvasSize);
+    if ('visualViewport' in window) {
+        visualViewport.addEventListener('resize', adjustCanvasSize); // Handle dynamic changes (e.g., keyboard)
+    }
 
     // Toolbar button event listeners
     const toolbarButtons = document.querySelectorAll('.toolbar-button');
