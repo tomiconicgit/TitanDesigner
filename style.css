@@ -4,6 +4,7 @@ html, body {
     padding: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden; /* Prevent scrolling on the entire page */
 }
 
 /* General Body Styling */
@@ -15,11 +16,15 @@ body {
 
 /* Main Content Area */
 main {
+    width: 100%;
+    height: 100%;
+    position: fixed; /* Fix main to viewport */
+    top: 0;
+    left: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
-    position: relative; /* For positioning the toggle and panel */
+    justify-content: center; /* Center canvas vertically */
 }
 
 /* Toolbar Toggle Button */
@@ -55,7 +60,7 @@ main {
     border-right: 1px solid #424242;
     transition: left 0.3s ease-in-out;
     z-index: 1000;
-    overflow-y: auto;
+    overflow-y: auto; /* Allow scrolling within panel */
 }
 
 #toolbar-panel.active {
@@ -65,7 +70,7 @@ main {
 /* Toolbar Styles */
 #toolbar {
     display: flex;
-    flex-direction: column;
+    flex-direction: enri;
     gap: 10px;
     padding: 20px 10px;
 }
@@ -89,20 +94,22 @@ main {
 
 /* Container for the iPhone Canvas */
 #canvas-container {
-    padding: 20px;
+    width: 390px; /* Match canvas width */
+    height: 844px; /* Match canvas height */
+    position: relative;
+    overflow: hidden; /* Prevent scrolling */
 }
 
 /* The iPhone Canvas */
 #canvas {
-    width: 390px;
-    height: 844px;
+    width: 100%;
+    height: 100%;
     background-color: #000000;
     border: 8px solid #424242;
     border-radius: 50px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     position: relative;
     overflow: hidden;
-    transform-origin: center center;
 }
 
 /* ======================================= */
@@ -110,8 +117,9 @@ main {
 /* ======================================= */
 
 @media (max-width: 768px) {
-    #canvas {
+    #canvas-container {
         transform: scale(0.85);
+        transform-origin: center center;
     }
 
     #toolbar-panel {
@@ -120,7 +128,7 @@ main {
 }
 
 @media (max-height: 700px) {
-    #canvas {
+    #canvas-container {
         transform: scale(0.7);
     }
 }
