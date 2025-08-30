@@ -6,37 +6,71 @@ let startX, startY, startTime;
 const tapThreshold = 5; // Max pixels to move to be considered a tap
 const longPressDuration = 250; // ms
 
-// --- Context Menu ---
+// --- Get DOM Elements ---
+const canvas = document.getElementById('canvas');
 const contextMenu = document.getElementById('context-menu');
+const toolsPanel = document.getElementById('tools-panel');
+const toolsOverlay = document.getElementById('tools-overlay');
+
+// --- Event Listeners ---
 document.addEventListener('click', (e) => {
-    // Hide menu if clicking anywhere else
+    // Hide context menu if clicking anywhere else
     if (!contextMenu.contains(e.target) && !e.target.classList.contains('canvas-element')) {
         contextMenu.classList.add('hidden');
-        activeElement = null;
     }
 });
 
-// We'll add logic for the menu buttons later
+// Close tools panel when clicking the overlay
+toolsOverlay.addEventListener('click', () => {
+    toolsPanel.classList.remove('visible');
+    toolsOverlay.classList.remove('visible');
+    // A small delay to allow the animation to finish before hiding it
+    setTimeout(() => {
+        toolsPanel.classList.add('hidden');
+    }, 300);
+});
+
 contextMenu.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-action');
     if (!action || !activeElement) return;
 
-    console.log(`Action: ${action} on element ${activeElement.id}`);
-    // Future logic for delete, duplicate, tools will go here.
+    // --- UPDATED: Handle the "Tools" action ---
+    if (action === 'tools') {
+        const elementRect = activeElement.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        
+        // Calculate the vertical midpoint of the element and the canvas
+        const elementMidY = elementRect.top + (elementRect.height / 2);
+        const canvasMidY = canvasRect.top + (canvasRect.height / 2);
+        
+        // Reset classes before showing
+        toolsPanel.className = 'hidden';
 
-    contextMenu.classList.add('hidden'); // Hide after action
+        if (elementMidY > canvasMidY) {
+            // If element is in the bottom half, show panel from the top
+            toolsPanel.classList.add('slide-from-top');
+        } else {
+            // If element is in the top half, show panel from the bottom
+            toolsPanel.classList.add('slide-from-bottom');
+        }
+
+        // Make the panel and overlay visible
+        toolsPanel.classList.add('visible');
+        toolsOverlay.classList.add('visible');
+    }
+
+    console.log(`Action: ${action} on element ${activeElement.id}`);
+    contextMenu.classList.add('hidden'); // Hide context menu after action
 });
 
 
-function showContextMenu(element, event) {
-    const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+function showContextMenu(element) {
     const elementRect = element.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
     
-    // Position menu to the right of the element
     let menuX = elementRect.right;
     let menuY = elementRect.top;
 
-    // Reposition if it overflows the canvas view
     if (menuX + contextMenu.offsetWidth > canvasRect.right) {
         menuX = elementRect.left - contextMenu.offsetWidth;
     }
@@ -55,7 +89,7 @@ export function makeInteractive(element) {
 
     const dragStart = (e) => {
         activeElement = element;
-        isDragging = false; // Reset dragging state
+        isDragging = false;
         
         const touch = e.touches ? e.touches[0] : e;
         startX = touch.clientX;
@@ -78,14 +112,13 @@ export function makeInteractive(element) {
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
 
-        // If moved beyond the tap threshold, it's a drag
         if (deltaX > tapThreshold || deltaY > tapThreshold) {
             isDragging = true;
-            contextMenu.classList.add('hidden'); // Hide menu if it was open
+            contextMenu.classList.add('hidden');
         }
 
         if (isDragging) {
-            const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
             let newX = touch.clientX - canvasRect.left - offsetX;
             let newY = touch.clientY - canvasRect.top - offsetY;
 
@@ -98,16 +131,13 @@ export function makeInteractive(element) {
         const elapsedTime = Date.now() - startTime;
         
         if (isDragging) {
-            // If it was a drag, finalize the position
             const newX = parseFloat(element.style.left);
             const newY = parseFloat(element.style.top);
             updateComponent(element.id, { x: newX, y: newY });
         } else if (elapsedTime < longPressDuration) {
-            // If it wasn't a drag and it was short, it's a tap
-            showContextMenu(element, e);
+            showContextMenu(element);
         }
 
-        // Cleanup
         isDragging = false;
         document.removeEventListener('mousemove', dragMove);
         document.removeEventListener('touchmove', dragMove);
