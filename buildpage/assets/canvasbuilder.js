@@ -6,21 +6,21 @@ const canvasStyles = `
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0; /* No additional padding, rely on app-wrapper */
+        padding: 0; /* No padding, handled by canvas-frame */
         box-sizing: border-box;
     }
 
     #canvas {
         width: 100%;
         height: auto;
-        max-width: 340px; /* Matches previous size, adjustable if needed */
+        max-width: 340px; /* Maintains previous size */
         background-color: #000000;
         border: 8px solid #424242; /* Realistic iPhone frame color */
-        border-radius: 50px; /* Rounded corners like iPhone */
+        border-radius: 40px; /* Slightly reduced to fit within frame */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3); /* Enhanced realistic shadow */
         position: relative;
         overflow: hidden;
-        aspect-ratio: 131 / 284; /* Default to iPhone 16 ratio */
+        aspect-ratio: 215 / 466; /* iPhone 15 Pro Max ratio */
     }
 `;
 
@@ -40,7 +40,7 @@ export function createCanvas(parentElement) {
     canvas.id = 'canvas';
 
     canvasContainer.appendChild(canvas);
-    parentContainer.appendChild(canvasContainer);
+    parentElement.appendChild(canvasContainer);
 }
 
 // Export function to update aspect ratio (called from canvasbuilderlayouts.js)
