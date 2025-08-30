@@ -11,10 +11,30 @@ import { initBuildPage } from '../buildpage/buildpage.js';
  * Determines which page to load based on URL or state.
  */
 function route() {
-    // For now, we only have one page, so we'll always load the build page.
-    // In the future, this function could check window.location.pathname
-    // to decide which page to render.
+    // 1. Initialize the primary page structure
     initBuildPage();
+
+    // 2. Get a reference to the canvas now that it exists
+    const canvas = document.getElementById('canvas');
+    if (!canvas) {
+        console.error("Canvas element not found after page initialization.");
+        return;
+    }
+
+    // 3. Define and add the initial component to the schema
+    const initialComponent = {
+        id: schema.generateId(),
+        type: 'Text',
+        props: {
+            text: 'Canvas Ready',
+            x: (canvas.offsetWidth / 2) - 75, // Position in the center
+            y: 150
+        }
+    };
+    schema.addComponent(initialComponent);
+
+    // 4. Render the initial component
+    renderer.render();
 }
 
 // Initialize the application once the DOM is ready.
