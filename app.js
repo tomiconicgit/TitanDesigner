@@ -9,12 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Panel and Toolbar Logic ---
     leftToolbarToggle.addEventListener('click', () => {
-        const isVisible = libraryPanel.classList.toggle('visible');
-        if (isVisible) {
-            document.body.classList.add('noscroll');
-        } else {
-            document.body.classList.remove('noscroll');
-        }
+        libraryPanel.classList.toggle('visible');
+        // ADDED: Toggle the noscroll class on the body
+        document.body.classList.toggle('noscroll');
     });
 
     // --- Tap-to-Add Component Logic ---
@@ -34,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             addComponent(newComponent);
             render();
-            // Close the panel and remove the noscroll class after adding a component
             libraryPanel.classList.remove('visible');
+            // ADDED: Ensure noscroll is removed when panel closes
             document.body.classList.remove('noscroll');
         });
     });
