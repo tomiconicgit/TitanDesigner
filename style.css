@@ -51,7 +51,6 @@ main {
 /* Styling for Asides (Toolbar & Inspector) */
 aside {
     width: 240px;
-    height: 100%; /* Ensure it fills viewport height on desktop */
     background-color: #1E1E1E;
     padding: 15px;
     box-sizing: border-box;
@@ -59,7 +58,13 @@ aside {
     transition: transform 0.3s ease-in-out;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
-    min-height: 0;
+    z-index: 100;
+}
+
+#ui-library h2, #property-inspector h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
 }
 
 /* Draggable Components in the Library */
@@ -124,7 +129,7 @@ aside {
         z-index: 100;
         transform: translateX(-100%);
         border-right: 1px solid #555;
-        overflow-y: auto; /* Explicit for mobile */
+        overflow-y: auto;
         touch-action: pan-y;
         -webkit-overflow-scrolling: touch;
     }
@@ -226,7 +231,7 @@ aside {
     position: fixed;
     left: 0;
     width: 100%;
-    height: 50vh; /* Increased from 45vh for more scrollable space */
+    height: 45vh;
     background-color: #1E1E1E;
     z-index: 300;
     border-top: 1px solid #444;
@@ -260,8 +265,7 @@ aside {
 }
 
 .tools-content {
-    flex: 1 1 0;
-    min-height: 0; /* Prevent flex shrinkage issues */
+    flex: 1 1 auto;
     overflow-y: auto;
     padding: 20px;
     touch-action: pan-y;
