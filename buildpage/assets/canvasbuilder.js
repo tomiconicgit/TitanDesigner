@@ -6,14 +6,14 @@ const canvasStyles = `
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 15px; /* Increased padding to add a bit more space from the sides */
+        padding: 0; /* Remove padding to rely on page-level padding */
         box-sizing: border-box;
     }
 
     #canvas {
         width: 100%;
         height: auto;
-        max-width: 340px; /* Reduced max-width to make the canvas slightly smaller */
+        max-width: 340px; /* Matches previous size, adjustable if needed */
         background-color: #000000;
         border: 8px solid #424242; /* Realistic iPhone frame color */
         border-radius: 50px; /* Rounded corners like iPhone */
