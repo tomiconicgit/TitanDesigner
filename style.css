@@ -11,24 +11,15 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #121212;
     color: #ffffff;
-    display: flex;
-    overflow: hidden;
-}
-
-/* Class to lock body scroll when a panel is open */
-body.noscroll {
-    position: fixed;
-    width: 100%;
-    overflow: hidden;
+    /* overflow: hidden; has been removed to allow global scrolling */
 }
 
 /* Main Content Area */
 main {
-    flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    min-height: 100vh; /* Use min-height to allow page to grow */
 }
 
 /* Container for the iPhone Canvas */
@@ -118,7 +109,7 @@ main {
     color: #ccc;
     border: 1px solid #444;
     border-left: none;
-    touch-action: manipulation; /* THE FIX: Prevents browser from confusing tap with scroll */
+    touch-action: manipulation;
 }
 
 
@@ -127,14 +118,6 @@ main {
 /* ======================================= */
 
 @media (max-width: 768px) {
-    body {
-        display: block;
-    }
-
-    main {
-        padding-bottom: 0;
-    }
-
     #canvas {
         transform: scale(0.85);
     }
