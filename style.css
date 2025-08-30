@@ -38,7 +38,7 @@ canvas {
     position: fixed;
     background-color: #282828;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    border-top: 1px solid #444;
+    border-top: 1px solid #444; /* Applies to bottom panels */
     transition: transform 0.3s ease-in-out;
     z-index: 1000;
 }
@@ -52,6 +52,7 @@ canvas {
     transform: translateY(100%);
     display: flex;
     flex-direction: column;
+    border-top: 1px solid #444; /* Ensure this panel has its top border */
 }
 
 #tools-panel.show {
@@ -65,7 +66,7 @@ canvas {
     text-align: center;
 }
 
-/* UPDATED: .tools-content for proper flexbox scrolling */
+/* UPDATED: .tools-content for proper flexbox scrolling (from Grok's original advice) */
 .tools-content {
     flex: 1 1 0; /* Replaces height, min-height, and flex-grow for robust scrolling */
     overflow-y: auto;
@@ -74,16 +75,18 @@ canvas {
     -webkit-overflow-scrolling: touch;
 }
 
-/* UI Library Panel (Right Side) */
+/* UI Library Panel (Right Side - Reinstated/Corrected Mobile Styles) */
 #ui-library {
     top: 0;
     right: 0;
-    width: 280px;
-    height: 100vh;
+    width: 280px; /* Adjust as needed */
+    height: 100vh; /* Fill full viewport height */
     transform: translateX(100%);
     display: flex;
     flex-direction: column;
-    /* The min-height: 0 fix was omitted as requested for mobile-only */
+    background-color: #282828; /* Ensure consistent background */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Consistent shadow */
+    border-left: 1px solid #444; /* Add a left border for visual separation */
 }
 
 #ui-library.show {
@@ -104,6 +107,40 @@ canvas {
     cursor: pointer;
 }
 
+/* Asides (Generic styling for other side panels like "Properties") */
+aside {
+    position: fixed; /* Fixes them in place relative to the viewport */
+    top: 0;
+    right: 0; /* Or left: 0 depending on desired side */
+    width: 280px; /* Adjust width as needed */
+    height: 100vh; /* Fill full viewport height */
+    background-color: #282828; /* Consistent background */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Consistent shadow */
+    border-left: 1px solid #444; /* Add a border for visual separation */
+    transform: translateX(100%); /* Initially off-screen */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000; /* Ensure it's above main content */
+    display: flex; /* Enable flex for internal layout */
+    flex-direction: column; /* Stack content vertically */
+}
+
+/* Specific styling for the Properties panel if it's also an aside */
+/* Assuming 'Properties' is also an aside or has a similar structure as #ui-library */
+#properties-panel { /* Assuming an ID for your properties panel */
+    /* If it's styled as a general aside, these might be redundant but good for specificity */
+    /* Add any specific styles if its behavior/appearance differs from #ui-library */
+}
+#properties-panel.show {
+    transform: translateX(0);
+}
+
+.properties-content { /* Assuming a class for its content */
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+
 /* Overlay for background dimming */
 #overlay {
     position: fixed;
@@ -121,4 +158,70 @@ canvas {
 #overlay.show {
     opacity: 1;
     visibility: visible;
+}
+
+/* Styles for smaller elements within panels like buttons and inputs */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px; /* Space between buttons */
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* Input styles for various controls like sliders */
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #bbb;
+}
+
+.control-group input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 8px;
+    background: #555;
+    border-radius: 5px;
+    outline: none;
+    margin-top: 5px;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: grab;
+    border: 2px solid #fff;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+
+.control-group input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: grab;
+    border: 2px solid #fff;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
 }
