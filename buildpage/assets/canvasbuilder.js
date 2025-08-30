@@ -6,25 +6,15 @@ const canvasStyles = `
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 15px;
         box-sizing: border-box;
-        min-height: 0; /* Prevent container from forcing full height */
     }
 
     #canvas {
-        width: 100%;
-        height: auto; /* Allow height to adjust based on aspect ratio */
-        max-width: 430px;
-        max-height: 932px;
+        width: 100vw;
+        height: 100vh;
         background-color: #000000;
-        border: 8px solid #424242;
-        border-radius: 50px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
         position: relative;
         overflow: hidden;
-        aspect-ratio: 9 / 19.5;
-        transform: scale(0.8); /* Maintains the shrink from previous change */
-        transform-origin: center;
     }
 `;
 
