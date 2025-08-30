@@ -22,6 +22,8 @@ const canvasStyles = `
         position: relative;
         overflow: hidden;
         aspect-ratio: 9 / 19.5;
+        transform: scale(0.8); /* Shrink the canvas to 80% of its original size */
+        transform-origin: center; /* Ensure scaling is centered */
     }
 `;
 
