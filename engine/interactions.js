@@ -9,9 +9,15 @@ export function makeInteractive(element) {
     const tapThreshold = 5;
 
     const dragStart = (e) => {
+        // Check if the touch/click started on a scrollable element
+        const target = e.target;
+        if (target.closest('#toolbar-panel')) {
+            return; // Do not start dragging if inside the toolbar
+        }
+
         isDragging = false;
         
-        const touch = e.touches ? e.touches[0] : e;
+        const touch = e.touches? e.touches : e;
         startX = touch.clientX;
         startY = touch.clientY;
         
@@ -21,20 +27,24 @@ export function makeInteractive(element) {
 
         window.addEventListener('mousemove', dragMove);
         window.addEventListener('mouseup', dragEnd, { once: true });
+        // Set passive to false to allow preventDefault()
         window.addEventListener('touchmove', dragMove, { passive: false });
         window.addEventListener('touchend', dragEnd, { once: true });
     };
 
     const dragMove = (e) => {
-        const touch = e.touches ? e.touches[0] : e;
+        const touch = e.touches? e.touches : e;
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
 
-        if (!isDragging && (deltaX > tapThreshold || deltaY > tapThreshold)) {
+        if (!isDragging && (deltaX > tapThreshold |
+
+| deltaY > tapThreshold)) {
             isDragging = true;
         }
 
         if (isDragging) {
+            // This is crucial to prevent the page from scrolling while dragging an element
             if (e.cancelable) e.preventDefault();
 
             const canvasRect = canvas.getBoundingClientRect();
@@ -60,5 +70,6 @@ export function makeInteractive(element) {
     };
 
     element.addEventListener('mousedown', dragStart);
-    element.addEventListener('touchstart', dragStart, { passive: true });
+    // Set passive to false here as well
+    element.addEventListener('touchstart', dragStart, { passive: false });
 }
