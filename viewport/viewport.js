@@ -101,10 +101,11 @@ export function updateAspectRatio(ratio) {
     if (canvas) {
         const [width, height] = ratio.split('/').map(Number);
         const scaleFactor = 0.9; // 90% of original size
-        const viewportWidth = (window.innerWidth * scaleFactor * width) / Math.max(width, height);
-        const viewportHeight = (window.innerHeight * scaleFactor * height) / Math.max(width, height);
-        canvas.style.width = `${viewportWidth}px`;
-        canvas.style.height = `${viewportHeight}px`;
+        const baseWidth = 306; // Based on max-width
+        const scaledWidth = baseWidth * scaleFactor;
+        const scaledHeight = (scaledWidth * height) / width;
+        canvas.style.width = `${scaledWidth}px`;
+        canvas.style.height = `${scaledHeight}px`;
         canvas.style.aspectRatio = ratio; // Ensure aspect ratio is maintained
     }
 }
