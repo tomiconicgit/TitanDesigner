@@ -1,18 +1,18 @@
 const layoutStyles = `
     #control-bar {
         position: fixed;
-        bottom: 0;
+        top: 0; /* Moved to top of page */
         left: 0;
         right: 0;
         width: 100%; /* Touching left and right edges */
         height: 40px; /* Reduced vertical height */
         background: #000000; /* New color */
-        border-top: 1px solid rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2); /* Changed to bottom border for top placement */
         display: flex;
         justify-content: flex-end;
         align-items: center;
         z-index: 1002;
-        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.4); /* Top drop shadow */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); /* Top drop shadow */
         transition: background-color 0.2s ease;
     }
 
@@ -136,7 +136,7 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control panel with a fixed bottom bar and sliding full-screen panel with fade transitions.
+ * Initializes the control panel with a fixed top bar and sliding full-screen panel with fade transitions.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
@@ -160,7 +160,7 @@ export function initViewportLayouts() {
         canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
     }
 
-    // Initialize bottom bar with menu icon
+    // Initialize top bar with menu icon
     let isOpen = false;
     let currentPanel = null;
     const menuIcon = document.createElement('div');
@@ -206,7 +206,7 @@ export function initViewportLayouts() {
             options.forEach((opt, index) => {
                 const item = document.createElement('div');
                 item.className = 'control-item';
-                item.textContent = opt; // Off-white text
+                item.textContent = opt; // Off-white text for Library and Layout
                 item.dataset.type = opt.toLowerCase();
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
