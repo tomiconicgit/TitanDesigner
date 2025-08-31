@@ -42,7 +42,7 @@ const layoutStyles = `
     }
 
     #viewport-panel.open {
-        left: calc(-350px + 215px); /* Slide halfway across ~430px screen (215px from left) */
+        left: 0; /* Slide fully on-screen, adjust if halfway intent differs */
     }
 
     .viewport-option {
