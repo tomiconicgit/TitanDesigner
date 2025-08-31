@@ -13,7 +13,7 @@ export function initViewportPage() {
     mainContainer.style.position = 'absolute';
     mainContainer.style.top = '0';
     mainContainer.style.left = '0';
-    mainContainer.style.backgroundColor = '#1e1e1e'; // Full-screen background for the page
+    mainContainer.style.backgroundColor = '#2E2E2E'; // Xcode-like dark grey background
 
     // Append the main container to the body
     document.body.appendChild(mainContainer);
