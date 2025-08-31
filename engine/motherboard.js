@@ -5,8 +5,10 @@ import * as renderer from './renderer.js';
 
 // Import viewport initializers
 import { initViewportPage } from '../viewport/viewportpage.js';
-import { createCanvas, updateAspectRatio, updateOrientation, updateColorScheme, updateDynamicType, updatePreviewMode } from '../viewport/viewport.js';
+import { createCanvas, updateAspectRatio, updateOrientation, updateColourScheme, updateDynamicType, updatePreviewMode } from '../viewport/viewport.js';
 import { initViewportLayouts } from '../viewport/viewportlayouts.js';
+import { initComponentLibrary } from '../viewport/componentlibrary.js';
+import { initCustomisationToolbar } from '../viewport/customisationtoolbar.js';
 
 /**
  * Main application router.
@@ -32,24 +34,30 @@ function route() {
             return;
         }
 
-        // 4. Define and add the initial component to the schema
+        // 4. Initialize toolbars
+        initComponentLibrary();
+        initCustomisationToolbar();
+
+        // 5. Define and add the initial component to the schema
         const initialComponent = {
             id: schema.generateId(),
             type: 'Text',
             props: {
                 text: 'Canvas Ready',
-                x: 100, // Adjusted for better centering on 340px canvas
-                y: 200,
-                color: '#ffffff'
+                x: 125,
+                y: 150
             }
         };
         schema.addComponent(initialComponent);
 
-        // 5. Render the initial component
+        // 6. Render the initial component
         renderer.render();
 
-        // 6. Initialize the viewport layouts panel (Xcode-like controls)
+        // 7. Initialize the viewport layouts panel (Xcode-like controls)
         initViewportLayouts();
+
+        // 8. Initialize interactions
+        interactions.initInteractions();
     } catch (error) {
         console.error("Error during route initialization:", error);
     }
