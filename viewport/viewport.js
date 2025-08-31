@@ -4,8 +4,8 @@ const canvasStyles = `
         height: 100%;
         position: relative;
         display: flex;
-        align-items: centre;
-        justify-content: centre;
+        align-items: center;
+        justify-content: center;
         box-sizing: border-box;
     }
 
@@ -13,7 +13,7 @@ const canvasStyles = `
         width: 100%;
         height: auto;
         max-width: 340px; /* Balanced size for building */
-        background-colour: #000000;
+        background-color: #000000;
         border: 8px solid #424242; /* Realistic iPhone frame */
         border-radius: 40px; /* Rounded corners like iPhone */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3); /* Realistic shadow */
@@ -24,8 +24,8 @@ const canvasStyles = `
     }
 
     #canvas.dark {
-        background-colour: #1c1c1e; /* Dark mode background */
-        colour: #ffffff; /* Adjust text colour for dark mode */
+        background-color: #1c1c1e; /* Dark mode background */
+        color: #ffffff; /* Adjust text color for dark mode */
     }
 
     #canvas.large-text {
@@ -42,6 +42,10 @@ const canvasStyles = `
  * @param {HTMLElement} parentElement The DOM element to attach the canvas to.
  */
 export function createCanvas(parentElement) {
+    if (!document.head) {
+        console.error("Document head not available.");
+        return;
+    }
     const styleElement = document.createElement('style');
     styleElement.textContent = canvasStyles;
     document.head.appendChild(styleElement);
