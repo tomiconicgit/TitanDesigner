@@ -14,6 +14,10 @@ export function render() {
     // Fetch components from schema
     import('./layoutschema.js').then(({ getComponents }) => {
         const components = getComponents();
+        if (!components || components.length === 0) {
+            console.warn("No components found to render.");
+            return;
+        }
         components.forEach(component => {
             const element = createComponentElement(component);
             if (element) {
@@ -40,9 +44,9 @@ function createComponentElement(component) {
             element.style.top = `${component.props.y}px`;
             element.style.color = component.props.color || '#ffffff';
             element.style.fontSize = getDynamicFontSize();
+            element.style.zIndex = '10'; // Ensure it's above other elements
             element.textContent = component.props.text || 'Unnamed Text';
             break;
-        // Add more component types (e.g., 'Image', 'Shape') as needed
         default:
             console.warn(`Unsupported component type: ${component.type}`);
             return null;
@@ -70,5 +74,5 @@ export function updateRender() {
     render();
 }
 
-// Export for external triggering (e.g., from interactions.js)
+// Export for external triggering
 export default { render, updateRender };
