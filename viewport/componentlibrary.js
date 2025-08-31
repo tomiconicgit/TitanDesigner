@@ -4,8 +4,8 @@ const libraryStyles = `
         bottom: 20px;
         left: 10px;
         padding: 10px 15px;
-        background-color: #333;
-        color: white;
+        background-colour: #333;
+        colour: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -18,8 +18,8 @@ const libraryStyles = `
         left: -400px; /* Start off-screen */
         width: 400px;
         height: 200px;
-        background-color: #222;
-        color: white;
+        background-colour: #222;
+        colour: white;
         padding: 20px;
         box-sizing: border-box;
         border-top: 2px solid #444;
@@ -36,21 +36,21 @@ const libraryStyles = `
         display: inline-block;
         padding: 10px;
         margin: 5px;
-        background-color: #444;
+        background-colour: #444;
         border-radius: 5px;
         cursor: pointer;
-        text-align: center;
+        text-align: centre;
     }
 
     .library-option:hover {
-        background-color: #555;
+        background-colour: #555;
     }
 `;
 
 const availableComponents = ['Text', 'Button', 'Header']; // Add more as files are created
 
 /**
- * Initializes the component library toolbar.
+ * Initialises the component library toolbar.
  */
 export function initComponentLibrary() {
     const styleElement = document.createElement('style');
