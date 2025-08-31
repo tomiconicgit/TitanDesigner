@@ -1,32 +1,31 @@
-// This module will hold the "single source of truth" for the UI design.
-// Every component on the canvas will be represented as an object in this array.
-
-export let layoutSchema = [];
-
 /**
- * Adds a new component object to the central layout schema.
- * @param {object} component The component to add.
+ * Layout schema module for managing components.
  */
-export function addComponent(component) {
-    layoutSchema.push(component);
-}
+let components = [];
 
 /**
- * Updates the properties of an existing component in the schema.
- * @param {string} id The ID of the component to update.
- * @param {object} newProps The new properties to assign.
- */
-export function updateComponent(id, newProps) {
-    const component = layoutSchema.find(c => c.id === id);
-    if (component) {
-        Object.assign(component.props, newProps);
-    }
-}
-
-/**
- * Generates a unique ID for a new component.
- * @returns {string} A unique component ID.
+ * Generates a unique ID for a component.
+ * @returns {string} A unique identifier.
  */
 export function generateId() {
-    return `comp_${Date.now()}`;
+    return 'comp_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
 }
+
+/**
+ * Adds a component to the schema.
+ * @param {Object} component The component object with id, type, and props.
+ */
+export function addComponent(component) {
+    components.push(component);
+}
+
+/**
+ * Retrieves all components from the schema.
+ * @returns {Array} Array of component objects.
+ */
+export function getComponents() {
+    return [...components];
+}
+
+// Export the module
+export default { generateId, addComponent, getComponents };
