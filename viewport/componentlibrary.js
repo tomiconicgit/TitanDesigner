@@ -25,7 +25,7 @@ const libraryStyles = `
         position: fixed;
         top: 170px; /* Align with tab */
         left: -400px; /* Start fully off-screen left */
-        width: 400px;
+        width: 400px; /* Full width to show all content */
         height: 200px;
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(15px);
@@ -38,11 +38,11 @@ const libraryStyles = `
         border-bottom-right-radius: 10px;
         transition: left 0.3s ease; /* Slide in with tab */
         z-index: 1000;
-        overflow-x: auto;
+        overflow-x: auto; /* Ensure all content is scrollable if needed */
     }
 
     #library-panel.open {
-        left: -200px; /* Slide in halfway (400px / 2) */
+        left: calc(-400px + 215px); /* Slide halfway across ~430px screen (215px from left) */
     }
 
     .library-option {
