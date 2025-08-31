@@ -134,14 +134,17 @@ export function initViewportLayouts() {
 
     // Initial small panel with options
     let isOpen = false;
+    let currentPanel = null; // Track the current panel type
     toggleButton.addEventListener('click', () => {
         isOpen = !isOpen;
         panel.classList.toggle('open', isOpen);
         if (isOpen && !panel.classList.contains('expanded')) {
             showInitialOptions();
             panel.classList.remove('expanded');
+            currentPanel = null; // Reset current panel on toggle open
         } else if (!isOpen) {
             panel.classList.remove('expanded');
+            currentPanel = null; // Reset on close
         }
     });
 
@@ -152,9 +155,11 @@ export function initViewportLayouts() {
             const option = document.createElement('div');
             option.className = 'control-option';
             option.textContent = opt;
-            option.addEventListener('click', () => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent tap-off from closing immediately
                 panel.classList.add('expanded');
-                showPanel(opt.toLowerCase());
+                currentPanel = opt.toLowerCase();
+                showPanel(currentPanel);
             });
             panel.appendChild(option);
         });
@@ -263,6 +268,7 @@ export function initViewportLayouts() {
             panel.classList.remove('open');
             panel.classList.remove('expanded');
             isOpen = false;
+            currentPanel = null; // Reset current panel on close
         }
     });
 }
