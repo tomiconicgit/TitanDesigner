@@ -1,11 +1,10 @@
 const layoutStyles = `
     #viewport-toggle {
         position: fixed;
-        top: 50%; /* Center vertically, adjust for tab */
+        top: calc(50% - 120px); /* Position above center */
         left: 0;
         width: 40px;
         height: 120px; /* Tall enough for vertical text */
-        transform: translateY(-50%); /* Center vertically */
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(10px);
         color: #ffffff;
@@ -28,7 +27,7 @@ const layoutStyles = `
         left: -350px; /* Start fully off-screen left */
         width: 350px; /* Standardized width */
         height: 490px; /* 5:7 aspect ratio with 350px width */
-        transform: transformY(-50%); /* Center vertically */
+        transform: translateY(-50%); /* Center vertically */
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(15px);
         color: #ffffff;
