@@ -1,88 +1,81 @@
 const layoutStyles = `
     #control-bar {
         position: fixed;
-        bottom: 10px; /* Small offset below viewport */
-        left: 10px; /* Tiny gap on left */
-        right: 10px; /* Tiny gap on right */
-        width: calc(100% - 20px); /* Adjust for left and right gaps */
-        height: 80px; /* Compact height */
-        background: #000E1C; /* New color */
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%; /* Touching left and right edges */
+        height: 60px; /* Reduced height */
+        background: #000000; /* New color */
+        border-top: 1px solid rgba(0, 0, 0, 0.2);
         display: flex;
-        justify-content: space-around;
+        justify-content: flex-end;
         align-items: center;
         z-index: 1002;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); /* Drop shadow */
+        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.4); /* Top drop shadow */
         transition: background-color 0.2s ease;
     }
 
     #control-bar.dark {
-        background: #000A14;
+        background: #0A0A0A;
     }
 
-    .control-option {
-        width: 100px;
-        height: 50px;
-        background-color: transparent;
-        color: #F8F9FA; /* Off-white text */
-        font-size: 16px;
-        cursor: pointer;
+    .menu-icon {
+        width: 30px;
+        height: 20px;
+        margin-right: 15px;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: color 0.1s ease, background-color 0.1s ease; /* Quick transition */
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
     }
 
-    .control-option:active {
-        background-color: #F8F9FA; /* Off-white highlight on press */
-        color: #000E1C; /* Dark text on highlight */
+    .menu-line {
+        width: 100%;
+        height: 3px;
+        background-color: #F8F9FA; /* Off-white lines */
+        transition: background-color 0.2s ease;
     }
 
-    .control-option.dark {
-        color: #F8F9FA;
-    }
-
-    .control-option.dark:active {
-        background-color: #F8F9FA;
-        color: #000A14;
+    .menu-line.dark {
+        background-color: #E9ECEF;
     }
 
     #control-panel {
         position: fixed;
-        left: -200px; /* Start fully off-screen left */
+        right: -300px; /* Start fully off-screen right */
         top: 0;
-        width: 200px; /* 5:10 aspect ratio, height will be 400px */
-        height: 400px; /* 5:10 aspect ratio of 200px width */
-        background-color: #000E1C; /* Panel background */
+        width: 300px; /* Slightly before left edge with 10px margin */
+        height: 100dvh; /* Full height */
+        background-color: #111111; /* Panel background */
         padding: 20px;
         box-sizing: border-box;
-        transition: left 0.8s ease-out; /* Smooth slide-in with slowdown */
+        transition: right 0.8s ease-out, opacity 0.3s ease; /* Slide and fade */
         z-index: 1001;
         overflow-y: auto;
-        box-shadow: 2px 0 6px rgba(0, 0, 0, 0.4); /* Drop shadow on right */
-        border-radius: 2px; /* Subtle 2px curve */
+        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.4); /* Drop shadow on left */
     }
 
     #control-panel.dark {
-        background-color: #000A14;
+        background-color: #0F0F0F;
     }
 
     #control-panel.open {
-        left: 0; /* Slide in fully against left edge */
+        right: 10px; /* Slightly before left edge */
     }
 
     #control-panel .header {
-        background-color: #000A14; /* Darker header (a few shades less) */
+        background-color: #000000; /* Header color */
         padding: 10px;
         margin: -20px -20px 20px -20px; /* Extend to panel edges */
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-radius: 2px 2px 0 0; /* Match top corners */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Bottom drop shadow */
     }
 
     #control-panel .header h3 {
-        color: #0481FF; /* Title color */
+        color: #F8F9FA; /* Off-white text */
         font-size: 14px;
         font-weight: bold;
         margin: 0;
@@ -109,7 +102,12 @@ const layoutStyles = `
         padding: 8px;
         cursor: pointer;
         color: #F8F9FA; /* Off-white text */
-        transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease, opacity 0.3s ease; /* Fade transition */
+        opacity: 0; /* Initially hidden */
+    }
+
+    .control-item.active {
+        opacity: 1; /* Fade in when active */
     }
 
     .control-item:hover {
@@ -138,7 +136,7 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control panel with a floating bottom bar and sliding left panel with dividers.
+ * Initializes the control panel with a fixed bottom bar and sliding right panel with fade transitions.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
@@ -162,38 +160,35 @@ export function initViewportLayouts() {
         canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
     }
 
-    // Initialize bottom bar with options
+    // Initialize bottom bar with menu icon
     let isOpen = false;
     let currentPanel = null;
-    const options = [
-        { name: 'Library', label: 'Library' },
-        { name: 'Layouts', label: 'Layouts' }
-    ];
-    options.forEach((opt, index) => {
-        const option = document.createElement('div');
-        option.className = 'control-option';
-        option.textContent = opt.label;
-        option.dataset.type = opt.name.toLowerCase();
-        option.addEventListener('click', (e) => {
-            e.stopPropagation();
-            isOpen = !isOpen;
-            panel.classList.toggle('open', isOpen);
-            if (isOpen) {
-                currentPanel = opt.name.toLowerCase();
-                showPanel(currentPanel);
-            } else {
-                currentPanel = null;
-            }
-        });
-        controlBar.appendChild(option);
+    const menuIcon = document.createElement('div');
+    menuIcon.className = 'menu-icon';
+    for (let i = 0; i < 3; i++) {
+        const line = document.createElement('div');
+        line.className = 'menu-line';
+        menuIcon.appendChild(line);
+    }
+    menuIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isOpen = !isOpen;
+        panel.classList.toggle('open', isOpen);
+        if (isOpen) {
+            currentPanel = 'menu'; // Initial state
+            showPanel(currentPanel);
+        } else {
+            currentPanel = null;
+        }
     });
+    controlBar.appendChild(menuIcon);
 
     function showPanel(type) {
         panel.innerHTML = '';
         const header = document.createElement('div');
         header.className = 'header';
         const title = document.createElement('h3');
-        title.textContent = type.toUpperCase();
+        title.textContent = 'Menu';
         const closeBtn = document.createElement('button');
         closeBtn.className = 'close-btn';
         closeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12L12 4M12 12L4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; // X icon
@@ -206,83 +201,20 @@ export function initViewportLayouts() {
         header.appendChild(closeBtn);
         panel.appendChild(header);
 
-        if (type === 'layouts') {
-            const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
-            sections.forEach((section, index) => {
-                const sectionDiv = document.createElement('div');
-                sectionDiv.className = 'control-section';
-                sectionDiv.innerHTML = `<h3>${section}</h3>`;
-                panel.appendChild(sectionDiv);
-
-                if (section === 'Device') {
-                    Object.entries(deviceOptions).forEach(([name, ratio]) => {
-                        const item = document.createElement('div');
-                        item.className = 'control-item';
-                        item.textContent = name.length > 15 ? name.substring(0, 15) + '...' : name;
-                        item.addEventListener('click', () => {
-                            import('./viewport.js').then(({ updateAspectRatio }) => {
-                                updateAspectRatio(ratio);
-                            });
-                        });
-                        sectionDiv.appendChild(item);
-                    });
-                } else if (section === 'Orientation') {
-                    ['Portrait', 'Landscape'].forEach(orient => {
-                        const item = document.createElement('div');
-                        item.className = 'control-item';
-                        item.textContent = orient;
-                        item.addEventListener('click', () => {
-                            import('./viewport.js').then(({ updateOrientation }) => {
-                                updateOrientation(orient.toLowerCase());
-                            });
-                        });
-                        sectionDiv.appendChild(item);
-                    });
-                } else if (section === 'Colour Scheme') {
-                    ['Light', 'Dark'].forEach(scheme => {
-                        const item = document.createElement('div');
-                        item.className = 'control-item';
-                        item.textContent = scheme;
-                        item.addEventListener('click', () => {
-                            import('./viewport.js').then(({ updateColourScheme }) => {
-                                updateColourScheme(scheme.toLowerCase());
-                                if (scheme === 'dark') {
-                                    panel.classList.add('dark');
-                                    controlBar.classList.add('dark');
-                                } else {
-                                    panel.classList.remove('dark');
-                                    controlBar.classList.remove('dark');
-                                }
-                            });
-                        });
-                        sectionDiv.appendChild(item);
-                    });
-                } else if (section === 'Dynamic Type') {
-                    ['Small', 'Large'].forEach(type => {
-                        const item = document.createElement('div');
-                        item.className = 'control-item';
-                        item.textContent = type;
-                        item.addEventListener('click', () => {
-                            import('./viewport.js').then(({ updateDynamicType }) => {
-                                updateDynamicType(type.toLowerCase());
-                            });
-                        });
-                        sectionDiv.appendChild(item);
-                    });
-                } else if (section === 'Preview Mode') {
-                    ['Live', 'Selectable'].forEach(mode => {
-                        const item = document.createElement('div');
-                        item.className = 'control-item';
-                        item.textContent = mode;
-                        item.addEventListener('click', () => {
-                            import('./viewport.js').then(({ updatePreviewMode }) => {
-                                updatePreviewMode(mode.toLowerCase());
-                            });
-                        });
-                        sectionDiv.appendChild(item);
-                    });
-                }
-                if (index < sections.length - 1) {
+        if (type === 'menu') {
+            const options = ['Library', 'Layout'];
+            options.forEach((opt, index) => {
+                const item = document.createElement('div');
+                item.className = 'control-item';
+                item.textContent = opt;
+                item.dataset.type = opt.toLowerCase();
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    currentPanel = item.dataset.type;
+                    showPanel(currentPanel);
+                });
+                panel.appendChild(item);
+                if (index < options.length - 1) {
                     const divider = document.createElement('div');
                     divider.className = 'panel-divider';
                     panel.appendChild(divider);
@@ -292,7 +224,7 @@ export function initViewportLayouts() {
             const availableComponents = ['Text', 'Button', 'Header'];
             availableComponents.forEach((component, index) => {
                 const item = document.createElement('div');
-                item.className = 'control-item';
+                item.className = 'control-item active'; // Fade in
                 item.textContent = component;
                 item.addEventListener('click', () => {
                     import('./viewport.js').then(({ addComponent }) => {
@@ -306,6 +238,36 @@ export function initViewportLayouts() {
                     panel.appendChild(divider);
                 }
             });
+        } else if (type === 'layout') {
+            const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
+            sections.forEach((section, index) => {
+                const item = document.createElement('div');
+                item.className = 'control-item active'; // Fade in
+                item.textContent = section;
+                item.addEventListener('click', () => {
+                    // Handle layout options (e.g., updateAspectRatio for Device)
+                    if (section === 'Device') {
+                        import('./viewport.js').then(({ updateAspectRatio }) => {
+                            updateAspectRatio('430 / 932'); // Example, adjust as needed
+                        });
+                    }
+                    // Add other section handlers as needed
+                });
+                panel.appendChild(item);
+                if (index < sections.length - 1) {
+                    const divider = document.createElement('div');
+                    divider.className = 'panel-divider';
+                    panel.appendChild(divider);
+                }
+            });
+        }
+
+        // Fade out inactive items
+        const items = panel.getElementsByClassName('control-item');
+        for (let item of items) {
+            if (!item.classList.contains('active')) {
+                item.style.opacity = '0';
+            }
         }
     }
 
