@@ -6,18 +6,17 @@ const layoutStyles = `
         right: 0;
         width: 100%; /* Touching left and right edges */
         height: 40px; /* Reduced vertical height */
-        background: #000000; /* New color */
+        background: linear-gradient(to bottom, #000000, rgba(255, 255, 255, 0.1)); /* Glassmorphic shine at bottom */
         border-bottom: 1px solid rgba(0, 0, 0, 0.2); /* Changed to bottom border for top placement */
         display: flex;
         justify-content: flex-end;
         align-items: center;
         z-index: 1002;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); /* Top drop shadow */
         transition: background-color 0.2s ease;
     }
 
     #control-bar.dark {
-        background: #0A0A0A;
+        background: linear-gradient(to bottom, #0A0A0A, rgba(255, 255, 255, 0.1));
     }
 
     .menu-icon {
@@ -46,7 +45,7 @@ const layoutStyles = `
         right: -100%; /* Start fully off-screen right */
         top: 0;
         width: 100%; /* Expanded to touch right side */
-        height: 100dvh; /* Full height */
+        height: calc(100dvh - 40px); /* Reduced to avoid top bar overlap */
         background-color: #111111; /* Panel background */
         padding: 20px;
         box-sizing: border-box;
@@ -205,7 +204,7 @@ export function initViewportLayouts() {
             const options = ['Library', 'Layout'];
             options.forEach((opt, index) => {
                 const item = document.createElement('div');
-                item.className = 'control-item';
+                item.className = 'control-item'; // Initially hidden, will fade in
                 item.textContent = opt; // Off-white text for Library and Layout
                 item.dataset.type = opt.toLowerCase();
                 item.addEventListener('click', (e) => {
@@ -220,6 +219,11 @@ export function initViewportLayouts() {
                     panel.appendChild(divider);
                 }
             });
+            // Force fade-in for menu items
+            const items = panel.getElementsByClassName('control-item');
+            for (let item of items) {
+                item.classList.add('active'); // Ensure menu items are visible
+            }
         } else if (type === 'library') {
             const availableComponents = ['Text', 'Button', 'Header'];
             availableComponents.forEach((component, index) => {
