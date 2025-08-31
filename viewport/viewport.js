@@ -42,8 +42,8 @@ const canvasStyles = `
  * @param {HTMLElement} parentElement The DOM element to attach the canvas to.
  */
 export function createCanvas(parentElement) {
-    if (!document.head) {
-        console.error("Document head not available.");
+    if (!document.head || !parentElement) {
+        console.error("Document head or parent element not available.");
         return;
     }
     const styleElement = document.createElement('style');
