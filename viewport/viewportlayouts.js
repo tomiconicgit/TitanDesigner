@@ -9,7 +9,8 @@ const layoutStyles = `
         backdrop-filter: blur(10px);
         color: #ffffff;
         border: 1px solid rgba(68, 68, 68, 0.5);
-        border-right: none;
+        border-left: none; /* Remove left border to attach to screen */
+        border-right: 1px solid rgba(68, 68, 68, 0.5);
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         cursor: pointer;
@@ -22,26 +23,26 @@ const layoutStyles = `
 
     #viewport-panel {
         position: fixed;
-        top: 50%;
-        right: -350px; /* Start off-screen */
-        transform: translateY(-50%);
-        width: 350px;
+        top: 50px; /* Align with tab */
+        left: 0; /* Start at left edge with tab */
+        width: 0; /* Initially hidden */
         height: 280px; /* 5:4 aspect ratio */
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(15px);
         color: #ffffff;
         padding: 20px;
         box-sizing: border-box;
-        border-left: 1px solid rgba(68, 68, 68, 0.5);
-        transition: right 0.3s ease;
-        z-index: 1000;
-        overflow-y: auto;
+        border-left: none; /* No left border */
+        border-right: 1px solid rgba(68, 68, 68, 0.5);
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px;
+        transition: width 0.3s ease; /* Slide out with tab */
+        z-index: 1000;
+        overflow-y: auto;
     }
 
     #viewport-panel.open {
-        right: 0; /* Slide in when open */
+        width: 350px; /* Slide out to full width */
     }
 
     .viewport-option {
