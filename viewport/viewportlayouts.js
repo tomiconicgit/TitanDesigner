@@ -4,20 +4,20 @@ const layoutStyles = `
         top: 50px; /* Position as top tab */
         left: 0;
         width: 40px;
-        height: 120px;
-        background-color: #333;
-        color: white;
-        border: none;
-        border-right: 2px solid #444;
+        height: 120px; /* Tall enough for vertical text */
+        background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
+        backdrop-filter: blur(10px);
+        color: #ffffff;
+        border: 1px solid rgba(68, 68, 68, 0.5);
+        border-right: none;
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         cursor: pointer;
         z-index: 1000;
-        transform: rotate(90deg);
-        transform-origin: bottom left;
         padding: 5px 0;
         white-space: pre;
         text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     #viewport-panel {
@@ -27,14 +27,17 @@ const layoutStyles = `
         transform: translateY(-50%);
         width: 350px;
         height: 280px; /* 5:4 aspect ratio */
-        background-color: #222;
-        color: white;
+        background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
+        backdrop-filter: blur(15px);
+        color: #ffffff;
         padding: 20px;
         box-sizing: border-box;
-        border-left: 2px solid #444;
+        border-left: 1px solid rgba(68, 68, 68, 0.5);
         transition: right 0.3s ease;
         z-index: 1000;
         overflow-y: auto;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
 
     #viewport-panel.open {
@@ -44,14 +47,17 @@ const layoutStyles = `
     .viewport-option {
         padding: 10px;
         margin-bottom: 10px;
-        background-color: #444;
+        background-color: rgba(34, 34, 34, 0.7); /* Darker glassmorphic button */
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(68, 68, 68, 0.5);
         border-radius: 5px;
         cursor: pointer;
         text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .viewport-option:hover {
-        background-color: #555;
+        background-color: rgba(51, 51, 51, 0.8);
     }
 
     .viewport-section {
