@@ -1,42 +1,30 @@
 const layoutStyles = `
     #control-bar {
         position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 80px; /* Compact height below viewport */
-        background: linear-gradient(to bottom, #343A40, #2B2F33); /* Current color with slight gradient */
-        border-top: 1px solid rgba(0, 0, 0, 0.2);
+        bottom: 10px; /* Small offset below viewport */
+        left: 10px; /* Tiny gap on left */
+        right: 10px; /* Tiny gap on right */
+        width: calc(100% - 20px); /* Adjust for left and right gaps */
+        height: 80px; /* Compact height */
+        background: #000E1C; /* New color */
+        border: 1px solid rgba(0, 0, 0, 0.2);
         display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        justify-content: space-around;
+        align-items: center;
         z-index: 1002;
-        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3); /* Drop shadow above bar */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); /* Drop shadow */
         transition: background-color 0.2s ease;
     }
 
     #control-bar.dark {
-        background: linear-gradient(to bottom, #2B2F33, #212529);
-    }
-
-    .control-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    }
-
-    .control-section:last-child {
-        border-bottom: none;
+        background: #000A14;
     }
 
     .control-option {
-        width: 100%;
-        height: 100%; /* Full height of each section */
+        width: 100px;
+        height: 50px;
         background-color: transparent;
-        color: #FFFFFF; /* White text */
+        color: #F8F9FA; /* Off-white text */
         font-size: 16px;
         cursor: pointer;
         display: flex;
@@ -46,53 +34,55 @@ const layoutStyles = `
     }
 
     .control-option:active {
-        background-color: #FFFFFF; /* White highlight on press */
-        color: #0A0A0A; /* Dark text on highlight */
+        background-color: #F8F9FA; /* Off-white highlight on press */
+        color: #000E1C; /* Dark text on highlight */
     }
 
     .control-option.dark {
-        color: #FFFFFF;
+        color: #F8F9FA;
     }
 
     .control-option.dark:active {
-        background-color: #FFFFFF;
-        color: #0A0A0A;
+        background-color: #F8F9FA;
+        color: #000A14;
     }
 
     #control-panel {
         position: fixed;
-        bottom: -100dvh; /* Start fully off-screen bottom */
-        left: 0;
-        width: 100%;
-        height: 100dvh; /* Full screen height */
-        background-color: #343A40; /* Current panel background */
+        left: -200px; /* Start fully off-screen left */
+        top: 0;
+        width: 200px; /* 5:10 aspect ratio, height will be 400px */
+        height: 400px; /* 5:10 aspect ratio of 200px width */
+        background-color: #000E1C; /* Panel background */
         padding: 20px;
         box-sizing: border-box;
-        transition: bottom 0.8s ease-out; /* Smooth slide-up with slowdown */
+        transition: left 0.8s ease-out; /* Smooth slide-in with slowdown */
         z-index: 1001;
         overflow-y: auto;
-        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
+        box-shadow: 2px 0 6px rgba(0, 0, 0, 0.4); /* Drop shadow on right */
+        border-radius: 2px; /* Subtle 2px curve */
     }
 
     #control-panel.dark {
-        background-color: #2B2F33;
+        background-color: #000A14;
     }
 
     #control-panel.open {
-        bottom: 0; /* Slide up fully */
+        left: 0; /* Slide in fully against left edge */
     }
 
     #control-panel .header {
-        background-color: #212529; /* Darker header */
+        background-color: #000A14; /* Darker header (a few shades less) */
         padding: 10px;
         margin: -20px -20px 20px -20px; /* Extend to panel edges */
         display: flex;
         justify-content: space-between;
         align-items: center;
+        border-radius: 2px 2px 0 0; /* Match top corners */
     }
 
     #control-panel .header h3 {
-        color: #FFFFFF;
+        color: #0481FF; /* Title color */
         font-size: 14px;
         font-weight: bold;
         margin: 0;
@@ -102,13 +92,13 @@ const layoutStyles = `
         background: none;
         border: none;
         cursor: pointer;
-        color: #FFFFFF;
+        color: #F8F9FA; /* Off-white X */
         font-size: 18px;
         padding: 5px;
     }
 
     #control-panel .close-btn:hover {
-        color: #CCCCCC;
+        color: #E9ECEF; /* Slightly lighter off-white on hover */
     }
 
     .control-section {
@@ -118,18 +108,18 @@ const layoutStyles = `
     .control-item {
         padding: 8px;
         cursor: pointer;
-        color: #FFFFFF;
+        color: #F8F9FA; /* Off-white text */
         transition: background-color 0.2s ease;
     }
 
     .control-item:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(248, 249, 250, 0.1); /* Off-white hover */
     }
 
     .panel-divider {
         width: 100%;
         height: 1px;
-        background-color: rgba(255, 255, 255, 0.2); /* Horizontal divider */
+        background-color: #F8F9FA; /* Off-white divider */
         margin: 8px 0;
     }
 `;
@@ -148,7 +138,7 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control panel with a bottom bar and sliding full-screen panel with dividers.
+ * Initializes the control panel with a floating bottom bar and sliding left panel with dividers.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
@@ -172,30 +162,12 @@ export function initViewportLayouts() {
         canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
     }
 
-    // Initialize bottom bar with sections
+    // Initialize bottom bar with options
     let isOpen = false;
     let currentPanel = null;
-
-    // Top half (placeholder for "other things")
-    const topSection = document.createElement('div');
-    topSection.className = 'control-section';
-    const otherOption = document.createElement('div');
-    otherOption.className = 'control-option';
-    otherOption.textContent = 'Other'; // Placeholder
-    otherOption.addEventListener('click', (e) => {
-        e.stopPropagation();
-        // Add future functionality here
-        console.log('Other option clicked');
-    });
-    topSection.appendChild(otherOption);
-    controlBar.appendChild(topSection);
-
-    // Bottom half (Layouts and Library)
-    const bottomSection = document.createElement('div');
-    bottomSection.className = 'control-section';
     const options = [
-        { name: 'Layouts', label: 'Layouts' },
-        { name: 'Library', label: 'Library' }
+        { name: 'Library', label: 'Library' },
+        { name: 'Layouts', label: 'Layouts' }
     ];
     options.forEach((opt, index) => {
         const option = document.createElement('div');
@@ -213,14 +185,8 @@ export function initViewportLayouts() {
                 currentPanel = null;
             }
         });
-        bottomSection.appendChild(option);
-        if (index === 0) {
-            const divider = document.createElement('div');
-            divider.className = 'divider';
-            bottomSection.appendChild(divider);
-        }
+        controlBar.appendChild(option);
     });
-    controlBar.appendChild(bottomSection);
 
     function showPanel(type) {
         panel.innerHTML = '';
