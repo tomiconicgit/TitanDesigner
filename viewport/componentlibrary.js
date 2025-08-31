@@ -1,57 +1,65 @@
 const libraryStyles = `
     #library-toggle {
         position: fixed;
-        top: 150px; /* Position as bottom tab, stacked below layouts */
+        top: 170px; /* Position below layouts tab */
         left: 0;
         width: 40px;
-        height: 120px;
-        background-color: #333;
-        color: white;
-        border: none;
-        border-right: 2px solid #444;
+        height: 120px; /* Tall enough for vertical text */
+        background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
+        backdrop-filter: blur(10px);
+        color: #ffffff;
+        border: 1px solid rgba(68, 68, 68, 0.5);
+        border-left: none; /* Remove left border to attach to screen */
+        border-right: 1px solid rgba(68, 68, 68, 0.5);
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         cursor: pointer;
         z-index: 1000;
-        transform: rotate(90deg);
-        transform-origin: bottom left;
         padding: 5px 0;
         white-space: pre;
         text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     #library-panel {
         position: fixed;
-        bottom: 0;
-        left: -400px; /* Start off-screen */
-        width: 400px;
+        top: 170px; /* Align with tab */
+        left: 0; /* Start at left edge with tab */
+        width: 0; /* Initially hidden */
         height: 200px;
-        background-color: #222;
-        color: white;
+        background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
+        backdrop-filter: blur(15px);
+        color: #ffffff;
         padding: 20px;
         box-sizing: border-box;
-        border-top: 2px solid #444;
-        transition: left 0.3s ease;
+        border-left: none; /* No left border */
+        border-right: 1px solid rgba(68, 68, 68, 0.5);
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        transition: width 0.3s ease; /* Slide out with tab */
         z-index: 1000;
         overflow-x: auto;
     }
 
     #library-panel.open {
-        left: 0; /* Slide in when open */
+        width: 400px; /* Slide out to full width */
     }
 
     .library-option {
         display: inline-block;
         padding: 10px;
         margin: 5px;
-        background-color: #444;
+        background-color: rgba(34, 34, 34, 0.7); /* Darker glassmorphic button */
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(68, 68, 68, 0.5);
         border-radius: 5px;
         cursor: pointer;
         text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .library-option:hover {
-        background-color: #555;
+        background-color: rgba(51, 51, 51, 0.8);
     }
 `;
 
