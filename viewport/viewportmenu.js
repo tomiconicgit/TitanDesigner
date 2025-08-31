@@ -39,7 +39,7 @@ const layoutStyles = `
         border-radius: 10px;
         padding: 10px;
         box-sizing: border-box;
-        transition: right 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), width 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Slower bounce effect */
+        transition: right 1.0s cubic-bezier(0.4, 0.0, 0.2, 1), width 1.0s cubic-bezier(0.4, 0.0, 0.2, 1); /* Slower, smoother expansion */
         z-index: 1000;
         overflow-y: auto;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -178,8 +178,7 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateAspectRatio }) => {
                                 updateAspectRatio(ratio);
-                                panel.classList.remove('open');
-                                isOpen = false;
+                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -192,8 +191,7 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateOrientation }) => {
                                 updateOrientation(orient.toLowerCase());
-                                panel.classList.remove('open');
-                                isOpen = false;
+                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -206,8 +204,6 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateColourScheme }) => {
                                 updateColourScheme(scheme.toLowerCase());
-                                panel.classList.remove('open');
-                                isOpen = false;
                                 if (scheme === 'dark') {
                                     panel.classList.add('dark');
                                     toggleButton.classList.add('dark');
@@ -215,6 +211,7 @@ export function initViewportLayouts() {
                                     panel.classList.remove('dark');
                                     toggleButton.classList.remove('dark');
                                 }
+                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -227,8 +224,7 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateDynamicType }) => {
                                 updateDynamicType(type.toLowerCase());
-                                panel.classList.remove('open');
-                                isOpen = false;
+                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -241,8 +237,7 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updatePreviewMode }) => {
                                 updatePreviewMode(mode.toLowerCase());
-                                panel.classList.remove('open');
-                                isOpen = false;
+                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -258,8 +253,7 @@ export function initViewportLayouts() {
                 option.addEventListener('click', () => {
                     import('./viewport.js').then(({ addComponent }) => {
                         addComponent(type);
-                        panel.classList.remove('open');
-                        isOpen = false;
+                        // Do not close the panel here; keep it expanded
                     });
                 });
                 panel.appendChild(option);
