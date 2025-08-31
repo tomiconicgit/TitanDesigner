@@ -9,7 +9,7 @@ const layoutStyles = `
         backdrop-filter: blur(10px);
         color: #ffffff;
         border: 1px solid rgba(68, 68, 68, 0.5);
-        border-left: none; /* Remove left border to attach to screen */
+        border-left: none; /* No left border to attach to screen */
         border-right: 1px solid rgba(68, 68, 68, 0.5);
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
@@ -24,8 +24,8 @@ const layoutStyles = `
     #viewport-panel {
         position: fixed;
         top: 50px; /* Align with tab */
-        left: 0; /* Start at left edge with tab */
-        width: 0; /* Initially hidden */
+        left: -350px; /* Start fully off-screen left */
+        width: 350px;
         height: 280px; /* 5:4 aspect ratio */
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(15px);
@@ -36,13 +36,13 @@ const layoutStyles = `
         border-right: 1px solid rgba(68, 68, 68, 0.5);
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px;
-        transition: width 0.3s ease; /* Slide out with tab */
+        transition: left 0.3s ease; /* Slide in with tab */
         z-index: 1000;
         overflow-y: auto;
     }
 
     #viewport-panel.open {
-        width: 350px; /* Slide out to full width */
+        left: -175px; /* Slide in halfway (350px / 2) */
     }
 
     .viewport-option {
