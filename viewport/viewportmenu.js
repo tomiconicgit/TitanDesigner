@@ -4,7 +4,7 @@ const layoutStyles = `
         bottom: 0;
         left: 0;
         width: 100%;
-        height: calc(100dvh - 300px); /* Height from bottom to just below viewport (e.g., iPhone 15 Pro Max canvas height ~300px) */
+        height: 80px; /* Compact height below viewport */
         background: linear-gradient(to bottom, #343A40, #2B2F33); /* Current color with slight gradient */
         border-top: 1px solid rgba(0, 0, 0, 0.2);
         display: flex;
@@ -34,7 +34,7 @@ const layoutStyles = `
 
     .control-option {
         width: 100%;
-        height: 50%;
+        height: 100%; /* Full height of each section */
         background-color: transparent;
         color: #FFFFFF; /* White text */
         font-size: 16px;
