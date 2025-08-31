@@ -42,7 +42,7 @@ const libraryStyles = `
     }
 
     #library-panel.open {
-        left: 0; /* Slide fully on-screen, adjust if halfway intent differs */
+        left: 65px; /* Slide halfway (430px - 400px/2 + adjustment) */
     }
 
     .library-option {
