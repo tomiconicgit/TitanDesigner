@@ -1,7 +1,7 @@
 const layoutStyles = `
     #viewport-toggle {
         position: fixed;
-        top: calc(50% - 120px); /* Position above center */
+        top: 50px; /* Fixed position above center */
         left: 0;
         width: 40px;
         height: 120px; /* Tall enough for vertical text */
@@ -40,31 +40,10 @@ const layoutStyles = `
         transition: left 0.3s ease; /* Slide in with tab */
         z-index: 1000;
         overflow-y: auto; /* Ensure all content is scrollable */
-        position: relative; /* For fade positioning */
     }
 
     #viewport-panel.open {
         left: 0; /* Slide fully on-screen to show all buttons */
-    }
-
-    #viewport-panel::before, #viewport-panel::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 30px; /* Fade height */
-        pointer-events: none; /* Allow scrolling through fade */
-        z-index: 1; /* Above content */
-    }
-
-    #viewport-panel::before {
-        top: 0;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
-    }
-
-    #viewport-panel::after {
-        bottom: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
     }
 
     .viewport-option {
@@ -125,6 +104,9 @@ export function initViewportLayouts() {
 
     toggleButton.addEventListener('click', () => {
         panel.classList.toggle('open');
+        if (panel.classList.contains('open')) {
+            document.getElementById('library-panel')?.classList.remove('open'); // Close other panel
+        }
     });
 
     // Add sections for Xcode-like options
@@ -201,6 +183,15 @@ export function initViewportLayouts() {
                 });
                 sectionDiv.appendChild(option);
             });
+        }
+    });
+
+    // Tap-off-to-close functionality
+    document.addEventListener('click', (event) => {
+        const panel = document.getElementById('viewport-panel');
+        const toggle = document.getElementById('viewport-toggle');
+        if (!panel.contains(event.target) && !toggle.contains(event.target) && panel.classList.contains('open')) {
+            panel.classList.remove('open');
         }
     });
 }
