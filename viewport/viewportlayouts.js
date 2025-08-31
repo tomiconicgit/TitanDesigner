@@ -15,7 +15,7 @@ const layoutStyles = `
         align-items: center;
         justify-content: center;
         z-index: 1001;
-        transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     #control-toggle.dark {
@@ -28,34 +28,35 @@ const layoutStyles = `
         color: #005bb5;
     }
 
-    #control-sidebar {
+    #control-panel {
         position: fixed;
-        top: 0;
-        right: -250px;
-        width: 250px;
-        height: 100vh;
+        top: 50px; /* Below toggle */
+        right: -200px; /* Start off-screen right */
+        width: 200px; /* Initial small width */
+        height: auto;
         background-color: #ffffff; /* Light theme */
-        border-left: 1px solid rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
         padding: 10px;
         box-sizing: border-box;
-        transition: right 0.3s ease;
+        transition: right 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), width 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bounce effect */
         z-index: 1000;
         overflow-y: auto;
-        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
-    #control-sidebar.dark {
+    #control-panel.dark {
         background-color: #1c1c1e;
         color: #ffffff;
         border-color: rgba(255, 255, 255, 0.1);
     }
 
-    #control-sidebar.open {
+    #control-panel.open {
         right: 0;
     }
 
-    .control-section {
-        margin-bottom: 15px;
+    #control-panel.expanded {
+        width: 50vw; /* Halfway across screen */
     }
 
     .control-option {
@@ -86,6 +87,10 @@ const layoutStyles = `
     .control-option.dark:hover {
         background-color: #3a3a3c;
     }
+
+    .control-section {
+        margin-bottom: 15px;
+    }
 `;
 
 // Device list from original
@@ -102,7 +107,7 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control sidebar with Xcode-like compact layout.
+ * Initializes the control panel with Xcode-like compact layout.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
@@ -115,28 +120,55 @@ export function initViewportLayouts() {
     toggleButton.textContent = '☰'; // Hamburger icon
     document.body.appendChild(toggleButton);
 
-    // Control sidebar
-    const sidebar = document.createElement('div');
-    sidebar.id = 'control-sidebar';
-    document.body.appendChild(sidebar);
+    // Control panel
+    const panel = document.createElement('div');
+    panel.id = 'control-panel';
+    document.body.appendChild(panel);
 
     // Sync theme with viewport
     const canvas = document.getElementById('canvas');
     if (canvas) {
-        canvas.classList.contains('dark') ? sidebar.classList.add('dark') : sidebar.classList.remove('dark');
+        canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
         toggleButton.classList.toggle('dark', canvas.classList.contains('dark'));
     }
 
+    // Initial small panel with options
+    let isOpen = false;
+    toggleButton.addEventListener('click', () => {
+        isOpen = !isOpen;
+        panel.classList.toggle('open', isOpen);
+        if (isOpen) {
+            showInitialOptions();
+            panel.classList.remove('expanded');
+        } else {
+            panel.classList.remove('expanded');
+        }
+    });
+
+    function showInitialOptions() {
+        panel.innerHTML = ''; // Clear previous content
+        const options = ['Layouts', 'Library'];
+        options.forEach(opt => {
+            const option = document.createElement('div');
+            option.className = 'control-option';
+            option.textContent = opt;
+            option.addEventListener('click', () => {
+                panel.classList.add('expanded');
+                showPanel(opt.toLowerCase());
+            });
+            panel.appendChild(option);
+        });
+    }
+
     function showPanel(type) {
-        sidebar.innerHTML = ''; // Clear previous content
-        sidebar.classList.add('open');
+        panel.innerHTML = ''; // Clear previous content
         if (type === 'layouts') {
             const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
             sections.forEach(section => {
                 const sectionDiv = document.createElement('div');
                 sectionDiv.className = 'control-section';
                 sectionDiv.innerHTML = `<h3>${section}</h3>`;
-                sidebar.appendChild(sectionDiv);
+                panel.appendChild(sectionDiv);
 
                 if (section === 'Device') {
                     Object.entries(deviceOptions).forEach(([name, ratio]) => {
@@ -146,7 +178,8 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateAspectRatio }) => {
                                 updateAspectRatio(ratio);
-                                sidebar.classList.remove('open');
+                                panel.classList.remove('open');
+                                isOpen = false;
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -159,7 +192,8 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateOrientation }) => {
                                 updateOrientation(orient.toLowerCase());
-                                sidebar.classList.remove('open');
+                                panel.classList.remove('open');
+                                isOpen = false;
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -172,12 +206,13 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateColourScheme }) => {
                                 updateColourScheme(scheme.toLowerCase());
-                                sidebar.classList.remove('open');
+                                panel.classList.remove('open');
+                                isOpen = false;
                                 if (scheme === 'dark') {
-                                    sidebar.classList.add('dark');
+                                    panel.classList.add('dark');
                                     toggleButton.classList.add('dark');
                                 } else {
-                                    sidebar.classList.remove('dark');
+                                    panel.classList.remove('dark');
                                     toggleButton.classList.remove('dark');
                                 }
                             });
@@ -192,7 +227,8 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateDynamicType }) => {
                                 updateDynamicType(type.toLowerCase());
-                                sidebar.classList.remove('open');
+                                panel.classList.remove('open');
+                                isOpen = false;
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -205,7 +241,8 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updatePreviewMode }) => {
                                 updatePreviewMode(mode.toLowerCase());
-                                sidebar.classList.remove('open');
+                                panel.classList.remove('open');
+                                isOpen = false;
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -221,30 +258,21 @@ export function initViewportLayouts() {
                 option.addEventListener('click', () => {
                     import('./viewport.js').then(({ addComponent }) => {
                         addComponent(type);
-                        sidebar.classList.remove('open');
+                        panel.classList.remove('open');
+                        isOpen = false;
                     });
                 });
-                sidebar.appendChild(option);
+                panel.appendChild(option);
             });
         }
     }
 
-    // Initial panel setup with a toggle mechanism
-    let isOpen = false;
-    toggleButton.addEventListener('click', () => {
-        isOpen = !isOpen;
-        sidebar.classList.toggle('open', isOpen);
-        if (isOpen) {
-            showPanel('layouts'); // Default to layouts on open
-        }
-    });
-
     // Tap-off-to-close functionality
     document.addEventListener('click', (event) => {
-        const sidebar = document.getElementById('control-sidebar');
+        const panel = document.getElementById('control-panel');
         const toggle = document.getElementById('control-toggle');
-        if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
-            sidebar.classList.remove('open');
+        if (!panel.contains(event.target) && !toggle.contains(event.target) && panel.classList.contains('open')) {
+            panel.classList.remove('open');
             isOpen = false;
         }
     });
