@@ -1,34 +1,74 @@
-// This module is responsible for turning the layoutSchema into a visible UI.
-import { layoutSchema } from './layoutschema.js';
-
 /**
- * Renders all components from the layoutSchema onto the canvas.
+ * Renderer module for rendering components onto the canvas.
  */
 export function render() {
     const canvas = document.getElementById('canvas');
-    if (!canvas) return;
+    if (!canvas) {
+        console.error("Canvas not found for rendering.");
+        return;
+    }
 
-    // Clear the canvas before rendering
+    // Clear existing content
     canvas.innerHTML = '';
 
-    // Loop through each component in the schema and create a DOM element for it
-    layoutSchema.forEach(component => {
-        const element = document.createElement('div');
-        element.id = component.id;
-        element.textContent = component.props.text || component.type;
-
-        // Apply basic styles for positioning and appearance
-        element.style.position = 'absolute';
-        element.style.left = `${component.props.x}px`;
-        element.style.top = `${component.props.y}px`;
-        element.style.width = '150px';
-        element.style.padding = '10px';
-        element.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-        element.style.color = 'white';
-        element.style.borderRadius = '8px';
-        element.style.textAlign = 'center';
-        element.style.boxSizing = 'border-box';
-
-        canvas.appendChild(element);
+    // Fetch components from schema
+    import('./layoutschema.js').then(({ getComponents }) => {
+        const components = getComponents();
+        components.forEach(component => {
+            const element = createComponentElement(component);
+            if (element) {
+                canvas.appendChild(element);
+            }
+        });
+    }).catch(error => {
+        console.error("Error loading components:", error);
     });
 }
+
+/**
+ * Creates a DOM element for a given component.
+ * @param {Object} component The component object with id, type, and props.
+ * @returns {HTMLElement} The created element or null if type is unsupported.
+ */
+function createComponentElement(component) {
+    let element;
+    switch (component.type) {
+        case 'Text':
+            element = document.createElement('div');
+            element.style.position = 'absolute';
+            element.style.left = `${component.props.x}px`;
+            element.style.top = `${component.props.y}px`;
+            element.style.color = component.props.color || '#ffffff';
+            element.style.fontSize = getDynamicFontSize();
+            element.textContent = component.props.text || 'Unnamed Text';
+            break;
+        // Add more component types (e.g., 'Image', 'Shape') as needed
+        default:
+            console.warn(`Unsupported component type: ${component.type}`);
+            return null;
+    }
+    element.dataset.componentId = component.id;
+    return element;
+}
+
+/**
+ * Gets the font size based on the dynamic type setting from viewport.js.
+ * @returns {string} The font size in em units.
+ */
+function getDynamicFontSize() {
+    const canvas = document.getElementById('canvas');
+    if (canvas && canvas.classList.contains('large-text')) {
+        return '1.2em';
+    }
+    return '1em';
+}
+
+/**
+ * Updates the rendering when the canvas state changes (e.g., color scheme, dynamic type).
+ */
+export function updateRender() {
+    render();
+}
+
+// Export for external triggering (e.g., from interactions.js)
+export default { render, updateRender };
