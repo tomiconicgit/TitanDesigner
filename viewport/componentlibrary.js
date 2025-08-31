@@ -1,7 +1,7 @@
 const libraryStyles = `
     #library-toggle {
         position: fixed;
-        top: calc(50% + 120px); /* Position below center */
+        top: calc(50px + 120px); /* Fixed position below viewport toggle */
         left: 0;
         width: 40px;
         height: 120px; /* Tall enough for vertical text */
@@ -40,31 +40,10 @@ const libraryStyles = `
         transition: left 0.3s ease; /* Slide in with tab */
         z-index: 1000;
         overflow-y: auto; /* Ensure all content is scrollable */
-        position: relative; /* For fade positioning */
     }
 
     #library-panel.open {
         left: 0; /* Slide fully on-screen to show all buttons */
-    }
-
-    #library-panel::before, #library-panel::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 30px; /* Fade height */
-        pointer-events: none; /* Allow scrolling through fade */
-        z-index: 1; /* Above content */
-    }
-
-    #library-panel::before {
-        top: 0;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
-    }
-
-    #library-panel::after {
-        bottom: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
     }
 
     .library-option {
@@ -110,6 +89,9 @@ export function initComponentLibrary() {
 
     toggleButton.addEventListener('click', () => {
         panel.classList.toggle('open');
+        if (panel.classList.contains('open')) {
+            document.getElementById('viewport-panel')?.classList.remove('open'); // Close other panel
+        }
     });
 
     // Populate panel with component options
@@ -120,9 +102,18 @@ export function initComponentLibrary() {
         option.addEventListener('click', () => {
             import('./viewport.js').then(({ addComponent }) => {
                 addComponent(type);
-                panel.classList.remove('open'); // Close panel after addition
+                panel.classList.remove('open');
             });
         });
         panel.appendChild(option);
+    });
+
+    // Tap-off-to-close functionality
+    document.addEventListener('click', (event) => {
+        const panel = document.getElementById('library-panel');
+        const toggle = document.getElementById('library-toggle');
+        if (!panel.contains(event.target) && !toggle.contains(event.target) && panel.classList.contains('open')) {
+            panel.classList.remove('open');
+        }
     });
 }
