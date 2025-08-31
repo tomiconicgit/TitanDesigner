@@ -12,7 +12,7 @@ const canvasStyles = `
     #canvas {
         width: 100%;
         height: auto;
-        max-width: 340px; /* Balanced size for building */
+        max-width: 306px; /* Reduced to 90% of 340px for more room */
         background-color: #000000;
         border: 8px solid #424242; /* Realistic iPhone frame */
         border-radius: 40px; /* Rounded corners like iPhone */
@@ -98,7 +98,15 @@ export function updateComponentProps(id, props) {
 // Re-export existing functions with British spelling
 export function updateAspectRatio(ratio) {
     const canvas = document.getElementById('canvas');
-    if (canvas) canvas.style.aspectRatio = ratio;
+    if (canvas) {
+        const [width, height] = ratio.split('/').map(Number);
+        const scaleFactor = 0.9; // 90% of original size
+        const viewportWidth = (window.innerWidth * scaleFactor * width) / Math.max(width, height);
+        const viewportHeight = (window.innerHeight * scaleFactor * height) / Math.max(width, height);
+        canvas.style.width = `${viewportWidth}px`;
+        canvas.style.height = `${viewportHeight}px`;
+        canvas.style.aspectRatio = ratio; // Ensure aspect ratio is maintained
+    }
 }
 
 export function updateOrientation(orient) {
