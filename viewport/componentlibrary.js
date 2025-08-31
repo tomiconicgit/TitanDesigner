@@ -24,9 +24,9 @@ const libraryStyles = `
     #library-panel {
         position: fixed;
         top: 170px; /* Align with tab */
-        left: -400px; /* Start fully off-screen left */
-        width: 400px; /* Full width to show all content */
-        height: 200px;
+        left: -350px; /* Start fully off-screen left, match layouts width */
+        width: 350px; /* Standardized width to match layouts */
+        height: 280px; /* Standardized height to match layouts */
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(15px);
         color: #ffffff;
@@ -42,24 +42,28 @@ const libraryStyles = `
     }
 
     #library-panel.open {
-        left: 65px; /* Slide halfway (430px - 400px/2 + adjustment) */
+        left: -175px; /* Slide halfway, 175px visible */
     }
 
     .library-option {
         display: inline-block;
+        width: 100px; /* Neater, fixed width */
+        height: 40px; /* Neater, fixed height */
         padding: 10px;
-        margin: 5px;
-        background-color: rgba(34, 34, 34, 0.7); /* Darker glassmorphic button */
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(68, 68, 68, 0.5);
+        margin: 5px 0;
+        background-color: rgba(245, 245, 245, 0.9); /* Off-white background */
+        backdrop-filter: blur(5px);
+        color: #333333; /* Dark text for readability */
+        border: 1px solid rgba(68, 68, 68, 0.3);
         border-radius: 5px;
         cursor: pointer;
         text-align: center;
+        line-height: 20px; /* Vertical centering */
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .library-option:hover {
-        background-color: rgba(51, 51, 51, 0.8);
+        background-color: rgba(230, 230, 230, 0.9); /* Lighter off-white on hover */
     }
 `;
 
