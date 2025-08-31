@@ -44,8 +44,8 @@ function route() {
             type: 'Text',
             props: {
                 text: 'Canvas Ready',
-                x: 125,
-                y: 150
+                x: 170, // Centred horizontally in 340px canvas
+                y: 466  // Centred vertically in 932px aspect ratio, scaled to canvas height
             }
         };
         schema.addComponent(initialComponent);
