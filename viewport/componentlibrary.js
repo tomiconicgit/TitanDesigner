@@ -42,14 +42,14 @@ const libraryStyles = `
     }
 
     #library-panel.open {
-        left: -175px; /* Slide halfway, 175px visible */
+        left: 0; /* Slide fully on-screen to show all buttons */
     }
 
     .library-option {
         display: inline-block;
         width: 100px; /* Neater, fixed width */
-        height: 40px; /* Neater, fixed height */
-        padding: 10px;
+        height: 25px; /* Reduced height for compactness */
+        padding: 5px; /* Adjusted padding for smaller height */
         margin: 5px 0;
         background-color: rgba(245, 245, 245, 0.9); /* Off-white background */
         backdrop-filter: blur(5px);
@@ -58,7 +58,7 @@ const libraryStyles = `
         border-radius: 5px;
         cursor: pointer;
         text-align: center;
-        line-height: 20px; /* Vertical centering */
+        line-height: 15px; /* Adjusted for smaller height */
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
