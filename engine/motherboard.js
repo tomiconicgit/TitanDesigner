@@ -6,8 +6,7 @@ import * as renderer from './renderer.js';
 // Import viewport initializers
 import { initViewportPage } from '../viewport/viewportpage.js';
 import { createCanvas, updateAspectRatio, updateOrientation, updateColourScheme, updateDynamicType, updatePreviewMode } from '../viewport/viewport.js';
-import { initViewportLayouts } from '../viewport/viewportlayouts.js';
-import { initComponentLibrary } from '../viewport/componentlibrary.js';
+import { initViewportLayouts } from '../viewport/viewportmenu.js'; // Updated import
 import { initCustomisationToolbar } from '../viewport/customisationtoolbar.js';
 
 /**
@@ -35,7 +34,6 @@ function route() {
         }
 
         // 4. Initialize toolbars
-        initComponentLibrary();
         initCustomisationToolbar();
 
         // 5. Define and add the initial component to the schema
@@ -53,7 +51,7 @@ function route() {
         // 6. Render the initial component
         renderer.render();
 
-        // 7. Initialize the viewport layouts panel (Xcode-like controls)
+        // 7. Initialize the viewport menu panel (Xcode-like controls)
         initViewportLayouts();
 
         // 8. Initialize interactions
