@@ -1,47 +1,75 @@
 const layoutStyles = `
-    #control-toggle {
+    #control-bar {
         position: fixed;
-        bottom: 10px;
-        right: 10px;
-        width: 40px;
-        height: 40px;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 50px;
         background-color: rgba(255, 255, 255, 0.9); /* Light theme */
         border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 6px;
-        color: #007aff; /* iOS system blue */
-        font-size: 18px;
-        cursor: pointer;
+        border-radius: 25px; /* Pill shape */
         display: flex;
         align-items: center;
-        justify-content: center;
-        z-index: 1001;
-        transition: background-color 0.2s ease, color 0.2s ease;
+        justify-content: space-around;
+        z-index: 1002;
+        transition: background-color 0.2s ease;
     }
 
-    #control-toggle.dark {
+    #control-bar.dark {
         background-color: rgba(28, 28, 30, 0.9);
         border-color: rgba(255, 255, 255, 0.1);
     }
 
-    #control-toggle:hover {
+    #control-bar:hover {
         background-color: rgba(0, 122, 255, 0.1);
+    }
+
+    .control-option {
+        width: 90px;
+        height: 40px;
+        background-color: transparent;
+        color: #007aff; /* iOS system blue */
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+    }
+
+    .control-option:hover {
         color: #005bb5;
+    }
+
+    .control-option.dark {
+        color: #0a84ff;
+    }
+
+    .control-option.dark:hover {
+        color: #0066cc;
+    }
+
+    .divider {
+        width: 1px;
+        height: 30px;
+        background-color: rgba(0, 0, 0, 0.1);
     }
 
     #control-panel {
         position: fixed;
-        bottom: -300px; /* Start fully off-screen bottom */
-        left: 0;
-        width: 100%;
-        max-height: 300px; /* Fixed height for bottom panel */
+        top: 0;
+        right: -400px; /* Start fully off-screen right */
+        width: 400px;
+        height: 100dvh; /* Full screen height */
         background-color: #2E2E2E; /* Match Xcode background */
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 10px;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 20px;
         box-sizing: border-box;
-        transition: bottom 1.0s cubic-bezier(0.4, 0.0, 0.2, 1); /* Slower, smoother slide up */
-        z-index: 1000;
+        transition: right 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Ease-in-out with bounce */
+        z-index: 1001;
         overflow-y: auto;
-        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.2);
     }
 
     #control-panel.dark {
@@ -51,47 +79,22 @@ const layoutStyles = `
     }
 
     #control-panel.open {
-        bottom: 0; /* Slide up to bottom edge */
-    }
-
-    #control-panel.expanded {
-        max-height: calc(50vh - 20px); /* Half screen height with padding */
-    }
-
-    .control-option {
-        display: inline-block;
-        width: 40px;
-        height: 40px;
-        padding: 5px;
-        margin: 5px;
-        background-color: #f5f5f5;
-        color: #333333;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 6px;
-        cursor: pointer;
-        text-align: center;
-        line-height: 30px;
-        font-size: 20px;
-        transition: background-color 0.2s ease;
-    }
-
-    .control-option:hover {
-        background-color: #e0e0e0;
-    }
-
-    .control-option.dark {
-        background-color: #2c2c2e;
-        color: #ffffff;
-    }
-
-    .control-option.dark:hover {
-        background-color: #3a3a3c;
+        right: 0; /* Slide out fully */
     }
 
     .control-section {
-        margin-bottom: 15px;
-        display: flex;
-        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .control-item {
+        padding: 10px;
+        cursor: pointer;
+        color: #ffffff;
+        transition: background-color 0.2s ease;
+    }
+
+    .control-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
     }
 `;
 
@@ -109,18 +112,17 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control panel with Xcode-like compact layout at the bottom.
+ * Initializes the control panel with a pill-shaped bar and sliding side panel.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
     styleElement.textContent = layoutStyles;
     document.head.appendChild(styleElement);
 
-    // Toggle button
-    const toggleButton = document.createElement('button');
-    toggleButton.id = 'control-toggle';
-    toggleButton.textContent = '▲'; // Up arrow to indicate sliding up
-    document.body.appendChild(toggleButton);
+    // Control bar
+    const controlBar = document.createElement('div');
+    controlBar.id = 'control-bar';
+    document.body.appendChild(controlBar);
 
     // Control panel
     const panel = document.createElement('div');
@@ -130,49 +132,43 @@ export function initViewportLayouts() {
     // Sync theme with viewport
     const canvas = document.getElementById('canvas');
     if (canvas) {
+        canvas.classList.contains('dark') ? controlBar.classList.add('dark') : controlBar.classList.remove('dark');
         canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
-        toggleButton.classList.toggle('dark', canvas.classList.contains('dark'));
     }
 
-    // Initial small panel with icon options
+    // Initialize pill bar with options
     let isOpen = false;
-    let currentPanel = null; // Track the current panel type
-    toggleButton.addEventListener('click', () => {
-        isOpen = !isOpen;
-        panel.classList.toggle('open', isOpen);
-        if (isOpen && !panel.classList.contains('expanded')) {
-            showInitialOptions();
-            panel.classList.remove('expanded');
-            currentPanel = null; // Reset current panel on toggle open
-        } else if (!isOpen) {
-            panel.classList.remove('expanded');
-            currentPanel = null; // Reset on close
+    let currentPanel = null;
+    const options = [
+        { name: 'Layouts', label: 'Layouts' },
+        { name: 'Library', label: 'Library' }
+    ];
+    options.forEach((opt, index) => {
+        const option = document.createElement('div');
+        option.className = 'control-option';
+        option.textContent = opt.label;
+        option.dataset.type = opt.name.toLowerCase();
+        option.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isOpen = !isOpen;
+            panel.classList.toggle('open', isOpen);
+            if (isOpen) {
+                currentPanel = opt.name.toLowerCase();
+                showPanel(currentPanel);
+            } else {
+                currentPanel = null;
+            }
+        });
+        controlBar.appendChild(option);
+        if (index === 0) {
+            const divider = document.createElement('div');
+            divider.className = 'divider';
+            controlBar.appendChild(divider);
         }
     });
 
-    function showInitialOptions() {
-        panel.innerHTML = ''; // Clear previous content
-        const options = [
-            { name: 'Layouts', icon: '⧉' }, // Layout grid icon
-            { name: 'Library', icon: '📚' }  // Library book icon
-        ];
-        options.forEach(opt => {
-            const option = document.createElement('div');
-            option.className = 'control-option';
-            option.textContent = opt.icon;
-            option.dataset.type = opt.name.toLowerCase();
-            option.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent tap-off from closing immediately
-                panel.classList.add('expanded');
-                currentPanel = opt.name.toLowerCase();
-                showPanel(currentPanel);
-            });
-            panel.appendChild(option);
-        });
-    }
-
     function showPanel(type) {
-        panel.innerHTML = ''; // Clear previous content
+        panel.innerHTML = '';
         if (type === 'layouts') {
             const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
             sections.forEach(section => {
@@ -183,85 +179,85 @@ export function initViewportLayouts() {
 
                 if (section === 'Device') {
                     Object.entries(deviceOptions).forEach(([name, ratio]) => {
-                        const option = document.createElement('div');
-                        option.className = 'control-option';
-                        option.textContent = name.length > 15 ? name.substring(0, 15) + '...' : name;
-                        option.addEventListener('click', () => {
+                        const item = document.createElement('div');
+                        item.className = 'control-item';
+                        item.textContent = name.length > 15 ? name.substring(0, 15) + '...' : name;
+                        item.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateAspectRatio }) => {
                                 updateAspectRatio(ratio);
                             });
                         });
-                        sectionDiv.appendChild(option);
+                        sectionDiv.appendChild(item);
                     });
                 } else if (section === 'Orientation') {
                     ['Portrait', 'Landscape'].forEach(orient => {
-                        const option = document.createElement('div');
-                        option.className = 'control-option';
-                        option.textContent = orient;
-                        option.addEventListener('click', () => {
+                        const item = document.createElement('div');
+                        item.className = 'control-item';
+                        item.textContent = orient;
+                        item.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateOrientation }) => {
                                 updateOrientation(orient.toLowerCase());
                             });
                         });
-                        sectionDiv.appendChild(option);
+                        sectionDiv.appendChild(item);
                     });
                 } else if (section === 'Colour Scheme') {
                     ['Light', 'Dark'].forEach(scheme => {
-                        const option = document.createElement('div');
-                        option.className = 'control-option';
-                        option.textContent = scheme;
-                        option.addEventListener('click', () => {
+                        const item = document.createElement('div');
+                        item.className = 'control-item';
+                        item.textContent = scheme;
+                        item.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateColourScheme }) => {
                                 updateColourScheme(scheme.toLowerCase());
                                 if (scheme === 'dark') {
                                     panel.classList.add('dark');
-                                    toggleButton.classList.add('dark');
+                                    controlBar.classList.add('dark');
                                 } else {
                                     panel.classList.remove('dark');
-                                    toggleButton.classList.remove('dark');
+                                    controlBar.classList.remove('dark');
                                 }
                             });
                         });
-                        sectionDiv.appendChild(option);
+                        sectionDiv.appendChild(item);
                     });
                 } else if (section === 'Dynamic Type') {
                     ['Small', 'Large'].forEach(type => {
-                        const option = document.createElement('div');
-                        option.className = 'control-option';
-                        option.textContent = type;
-                        option.addEventListener('click', () => {
+                        const item = document.createElement('div');
+                        item.className = 'control-item';
+                        item.textContent = type;
+                        item.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateDynamicType }) => {
                                 updateDynamicType(type.toLowerCase());
                             });
                         });
-                        sectionDiv.appendChild(option);
+                        sectionDiv.appendChild(item);
                     });
                 } else if (section === 'Preview Mode') {
                     ['Live', 'Selectable'].forEach(mode => {
-                        const option = document.createElement('div');
-                        option.classList.add('control-option');
-                        option.textContent = mode;
-                        option.addEventListener('click', () => {
+                        const item = document.createElement('div');
+                        item.className = 'control-item';
+                        item.textContent = mode;
+                        item.addEventListener('click', () => {
                             import('./viewport.js').then(({ updatePreviewMode }) => {
                                 updatePreviewMode(mode.toLowerCase());
                             });
                         });
-                        sectionDiv.appendChild(option);
+                        sectionDiv.appendChild(item);
                     });
                 }
             });
         } else if (type === 'library') {
             const availableComponents = ['Text', 'Button', 'Header'];
             availableComponents.forEach(type => {
-                const option = document.createElement('div');
-                option.className = 'control-option';
-                option.textContent = type;
-                option.addEventListener('click', () => {
+                const item = document.createElement('div');
+                item.className = 'control-item';
+                item.textContent = type;
+                item.addEventListener('click', () => {
                     import('./viewport.js').then(({ addComponent }) => {
                         addComponent(type);
                     });
                 });
-                panel.appendChild(option);
+                panel.appendChild(item);
             });
         }
     }
@@ -269,12 +265,11 @@ export function initViewportLayouts() {
     // Tap-off-to-close functionality
     document.addEventListener('click', (event) => {
         const panel = document.getElementById('control-panel');
-        const toggle = document.getElementById('control-toggle');
-        if (!panel.contains(event.target) && !toggle.contains(event.target) && panel.classList.contains('open')) {
+        const bar = document.getElementById('control-bar');
+        if (!panel.contains(event.target) && !bar.contains(event.target) && panel.classList.contains('open')) {
             panel.classList.remove('open');
-            panel.classList.remove('expanded');
             isOpen = false;
-            currentPanel = null; // Reset current panel on close
+            currentPanel = null;
         }
     });
 }
