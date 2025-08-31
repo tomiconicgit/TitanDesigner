@@ -1,29 +1,40 @@
 const layoutStyles = `
     #control-bar {
         position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 200px;
-        height: 50px;
-        background: linear-gradient(to bottom, #343A40, #2B2F33); /* Updated to #343A40 with slight gradient */
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        border-radius: 25px; /* Pill shape */
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100dvh - 300px); /* Height from bottom to just below viewport (e.g., iPhone 15 Pro Max canvas height ~300px) */
+        background: linear-gradient(to bottom, #343A40, #2B2F33); /* Current color with slight gradient */
+        border-top: 1px solid rgba(0, 0, 0, 0.2);
         display: flex;
-        align-items: center;
-        justify-content: space-around;
+        flex-direction: column;
+        justify-content: space-between;
         z-index: 1002;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Retain drop shadow */
+        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3); /* Drop shadow above bar */
         transition: background-color 0.2s ease;
     }
 
     #control-bar.dark {
-        background: linear-gradient(to bottom, #2B2F33, #1E2226); /* Dark mode adjustment */
+        background: linear-gradient(to bottom, #2B2F33, #212529);
+    }
+
+    .control-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .control-section:last-child {
+        border-bottom: none;
     }
 
     .control-option {
-        width: 90px;
-        height: 40px;
+        width: 100%;
+        height: 50%;
         background-color: transparent;
         color: #FFFFFF; /* White text */
         font-size: 16px;
@@ -48,39 +59,27 @@ const layoutStyles = `
         color: #0A0A0A;
     }
 
-    .divider {
-        width: 1px;
-        height: 30px;
-        background-color: rgba(255, 255, 255, 0.2); /* White divider */
-    }
-
     #control-panel {
         position: fixed;
-        top: 50%;
-        right: -240px; /* Start fully off-screen right, 60% of viewport width (400px) */
-        width: 240px; /* Just over half, approximately 60% of a typical viewport */
-        height: 0; /* Initial height, will be calculated to 5:7 aspect ratio */
-        background-color: #343A40; /* Updated panel background */
-        border-left: 1px solid rgba(0, 0, 0, 0.1);
+        bottom: -100dvh; /* Start fully off-screen bottom */
+        left: 0;
+        width: 100%;
+        height: 100dvh; /* Full screen height */
+        background-color: #343A40; /* Current panel background */
         padding: 20px;
         box-sizing: border-box;
-        transition: right 0.6s ease-out; /* Slide out with slow deceleration */
+        transition: bottom 0.8s ease-out; /* Smooth slide-up with slowdown */
         z-index: 1001;
         overflow-y: auto;
-        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.2);
-        border-radius: 8px; /* Subtle rounded corners */
-        transform: translateY(-50%); /* Center vertically */
+        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
     }
 
     #control-panel.dark {
         background-color: #2B2F33;
-        color: #ffffff;
-        border-color: rgba(255, 255, 255, 0.1);
     }
 
     #control-panel.open {
-        right: 20px; /* Small gap from right edge, making it float */
-        height: 336px; /* 5:7 aspect ratio of 240px width (240 * 7 / 5) */
+        bottom: 0; /* Slide up fully */
     }
 
     #control-panel .header {
@@ -90,7 +89,6 @@ const layoutStyles = `
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-radius: 8px 8px 0 0; /* Match top corners */
     }
 
     #control-panel .header h3 {
@@ -114,11 +112,11 @@ const layoutStyles = `
     }
 
     .control-section {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
 
     .control-item {
-        padding: 10px;
+        padding: 8px;
         cursor: pointer;
         color: #FFFFFF;
         transition: background-color 0.2s ease;
@@ -132,7 +130,7 @@ const layoutStyles = `
         width: 100%;
         height: 1px;
         background-color: rgba(255, 255, 255, 0.2); /* Horizontal divider */
-        margin: 10px 0;
+        margin: 8px 0;
     }
 `;
 
@@ -150,7 +148,7 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control panel with a pill-shaped bar and sliding side panel with dividers.
+ * Initializes the control panel with a bottom bar and sliding full-screen panel with dividers.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
@@ -174,9 +172,27 @@ export function initViewportLayouts() {
         canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
     }
 
-    // Initialize pill bar with options
+    // Initialize bottom bar with sections
     let isOpen = false;
     let currentPanel = null;
+
+    // Top half (placeholder for "other things")
+    const topSection = document.createElement('div');
+    topSection.className = 'control-section';
+    const otherOption = document.createElement('div');
+    otherOption.className = 'control-option';
+    otherOption.textContent = 'Other'; // Placeholder
+    otherOption.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // Add future functionality here
+        console.log('Other option clicked');
+    });
+    topSection.appendChild(otherOption);
+    controlBar.appendChild(topSection);
+
+    // Bottom half (Layouts and Library)
+    const bottomSection = document.createElement('div');
+    bottomSection.className = 'control-section';
     const options = [
         { name: 'Layouts', label: 'Layouts' },
         { name: 'Library', label: 'Library' }
@@ -197,13 +213,14 @@ export function initViewportLayouts() {
                 currentPanel = null;
             }
         });
-        controlBar.appendChild(option);
+        bottomSection.appendChild(option);
         if (index === 0) {
             const divider = document.createElement('div');
             divider.className = 'divider';
-            controlBar.appendChild(divider);
+            bottomSection.appendChild(divider);
         }
     });
+    controlBar.appendChild(bottomSection);
 
     function showPanel(type) {
         panel.innerHTML = '';
