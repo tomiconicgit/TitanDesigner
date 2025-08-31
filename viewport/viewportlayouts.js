@@ -1,16 +1,23 @@
 const layoutStyles = `
     #viewport-toggle {
         position: fixed;
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
-        padding: 10px 15px;
+        top: 50px; /* Position as top tab */
+        left: 0;
+        width: 40px;
+        height: 120px;
         background-color: #333;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-right: 2px solid #444;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
         cursor: pointer;
         z-index: 1000;
+        transform: rotate(90deg);
+        transform-origin: bottom left;
+        padding: 5px 0;
+        white-space: pre;
+        text-align: center;
     }
 
     #viewport-panel {
@@ -75,7 +82,7 @@ export function initViewportLayouts() {
 
     const toggleButton = document.createElement('button');
     toggleButton.id = 'viewport-toggle';
-    toggleButton.textContent = 'Previews';
+    toggleButton.textContent = 'L\nA\nY\nO\nU\nT\nS';
     document.body.appendChild(toggleButton);
 
     const panel = document.createElement('div');
