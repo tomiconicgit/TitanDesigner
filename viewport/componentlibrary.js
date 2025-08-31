@@ -1,15 +1,23 @@
 const libraryStyles = `
     #library-toggle {
         position: fixed;
-        bottom: 20px;
-        left: 10px;
-        padding: 10px 15px;
-        background-colour: #333;
-        colour: white;
+        top: 150px; /* Position as bottom tab, stacked below layouts */
+        left: 0;
+        width: 40px;
+        height: 120px;
+        background-color: #333;
+        color: white;
         border: none;
-        border-radius: 5px;
+        border-right: 2px solid #444;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
         cursor: pointer;
         z-index: 1000;
+        transform: rotate(90deg);
+        transform-origin: bottom left;
+        padding: 5px 0;
+        white-space: pre;
+        text-align: center;
     }
 
     #library-panel {
@@ -18,8 +26,8 @@ const libraryStyles = `
         left: -400px; /* Start off-screen */
         width: 400px;
         height: 200px;
-        background-colour: #222;
-        colour: white;
+        background-color: #222;
+        color: white;
         padding: 20px;
         box-sizing: border-box;
         border-top: 2px solid #444;
@@ -36,21 +44,21 @@ const libraryStyles = `
         display: inline-block;
         padding: 10px;
         margin: 5px;
-        background-colour: #444;
+        background-color: #444;
         border-radius: 5px;
         cursor: pointer;
-        text-align: centre;
+        text-align: center;
     }
 
     .library-option:hover {
-        background-colour: #555;
+        background-color: #555;
     }
 `;
 
 const availableComponents = ['Text', 'Button', 'Header']; // Add more as files are created
 
 /**
- * Initialises the component library toolbar.
+ * Initializes the component library toolbar.
  */
 export function initComponentLibrary() {
     const styleElement = document.createElement('style');
@@ -59,7 +67,7 @@ export function initComponentLibrary() {
 
     const toggleButton = document.createElement('button');
     toggleButton.id = 'library-toggle';
-    toggleButton.textContent = 'Library';
+    toggleButton.textContent = 'L\nI\nB\nR\nA\nR\nY';
     document.body.appendChild(toggleButton);
 
     const panel = document.createElement('div');
