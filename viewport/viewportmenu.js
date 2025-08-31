@@ -5,7 +5,7 @@ const layoutStyles = `
         left: 0;
         right: 0;
         width: 100%; /* Touching left and right edges */
-        height: 60px; /* Reduced height */
+        height: 40px; /* Reduced vertical height */
         background: #000000; /* New color */
         border-top: 1px solid rgba(0, 0, 0, 0.2);
         display: flex;
@@ -43,9 +43,9 @@ const layoutStyles = `
 
     #control-panel {
         position: fixed;
-        right: -300px; /* Start fully off-screen right */
+        right: -100%; /* Start fully off-screen right */
         top: 0;
-        width: 300px; /* Slightly before left edge with 10px margin */
+        width: 100%; /* Expanded to touch right side */
         height: 100dvh; /* Full height */
         background-color: #111111; /* Panel background */
         padding: 20px;
@@ -61,7 +61,7 @@ const layoutStyles = `
     }
 
     #control-panel.open {
-        right: 10px; /* Slightly before left edge */
+        right: 0; /* Touch right side */
     }
 
     #control-panel .header {
@@ -136,7 +136,7 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control panel with a fixed bottom bar and sliding right panel with fade transitions.
+ * Initializes the control panel with a fixed bottom bar and sliding full-screen panel with fade transitions.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
@@ -206,7 +206,7 @@ export function initViewportLayouts() {
             options.forEach((opt, index) => {
                 const item = document.createElement('div');
                 item.className = 'control-item';
-                item.textContent = opt;
+                item.textContent = opt; // Off-white text
                 item.dataset.type = opt.toLowerCase();
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -245,7 +245,6 @@ export function initViewportLayouts() {
                 item.className = 'control-item active'; // Fade in
                 item.textContent = section;
                 item.addEventListener('click', () => {
-                    // Handle layout options (e.g., updateAspectRatio for Device)
                     if (section === 'Device') {
                         import('./viewport.js').then(({ updateAspectRatio }) => {
                             updateAspectRatio('430 / 932'); // Example, adjust as needed
