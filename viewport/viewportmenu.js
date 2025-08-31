@@ -137,10 +137,10 @@ export function initViewportLayouts() {
     toggleButton.addEventListener('click', () => {
         isOpen = !isOpen;
         panel.classList.toggle('open', isOpen);
-        if (isOpen) {
+        if (isOpen && !panel.classList.contains('expanded')) {
             showInitialOptions();
             panel.classList.remove('expanded');
-        } else {
+        } else if (!isOpen) {
             panel.classList.remove('expanded');
         }
     });
@@ -178,7 +178,6 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateAspectRatio }) => {
                                 updateAspectRatio(ratio);
-                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -191,7 +190,6 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateOrientation }) => {
                                 updateOrientation(orient.toLowerCase());
-                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -211,7 +209,6 @@ export function initViewportLayouts() {
                                     panel.classList.remove('dark');
                                     toggleButton.classList.remove('dark');
                                 }
-                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -224,7 +221,6 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateDynamicType }) => {
                                 updateDynamicType(type.toLowerCase());
-                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -237,7 +233,6 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updatePreviewMode }) => {
                                 updatePreviewMode(mode.toLowerCase());
-                                // Do not close the panel here; keep it expanded
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -253,7 +248,6 @@ export function initViewportLayouts() {
                 option.addEventListener('click', () => {
                     import('./viewport.js').then(({ addComponent }) => {
                         addComponent(type);
-                        // Do not close the panel here; keep it expanded
                     });
                 });
                 panel.appendChild(option);
