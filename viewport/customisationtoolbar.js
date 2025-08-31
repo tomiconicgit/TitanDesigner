@@ -1,22 +1,22 @@
 const customStyles = `
-    #custom-menu {
+    #customisation-menu {
         position: absolute;
-        background-color: #333;
-        color: white;
+        background-colour: #333;
+        colour: white;
         padding: 10px;
         border-radius: 5px;
         z-index: 1001;
         display: none;
     }
 
-    #custom-tools-panel {
+    #customisation-tools-panel {
         position: fixed;
         bottom: 0;
         left: 400px; /* Position next to library if open */
         width: 400px;
         height: 300px;
-        background-color: #222;
-        color: white;
+        background-colour: #222;
+        colour: white;
         padding: 20px;
         box-sizing: border-box;
         border-top: 2px solid #444;
@@ -26,13 +26,13 @@ const customStyles = `
         display: none;
     }
 
-    .custom-option {
+    .customisation-option {
         padding: 5px;
         cursor: pointer;
     }
 
-    .custom-option:hover {
-        background-color: #444;
+    .customisation-option:hover {
+        background-colour: #444;
     }
 
     .tools-section {
@@ -41,7 +41,7 @@ const customStyles = `
 `;
 
 /**
- * Initializes the customisation toolbar.
+ * Initialises the customisation toolbar.
  */
 export function initCustomisationToolbar() {
     const styleElement = document.createElement('style');
@@ -49,20 +49,20 @@ export function initCustomisationToolbar() {
     document.head.appendChild(styleElement);
 
     const menu = document.createElement('div');
-    menu.id = 'custom-menu';
+    menu.id = 'customisation-menu';
     document.body.appendChild(menu);
 
     const toolsPanel = document.createElement('div');
-    toolsPanel.id = 'custom-tools-panel';
+    toolsPanel.id = 'customisation-tools-panel';
     document.body.appendChild(toolsPanel);
 
     // Drop-down menu options
     const options = ['Edit Colour', 'Edit Size', 'Open Tools'];
     options.forEach(opt => {
         const option = document.createElement('div');
-        option.className = 'custom-option';
+        option.className = 'customisation-option';
         option.textContent = opt;
-        option.addEventListener('click', () => handleCustomOption(opt, menu.dataset.componentId));
+        option.addEventListener('click', () => handleCustomisationOption(opt, menu.dataset.componentId));
         menu.appendChild(option);
     });
 
@@ -75,7 +75,7 @@ export function initCustomisationToolbar() {
     toolsSection.innerHTML = '<h3>Tools</h3>';
     toolsOptions.forEach(tool => {
         const toolOption = document.createElement('div');
-        toolOption.className = 'custom-option';
+        toolOption.className = 'customisation-option';
         toolOption.textContent = tool;
         toolOption.addEventListener('click', () => console.log(`Customising ${tool} for component ${toolsPanel.dataset.componentId}`)); // Implement customisation logic
         toolsSection.appendChild(toolOption);
@@ -92,4 +92,36 @@ export function initCustomisationToolbar() {
 /**
  * Shows the drop-down menu for a component.
  * @param {HTMLElement} component The selected component element.
- * @param {number
+ * @param {number} x The x-position for the menu.
+ * @param {number} y The y-position for the menu.
+ */
+export function showCustomisationMenu(component, x, y) {
+    const menu = document.getElementById('customisation-menu');
+    menu.dataset.componentId = component.dataset.componentId;
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+    menu.style.display = 'block';
+}
+
+/**
+ * Handles selection from the customisation menu.
+ * @param {string} opt The selected option.
+ * @param {string} id The component ID.
+ */
+function handleCustomisationOption(opt, id) {
+    const menu = document.getElementById('customisation-menu');
+    menu.style.display = 'none';
+
+    if (opt === 'Open Tools') {
+        const toolsPanel = document.getElementById('customisation-tools-panel');
+        toolsPanel.dataset.componentId = id;
+        toolsPanel.style.display = 'block';
+    } else if (opt === 'Edit Colour') {
+        const newColour = prompt('Enter new colour (e.g., #ff0000)');
+        if (newColour) {
+            import('./viewport.js').then(({ updateComponentProps }) => {
+                updateComponentProps(id, { colour: newColour });
+            });
+        }
+    } // Add more options as needed
+}
