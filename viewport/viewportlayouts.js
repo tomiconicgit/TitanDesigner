@@ -5,8 +5,8 @@ const layoutStyles = `
         right: 10px;
         transform: translateY(-50%);
         padding: 10px 15px;
-        background-colour: #333;
-        colour: white;
+        background-color: #333;
+        color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -20,8 +20,8 @@ const layoutStyles = `
         transform: translateY(-50%);
         width: 350px;
         height: 280px; /* 5:4 aspect ratio */
-        background-colour: #222;
-        colour: white;
+        background-color: #222;
+        color: white;
         padding: 20px;
         box-sizing: border-box;
         border-left: 2px solid #444;
@@ -37,14 +37,14 @@ const layoutStyles = `
     .viewport-option {
         padding: 10px;
         margin-bottom: 10px;
-        background-colour: #444;
+        background-color: #444;
         border-radius: 5px;
         cursor: pointer;
-        text-align: centre;
+        text-align: center;
     }
 
     .viewport-option:hover {
-        background-colour: #555;
+        background-color: #555;
     }
 
     .viewport-section {
@@ -66,7 +66,7 @@ const deviceOptions = {
 };
 
 /**
- * Initialises the viewport layouts panel with Xcode-like controls.
+ * Initializes the viewport layouts panel with Xcode-like controls.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
