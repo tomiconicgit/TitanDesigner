@@ -4,8 +4,8 @@ const canvasStyles = `
         height: 100%;
         position: relative;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: centre;
+        justify-content: centre;
         box-sizing: border-box;
     }
 
@@ -13,7 +13,7 @@ const canvasStyles = `
         width: 100%;
         height: auto;
         max-width: 340px; /* Balanced size for building */
-        background-color: #000000;
+        background-colour: #000000;
         border: 8px solid #424242; /* Realistic iPhone frame */
         border-radius: 40px; /* Rounded corners like iPhone */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3); /* Realistic shadow */
@@ -24,8 +24,8 @@ const canvasStyles = `
     }
 
     #canvas.dark {
-        background-color: #1c1c1e; /* Dark mode background */
-        color: #ffffff; /* Adjust text color for dark mode */
+        background-colour: #1c1c1e; /* Dark mode background */
+        colour: #ffffff; /* Adjust text colour for dark mode */
     }
 
     #canvas.large-text {
@@ -62,16 +62,16 @@ export function createCanvas(parentElement) {
  * @param {string} type The component type (e.g., 'Text', 'Button').
  */
 export function addComponent(type) {
-    import(`./components/${type.toLowerCase()}.js`).then(({ createComponentTemplate }) => {
-        const template = createComponentTemplate();
-        template.id = generateId(); // Assume generateId from layoutschema.js
-        import('../engine/layoutschema.js').then(({ addComponent }) => {
-            addComponent(template);
-            import('../engine/renderer.js').then(({ render }) => render());
-        });
-    }).catch(error => {
-        console.error("Error adding component:", error);
-    });
+    import('../engine/layoutschema.js').then(({ generateId }) => {
+        import(`./components/${type.toLowerCase()}.js`).then(({ createComponentTemplate }) => {
+            const template = createComponentTemplate();
+            template.id = generateId();
+            import('../engine/layoutschema.js').then(({ addComponent }) => {
+                addComponent(template);
+                import('../engine/renderer.js').then(({ render }) => render());
+            }).catch(error => console.error("Error adding component to schema:", error));
+        }).catch(error => console.error("Error loading component template:", error));
+    }).catch(error => console.error("Error importing layout schema:", error));
 }
 
 /**
@@ -88,8 +88,37 @@ export function updateComponentProps(id, props) {
             updateComponent(component);
             import('../engine/renderer.js').then(({ render }) => render());
         }
-    });
+    }).catch(error => console.error("Error updating component props:", error));
 }
 
-// Re-export existing functions (aspect ratio, orientation, etc.)
-export { updateAspectRatio, updateOrientation, updateColorScheme, updateDynamicType, updatePreviewMode } from './previous_viewport_functions.js'; // Assume previous functions are retained
+// Re-export existing functions with British spelling
+export function updateAspectRatio(ratio) {
+    const canvas = document.getElementById('canvas');
+    if (canvas) canvas.style.aspectRatio = ratio;
+}
+
+export function updateOrientation(orient) {
+    const canvas = document.getElementById('canvas');
+    if (canvas) canvas.style.transform = orient === 'landscape' ? 'rotate(90deg)' : 'rotate(0deg)';
+}
+
+export function updateColourScheme(scheme) {
+    const canvas = document.getElementById('canvas');
+    if (canvas) {
+        canvas.classList.toggle('dark', scheme === 'dark');
+        canvas.classList.toggle('light', scheme === 'light');
+    }
+}
+
+export function updateDynamicType(type) {
+    const canvas = document.getElementById('canvas');
+    if (canvas) canvas.classList.toggle('large-text', type === 'large');
+}
+
+export function updatePreviewMode(mode) {
+    const canvas = document.getElementById('canvas');
+    if (canvas) {
+        canvas.classList.toggle('live', mode === 'live');
+        canvas.classList.toggle('selectable', mode === 'selectable');
+    }
+}
