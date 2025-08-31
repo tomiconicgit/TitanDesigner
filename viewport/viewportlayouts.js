@@ -1,79 +1,66 @@
 const layoutStyles = `
-    #control-toolbar {
+    #control-toggle {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
+        top: 10px;
+        right: 10px;
+        width: 40px;
         height: 40px;
         background-color: rgba(255, 255, 255, 0.9); /* Light theme */
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        z-index: 1001;
-        padding: 0 10px;
-    }
-
-    #control-toolbar.dark {
-        background-color: rgba(28, 28, 30, 0.9); /* Dark theme */
-    }
-
-    .toolbar-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 80px;
-        height: 30px;
-        margin: 0 5px;
-        background-color: transparent;
         border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 6px;
         color: #007aff; /* iOS system blue */
-        font-size: 14px;
+        font-size: 18px;
         cursor: pointer;
-        transition: background-color 0.2s ease, color 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1001;
+        transition: background-color 0.2s ease;
     }
 
-    .toolbar-button:hover, .toolbar-button.active {
-        background-color: rgba(0, 122, 255, 0.1); /* Subtle hover/active state */
+    #control-toggle.dark {
+        background-color: rgba(28, 28, 30, 0.9);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    #control-toggle:hover {
+        background-color: rgba(0, 122, 255, 0.1);
         color: #005bb5;
     }
 
-    #control-panel {
+    #control-sidebar {
         position: fixed;
-        top: 50%;
-        left: -350px;
-        width: 350px;
-        height: 490px;
-        transform: translateY(-50%);
+        top: 0;
+        right: -250px;
+        width: 250px;
+        height: 100vh;
         background-color: #ffffff; /* Light theme */
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-        padding: 20px;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 10px;
         box-sizing: border-box;
-        transition: left 0.3s ease;
+        transition: right 0.3s ease;
         z-index: 1000;
         overflow-y: auto;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
     }
 
-    #control-panel.dark {
+    #control-sidebar.dark {
         background-color: #1c1c1e;
         color: #ffffff;
         border-color: rgba(255, 255, 255, 0.1);
     }
 
-    #control-panel.open {
-        left: 0;
+    #control-sidebar.open {
+        right: 0;
     }
 
     .control-section {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
     .control-option {
-        display: inline-block;
-        width: 100px;
+        display: block;
+        width: 100%;
         height: 30px;
         padding: 5px;
         margin: 5px 0;
@@ -82,7 +69,7 @@ const layoutStyles = `
         border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 6px;
         cursor: pointer;
-        text-align: center;
+        text-align: left;
         line-height: 20px;
         transition: background-color 0.2s ease;
     }
@@ -115,61 +102,41 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control panel with Xcode-like layout.
+ * Initializes the control sidebar with Xcode-like compact layout.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
     styleElement.textContent = layoutStyles;
     document.head.appendChild(styleElement);
 
-    // Toolbar
-    const toolbar = document.createElement('div');
-    toolbar.id = 'control-toolbar';
+    // Toggle button
+    const toggleButton = document.createElement('button');
+    toggleButton.id = 'control-toggle';
+    toggleButton.textContent = '☰'; // Hamburger icon
+    document.body.appendChild(toggleButton);
 
-    const layoutButton = document.createElement('button');
-    layoutButton.className = 'toolbar-button';
-    layoutButton.textContent = 'Layouts';
-    layoutButton.addEventListener('click', () => {
-        showPanel('layouts');
-        layoutButton.classList.add('active');
-        libraryButton.classList.remove('active');
-    });
-
-    const libraryButton = document.createElement('button');
-    libraryButton.className = 'toolbar-button';
-    libraryButton.textContent = 'Library';
-    libraryButton.addEventListener('click', () => {
-        showPanel('library');
-        libraryButton.classList.add('active');
-        layoutButton.classList.remove('active');
-    });
-
-    toolbar.appendChild(layoutButton);
-    toolbar.appendChild(libraryButton);
-    document.body.appendChild(toolbar);
-
-    // Single control panel
-    const panel = document.createElement('div');
-    panel.id = 'control-panel';
-    document.body.appendChild(panel);
+    // Control sidebar
+    const sidebar = document.createElement('div');
+    sidebar.id = 'control-sidebar';
+    document.body.appendChild(sidebar);
 
     // Sync theme with viewport
     const canvas = document.getElementById('canvas');
     if (canvas) {
-        canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
-        toolbar.classList.toggle('dark', canvas.classList.contains('dark'));
+        canvas.classList.contains('dark') ? sidebar.classList.add('dark') : sidebar.classList.remove('dark');
+        toggleButton.classList.toggle('dark', canvas.classList.contains('dark'));
     }
 
     function showPanel(type) {
-        panel.innerHTML = ''; // Clear previous content
-        panel.classList.add('open');
+        sidebar.innerHTML = ''; // Clear previous content
+        sidebar.classList.add('open');
         if (type === 'layouts') {
             const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
             sections.forEach(section => {
                 const sectionDiv = document.createElement('div');
                 sectionDiv.className = 'control-section';
                 sectionDiv.innerHTML = `<h3>${section}</h3>`;
-                panel.appendChild(sectionDiv);
+                sidebar.appendChild(sectionDiv);
 
                 if (section === 'Device') {
                     Object.entries(deviceOptions).forEach(([name, ratio]) => {
@@ -179,7 +146,7 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateAspectRatio }) => {
                                 updateAspectRatio(ratio);
-                                panel.classList.remove('open');
+                                sidebar.classList.remove('open');
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -192,7 +159,7 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateOrientation }) => {
                                 updateOrientation(orient.toLowerCase());
-                                panel.classList.remove('open');
+                                sidebar.classList.remove('open');
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -205,13 +172,13 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateColourScheme }) => {
                                 updateColourScheme(scheme.toLowerCase());
-                                panel.classList.remove('open');
+                                sidebar.classList.remove('open');
                                 if (scheme === 'dark') {
-                                    panel.classList.add('dark');
-                                    toolbar.classList.add('dark');
+                                    sidebar.classList.add('dark');
+                                    toggleButton.classList.add('dark');
                                 } else {
-                                    panel.classList.remove('dark');
-                                    toolbar.classList.remove('dark');
+                                    sidebar.classList.remove('dark');
+                                    toggleButton.classList.remove('dark');
                                 }
                             });
                         });
@@ -225,7 +192,7 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updateDynamicType }) => {
                                 updateDynamicType(type.toLowerCase());
-                                panel.classList.remove('open');
+                                sidebar.classList.remove('open');
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -238,7 +205,7 @@ export function initViewportLayouts() {
                         option.addEventListener('click', () => {
                             import('./viewport.js').then(({ updatePreviewMode }) => {
                                 updatePreviewMode(mode.toLowerCase());
-                                panel.classList.remove('open');
+                                sidebar.classList.remove('open');
                             });
                         });
                         sectionDiv.appendChild(option);
@@ -254,25 +221,31 @@ export function initViewportLayouts() {
                 option.addEventListener('click', () => {
                     import('./viewport.js').then(({ addComponent }) => {
                         addComponent(type);
-                        panel.classList.remove('open');
+                        sidebar.classList.remove('open');
                     });
                 });
-                panel.appendChild(option);
+                sidebar.appendChild(option);
             });
         }
     }
 
-    // Initial panel setup
-    showPanel('layouts');
+    // Initial panel setup with a toggle mechanism
+    let isOpen = false;
+    toggleButton.addEventListener('click', () => {
+        isOpen = !isOpen;
+        sidebar.classList.toggle('open', isOpen);
+        if (isOpen) {
+            showPanel('layouts'); // Default to layouts on open
+        }
+    });
 
     // Tap-off-to-close functionality
     document.addEventListener('click', (event) => {
-        const panel = document.getElementById('control-panel');
-        const toolbar = document.getElementById('control-toolbar');
-        if (!panel.contains(event.target) && !toolbar.contains(event.target) && panel.classList.contains('open')) {
-            panel.classList.remove('open');
-            layoutButton.classList.remove('active');
-            libraryButton.classList.remove('active');
+        const sidebar = document.getElementById('control-sidebar');
+        const toggle = document.getElementById('control-toggle');
+        if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            isOpen = false;
         }
     });
 }
