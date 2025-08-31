@@ -42,10 +42,45 @@ function createComponentElement(component) {
             element.style.position = 'absolute';
             element.style.left = `${component.props.x}px`;
             element.style.top = `${component.props.y}px`;
-            element.style.color = component.props.color || '#ffffff';
-            element.style.fontSize = getDynamicFontSize();
-            element.style.zIndex = '10'; // Ensure it's above other elements
+            element.style.colour = component.props.colour || '#ffffff';
+            element.style.fontSize = getDynamicFontSize(component.props.fontSize);
+            element.style.zIndex = '10';
+            element.contentEditable = true; // Allow text editing
             element.textContent = component.props.text || 'Unnamed Text';
+            element.addEventListener('input', (e) => updateComponentText(component.id, e.target.textContent));
+            break;
+        case 'Image':
+            element = document.createElement('img');
+            element.style.position = 'absolute';
+            element.style.left = `${component.props.x}px`;
+            element.style.top = `${component.props.y}px`;
+            element.style.width = `${component.props.width}px` || '100px';
+            element.style.height = `${component.props.height}px` || '100px';
+            element.src = component.props.src || 'https://via.placeholder.com/100';
+            element.style.zIndex = '10';
+            break;
+        case 'Button':
+            element = document.createElement('button');
+            element.style.position = 'absolute';
+            element.style.left = `${component.props.x}px`;
+            element.style.top = `${component.props.y}px`;
+            element.style.width = `${component.props.width}px` || '100px';
+            element.style.height = `${component.props.height}px` || '40px';
+            element.textContent = component.props.text || 'Button';
+            element.style.zIndex = '10';
+            element.addEventListener('click', () => console.log(`Button ${component.id} clicked`)); // Placeholder action
+            break;
+        case 'Header':
+            element = document.createElement('div');
+            element.style.position = 'absolute';
+            element.style.left = `${component.props.x}px`;
+            element.style.top = `${component.props.y}px`;
+            element.style.width = `${component.props.width}px` || '340px';
+            element.style.height = `${component.props.height}px` || '60px';
+            element.style.colour = component.props.colour || '#ffffff';
+            element.style.backgroundColour = component.props.backgroundColour || '#333';
+            element.style.zIndex = '10';
+            element.textContent = component.props.text || 'New Header';
             break;
         default:
             console.warn(`Unsupported component type: ${component.type}`);
@@ -56,19 +91,37 @@ function createComponentElement(component) {
 }
 
 /**
- * Gets the font size based on the dynamic type setting from viewport.js.
+ * Gets the font size based on the dynamic type setting or component prop.
+ * @param {string} [fontSize] Optional font size from component props.
  * @returns {string} The font size in em units.
  */
-function getDynamicFontSize() {
+function getDynamicFontSize(fontSize) {
     const canvas = document.getElementById('canvas');
     if (canvas && canvas.classList.contains('large-text')) {
-        return '1.2em';
+        return fontSize || '1.2em';
     }
-    return '1em';
+    return fontSize || '1em';
 }
 
 /**
- * Updates the rendering when the canvas state changes (e.g., color scheme, dynamic type).
+ * Updates the text content of a component in the schema.
+ * @param {string} id The component ID.
+ * @param {string} text The new text content.
+ */
+function updateComponentText(id, text) {
+    import('./layoutschema.js').then(({ getComponents, updateComponent }) => {
+        const components = getComponents();
+        const component = components.find(c => c.id === id);
+        if (component && component.type === 'Text') {
+            component.props.text = text;
+            updateComponent(component);
+            render(); // Re-render to reflect changes
+        }
+    });
+}
+
+/**
+ * Updates the rendering when the canvas state changes.
  */
 export function updateRender() {
     render();
