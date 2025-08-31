@@ -6,54 +6,52 @@ const layoutStyles = `
         transform: translateX(-50%);
         width: 200px;
         height: 50px;
-        background-color: rgba(255, 255, 255, 0.9); /* Light theme */
-        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: linear-gradient(to bottom, #1E1E1E, #0A0A0A); /* Black gradient */
+        border: 1px solid rgba(0, 0, 0, 0.2);
         border-radius: 25px; /* Pill shape */
         display: flex;
         align-items: center;
         justify-content: space-around;
         z-index: 1002;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Slight drop shadow */
         transition: background-color 0.2s ease;
     }
 
     #control-bar.dark {
-        background-color: rgba(28, 28, 30, 0.9);
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    #control-bar:hover {
-        background-color: rgba(0, 122, 255, 0.1);
+        background: linear-gradient(to bottom, #1c1c1e, #0A0A0A);
     }
 
     .control-option {
         width: 90px;
         height: 40px;
         background-color: transparent;
-        color: #007aff; /* iOS system blue */
+        color: #FFFFFF; /* White text */
         font-size: 16px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: color 0.2s ease;
+        transition: color 0.1s ease, background-color 0.1s ease; /* Quick transition */
     }
 
-    .control-option:hover {
-        color: #005bb5;
+    .control-option:active {
+        background-color: #FFFFFF; /* White highlight on press */
+        color: #0A0A0A; /* Dark text on highlight */
     }
 
     .control-option.dark {
-        color: #0a84ff;
+        color: #FFFFFF;
     }
 
-    .control-option.dark:hover {
-        color: #0066cc;
+    .control-option.dark:active {
+        background-color: #FFFFFF;
+        color: #0A0A0A;
     }
 
     .divider {
         width: 1px;
         height: 30px;
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.2); /* White divider */
     }
 
     #control-panel {
@@ -82,6 +80,35 @@ const layoutStyles = `
         right: 0; /* Slide out fully */
     }
 
+    #control-panel .header {
+        background-color: #1A1A1A; /* Darker header */
+        padding: 10px;
+        margin: -20px -20px 20px -20px; /* Extend to panel edges */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #control-panel .header h3 {
+        color: #FFFFFF;
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    #control-panel .close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #FFFFFF;
+        font-size: 18px;
+        padding: 5px;
+    }
+
+    #control-panel .close-btn:hover {
+        color: #CCCCCC;
+    }
+
     .control-section {
         margin-bottom: 20px;
     }
@@ -89,7 +116,7 @@ const layoutStyles = `
     .control-item {
         padding: 10px;
         cursor: pointer;
-        color: #ffffff;
+        color: #FFFFFF;
         transition: background-color 0.2s ease;
     }
 
@@ -169,6 +196,22 @@ export function initViewportLayouts() {
 
     function showPanel(type) {
         panel.innerHTML = '';
+        const header = document.createElement('div');
+        header.className = 'header';
+        const title = document.createElement('h3');
+        title.textContent = type.toUpperCase();
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12L12 4M12 12L4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; // X icon
+        closeBtn.addEventListener('click', () => {
+            panel.classList.remove('open');
+            isOpen = false;
+            currentPanel = null;
+        });
+        header.appendChild(title);
+        header.appendChild(closeBtn);
+        panel.appendChild(header);
+
         if (type === 'layouts') {
             const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
             sections.forEach(section => {
