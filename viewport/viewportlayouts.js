@@ -25,7 +25,7 @@ const layoutStyles = `
         position: fixed;
         top: 50px; /* Align with tab */
         left: -350px; /* Start fully off-screen left */
-        width: 350px;
+        width: 350px; /* Full width to show all content */
         height: 280px; /* 5:4 aspect ratio */
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(15px);
@@ -38,11 +38,11 @@ const layoutStyles = `
         border-bottom-right-radius: 10px;
         transition: left 0.3s ease; /* Slide in with tab */
         z-index: 1000;
-        overflow-y: auto;
+        overflow-y: auto; /* Ensure all content is scrollable if needed */
     }
 
     #viewport-panel.open {
-        left: -175px; /* Slide in halfway (350px / 2) */
+        left: calc(-350px + 215px); /* Slide halfway across ~430px screen (215px from left) */
     }
 
     .viewport-option {
