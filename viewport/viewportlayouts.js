@@ -1,10 +1,11 @@
 const layoutStyles = `
     #viewport-toggle {
         position: fixed;
-        top: 50px; /* Position as top tab */
+        top: 50%; /* Center vertically, adjust for tab */
         left: 0;
         width: 40px;
         height: 120px; /* Tall enough for vertical text */
+        transform: translateY(-50%); /* Center vertically */
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(10px);
         color: #ffffff;
@@ -23,10 +24,11 @@ const layoutStyles = `
 
     #viewport-panel {
         position: fixed;
-        top: 50px; /* Align with tab */
+        top: 50%; /* Center vertically */
         left: -350px; /* Start fully off-screen left */
         width: 350px; /* Standardized width */
-        height: 280px; /* Standardized height */
+        height: 490px; /* 5:7 aspect ratio with 350px width */
+        transform: transformY(-50%); /* Center vertically */
         background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
         backdrop-filter: blur(15px);
         color: #ffffff;
@@ -38,11 +40,32 @@ const layoutStyles = `
         border-bottom-right-radius: 10px;
         transition: left 0.3s ease; /* Slide in with tab */
         z-index: 1000;
-        overflow-y: auto; /* Ensure all content is scrollable if needed */
+        overflow-y: auto; /* Ensure all content is scrollable */
+        position: relative; /* For fade positioning */
     }
 
     #viewport-panel.open {
         left: 0; /* Slide fully on-screen to show all buttons */
+    }
+
+    #viewport-panel::before, #viewport-panel::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 30px; /* Fade height */
+        pointer-events: none; /* Allow scrolling through fade */
+        z-index: 1; /* Above content */
+    }
+
+    #viewport-panel::before {
+        top: 0;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    #viewport-panel::after {
+        bottom: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
     }
 
     .viewport-option {
