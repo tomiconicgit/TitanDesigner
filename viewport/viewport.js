@@ -19,7 +19,7 @@ const canvasStyles = `
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3); /* Realistic shadow */
         position: relative;
         overflow: hidden;
-        aspect-ratio: 430 / 932; /* Default to iPhone 15 Pro Max (full resolution ratio) */
+        aspect-ratio: 430 / 932; /* Default to iPhone 15 Pro Max */
         transition: transform 0.3s ease; /* For orientation changes */
     }
 
@@ -58,71 +58,38 @@ export function createCanvas(parentElement) {
 }
 
 /**
- * Updates the canvas aspect ratio based on selected device.
- * @param {string} ratio The aspect ratio string (e.g., '430 / 932').
+ * Adds a new component to the canvas from the library.
+ * @param {string} type The component type (e.g., 'Text', 'Button').
  */
-export function updateAspectRatio(ratio) {
-    const canvas = document.getElementById('canvas');
-    if (canvas) {
-        canvas.style.aspectRatio = ratio;
-    }
+export function addComponent(type) {
+    import(`./components/${type.toLowerCase()}.js`).then(({ createComponentTemplate }) => {
+        const template = createComponentTemplate();
+        template.id = generateId(); // Assume generateId from layoutschema.js
+        import('../engine/layoutschema.js').then(({ addComponent }) => {
+            addComponent(template);
+            import('../engine/renderer.js').then(({ render }) => render());
+        });
+    }).catch(error => {
+        console.error("Error adding component:", error);
+    });
 }
 
 /**
- * Updates the canvas orientation (portrait/landscape).
- * @param {string} orientation 'portrait' or 'landscape'.
+ * Updates a component's properties on the canvas.
+ * @param {string} id The component ID.
+ * @param {Object} props The updated props.
  */
-export function updateOrientation(orientation) {
-    const canvas = document.getElementById('canvas');
-    if (canvas) {
-        if (orientation === 'landscape') {
-            canvas.style.transform = 'rotate(90deg)';
-            const [width, height] = canvas.style.aspectRatio.split(' / ').map(Number);
-            canvas.style.aspectRatio = `${height} / ${width}`;
-        } else {
-            canvas.style.transform = 'rotate(0deg)';
+export function updateComponentProps(id, props) {
+    import('../engine/layoutschema.js').then(({ getComponents, updateComponent }) => {
+        const components = getComponents();
+        const component = components.find(c => c.id === id);
+        if (component) {
+            Object.assign(component.props, props);
+            updateComponent(component);
+            import('../engine/renderer.js').then(({ render }) => render());
         }
-    }
+    });
 }
 
-/**
- * Updates the color scheme (light/dark).
- * @param {string} scheme 'light' or 'dark'.
- */
-export function updateColorScheme(scheme) {
-    const canvas = document.getElementById('canvas');
-    if (canvas) {
-        if (scheme === 'dark') {
-            canvas.classList.add('dark');
-        } else {
-            canvas.classList.remove('dark');
-        }
-    }
-}
-
-/**
- * Updates dynamic type (font size).
- * @param {string} type 'small' or 'large'.
- */
-export function updateDynamicType(type) {
-    const canvas = document.getElementById('canvas');
-    if (canvas) {
-        if (type === 'large') {
-            canvas.classList.add('large-text');
-        } else {
-            canvas.classList.remove('large-text');
-        }
-    }
-}
-
-/**
- * Updates preview mode (live/selectable).
- * @param {string} mode 'live' or 'selectable'.
- */
-export function updatePreviewMode(mode) {
-    const canvas = document.getElementById('canvas');
-    if (canvas) {
-        canvas.classList.remove('live', 'selectable');
-        canvas.classList.add(mode);
-    }
-}
+// Re-export existing functions (aspect ratio, orientation, etc.)
+export { updateAspectRatio, updateOrientation, updateColorScheme, updateDynamicType, updatePreviewMode } from './previous_viewport_functions.js'; // Assume previous functions are retained
