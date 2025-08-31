@@ -27,5 +27,16 @@ export function getComponents() {
     return [...components];
 }
 
+/**
+ * Updates a component in the schema.
+ * @param {Object} component The updated component object.
+ */
+export function updateComponent(component) {
+    const index = components.findIndex(c => c.id === component.id);
+    if (index !== -1) {
+        components[index] = component;
+    }
+}
+
 // Export the module
-export default { generateId, addComponent, getComponents };
+export default { generateId, addComponent, getComponents, updateComponent };
