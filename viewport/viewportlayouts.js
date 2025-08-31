@@ -1,78 +1,107 @@
 const layoutStyles = `
-    #viewport-toggle {
+    #control-toolbar {
         position: fixed;
-        top: 50px; /* Fixed position above center */
+        top: 0;
         left: 0;
-        width: 40px;
-        height: 120px; /* Tall enough for vertical text */
-        background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
-        backdrop-filter: blur(10px);
-        color: #ffffff;
-        border: 1px solid rgba(68, 68, 68, 0.5);
-        border-left: none; /* No left border to attach to screen */
-        border-right: 1px solid rgba(68, 68, 68, 0.5);
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        cursor: pointer;
-        z-index: 1000;
-        padding: 5px 0;
-        white-space: pre;
-        text-align: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        height: 40px;
+        background-color: rgba(255, 255, 255, 0.9); /* Light theme */
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        z-index: 1001;
+        padding: 0 10px;
     }
 
-    #viewport-panel {
+    #control-toolbar.dark {
+        background-color: rgba(28, 28, 30, 0.9); /* Dark theme */
+    }
+
+    .toolbar-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 30px;
+        margin: 0 5px;
+        background-color: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        color: #007aff; /* iOS system blue */
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .toolbar-button:hover, .toolbar-button.active {
+        background-color: rgba(0, 122, 255, 0.1); /* Subtle hover/active state */
+        color: #005bb5;
+    }
+
+    #control-panel {
         position: fixed;
-        top: 50%; /* Center vertically */
-        left: -350px; /* Start fully off-screen left */
-        width: 350px; /* Standardized width */
-        height: 490px; /* 5:7 aspect ratio with 350px width */
-        transform: translateY(-50%); /* Center vertically */
-        background-color: rgba(26, 26, 26, 0.8); /* Dark glassmorphic base */
-        backdrop-filter: blur(15px);
-        color: #ffffff;
+        top: 50%;
+        left: -350px;
+        width: 350px;
+        height: 490px;
+        transform: translateY(-50%);
+        background-color: #ffffff; /* Light theme */
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
         padding: 20px;
         box-sizing: border-box;
-        border-left: none; /* No left border */
-        border-right: 1px solid rgba(68, 68, 68, 0.5);
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
-        transition: left 0.3s ease; /* Slide in with tab */
+        transition: left 0.3s ease;
         z-index: 1000;
-        overflow-y: auto; /* Ensure all content is scrollable */
+        overflow-y: auto;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
-    #viewport-panel.open {
-        left: 0; /* Slide fully on-screen to show all buttons */
+    #control-panel.dark {
+        background-color: #1c1c1e;
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.1);
     }
 
-    .viewport-option {
+    #control-panel.open {
+        left: 0;
+    }
+
+    .control-section {
+        margin-bottom: 20px;
+    }
+
+    .control-option {
         display: inline-block;
-        width: 100px; /* Neater, fixed width */
-        height: 25px; /* Reduced height for compactness */
-        padding: 5px; /* Adjusted padding for smaller height */
+        width: 100px;
+        height: 30px;
+        padding: 5px;
         margin: 5px 0;
-        background-color: rgba(245, 245, 245, 0.9); /* Off-white background */
-        backdrop-filter: blur(5px);
-        color: #333333; /* Dark text for readability */
-        border: 1px solid rgba(68, 68, 68, 0.3);
-        border-radius: 5px;
+        background-color: #f5f5f5;
+        color: #333333;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
         cursor: pointer;
         text-align: center;
-        line-height: 15px; /* Adjusted for smaller height */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        line-height: 20px;
+        transition: background-color 0.2s ease;
     }
 
-    .viewport-option:hover {
-        background-color: rgba(230, 230, 230, 0.9); /* Lighter off-white on hover */
+    .control-option:hover {
+        background-color: #e0e0e0;
     }
 
-    .viewport-section {
-        margin-bottom: 15px;
+    .control-option.dark {
+        background-color: #2c2c2e;
+        color: #ffffff;
+    }
+
+    .control-option.dark:hover {
+        background-color: #3a3a3c;
     }
 `;
 
-// Xcode-like device list with exact logical resolutions (portrait)
+// Device list from original
 const deviceOptions = {
     'iPhone SE (3rd gen)': '375 / 667',
     'iPhone 15': '393 / 852',
@@ -86,112 +115,164 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the viewport layouts panel with Xcode-like controls.
+ * Initializes the control panel with Xcode-like layout.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
     styleElement.textContent = layoutStyles;
     document.head.appendChild(styleElement);
 
-    const toggleButton = document.createElement('button');
-    toggleButton.id = 'viewport-toggle';
-    toggleButton.textContent = 'L\nA\nY\nO\nU\nT\nS';
-    document.body.appendChild(toggleButton);
+    // Toolbar
+    const toolbar = document.createElement('div');
+    toolbar.id = 'control-toolbar';
 
+    const layoutButton = document.createElement('button');
+    layoutButton.className = 'toolbar-button';
+    layoutButton.textContent = 'Layouts';
+    layoutButton.addEventListener('click', () => {
+        showPanel('layouts');
+        layoutButton.classList.add('active');
+        libraryButton.classList.remove('active');
+    });
+
+    const libraryButton = document.createElement('button');
+    libraryButton.className = 'toolbar-button';
+    libraryButton.textContent = 'Library';
+    libraryButton.addEventListener('click', () => {
+        showPanel('library');
+        libraryButton.classList.add('active');
+        layoutButton.classList.remove('active');
+    });
+
+    toolbar.appendChild(layoutButton);
+    toolbar.appendChild(libraryButton);
+    document.body.appendChild(toolbar);
+
+    // Single control panel
     const panel = document.createElement('div');
-    panel.id = 'viewport-panel';
+    panel.id = 'control-panel';
     document.body.appendChild(panel);
 
-    toggleButton.addEventListener('click', () => {
-        panel.classList.toggle('open');
-        if (panel.classList.contains('open')) {
-            document.getElementById('library-panel')?.classList.remove('open'); // Close other panel
-        }
-    });
+    // Sync theme with viewport
+    const canvas = document.getElementById('canvas');
+    if (canvas) {
+        canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
+        toolbar.classList.toggle('dark', canvas.classList.contains('dark'));
+    }
 
-    // Add sections for Xcode-like options
-    const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
+    function showPanel(type) {
+        panel.innerHTML = ''; // Clear previous content
+        panel.classList.add('open');
+        if (type === 'layouts') {
+            const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
+            sections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'control-section';
+                sectionDiv.innerHTML = `<h3>${section}</h3>`;
+                panel.appendChild(sectionDiv);
 
-    sections.forEach(section => {
-        const sectionDiv = document.createElement('div');
-        sectionDiv.className = 'viewport-section';
-        sectionDiv.innerHTML = `<h3>${section}</h3>`;
-        panel.appendChild(sectionDiv);
-
-        if (section === 'Device') {
-            Object.entries(deviceOptions).forEach(([name, ratio]) => {
-                const option = document.createElement('div');
-                option.className = 'viewport-option';
-                option.textContent = name.length > 15 ? name.substring(0, 15) + '...' : name; // Truncate long names
-                option.addEventListener('click', () => {
-                    import('./viewport.js').then(({ updateAspectRatio }) => {
-                        updateAspectRatio(ratio);
-                        panel.classList.remove('open');
+                if (section === 'Device') {
+                    Object.entries(deviceOptions).forEach(([name, ratio]) => {
+                        const option = document.createElement('div');
+                        option.className = 'control-option';
+                        option.textContent = name.length > 15 ? name.substring(0, 15) + '...' : name;
+                        option.addEventListener('click', () => {
+                            import('./viewport.js').then(({ updateAspectRatio }) => {
+                                updateAspectRatio(ratio);
+                                panel.classList.remove('open');
+                            });
+                        });
+                        sectionDiv.appendChild(option);
                     });
-                });
-                sectionDiv.appendChild(option);
-            });
-        } else if (section === 'Orientation') {
-            ['Portrait', 'Landscape'].forEach(orient => {
-                const option = document.createElement('div');
-                option.className = 'viewport-option';
-                option.textContent = orient;
-                option.addEventListener('click', () => {
-                    import('./viewport.js').then(({ updateOrientation }) => {
-                        updateOrientation(orient.toLowerCase());
-                        panel.classList.remove('open');
+                } else if (section === 'Orientation') {
+                    ['Portrait', 'Landscape'].forEach(orient => {
+                        const option = document.createElement('div');
+                        option.className = 'control-option';
+                        option.textContent = orient;
+                        option.addEventListener('click', () => {
+                            import('./viewport.js').then(({ updateOrientation }) => {
+                                updateOrientation(orient.toLowerCase());
+                                panel.classList.remove('open');
+                            });
+                        });
+                        sectionDiv.appendChild(option);
                     });
-                });
-                sectionDiv.appendChild(option);
-            });
-        } else if (section === 'Colour Scheme') {
-            ['Light', 'Dark'].forEach(scheme => {
-                const option = document.createElement('div');
-                option.className = 'viewport-option';
-                option.textContent = scheme;
-                option.addEventListener('click', () => {
-                    import('./viewport.js').then(({ updateColourScheme }) => {
-                        updateColourScheme(scheme.toLowerCase());
-                        panel.classList.remove('open');
+                } else if (section === 'Colour Scheme') {
+                    ['Light', 'Dark'].forEach(scheme => {
+                        const option = document.createElement('div');
+                        option.className = 'control-option';
+                        option.textContent = scheme;
+                        option.addEventListener('click', () => {
+                            import('./viewport.js').then(({ updateColourScheme }) => {
+                                updateColourScheme(scheme.toLowerCase());
+                                panel.classList.remove('open');
+                                if (scheme === 'dark') {
+                                    panel.classList.add('dark');
+                                    toolbar.classList.add('dark');
+                                } else {
+                                    panel.classList.remove('dark');
+                                    toolbar.classList.remove('dark');
+                                }
+                            });
+                        });
+                        sectionDiv.appendChild(option);
                     });
-                });
-                sectionDiv.appendChild(option);
+                } else if (section === 'Dynamic Type') {
+                    ['Small', 'Large'].forEach(type => {
+                        const option = document.createElement('div');
+                        option.className = 'control-option';
+                        option.textContent = type;
+                        option.addEventListener('click', () => {
+                            import('./viewport.js').then(({ updateDynamicType }) => {
+                                updateDynamicType(type.toLowerCase());
+                                panel.classList.remove('open');
+                            });
+                        });
+                        sectionDiv.appendChild(option);
+                    });
+                } else if (section === 'Preview Mode') {
+                    ['Live', 'Selectable'].forEach(mode => {
+                        const option = document.createElement('div');
+                        option.className = 'control-option';
+                        option.textContent = mode;
+                        option.addEventListener('click', () => {
+                            import('./viewport.js').then(({ updatePreviewMode }) => {
+                                updatePreviewMode(mode.toLowerCase());
+                                panel.classList.remove('open');
+                            });
+                        });
+                        sectionDiv.appendChild(option);
+                    });
+                }
             });
-        } else if (section === 'Dynamic Type') {
-            ['Small', 'Large'].forEach(type => {
+        } else if (type === 'library') {
+            const availableComponents = ['Text', 'Button', 'Header'];
+            availableComponents.forEach(type => {
                 const option = document.createElement('div');
-                option.className = 'viewport-option';
+                option.className = 'control-option';
                 option.textContent = type;
                 option.addEventListener('click', () => {
-                    import('./viewport.js').then(({ updateDynamicType }) => {
-                        updateDynamicType(type.toLowerCase());
+                    import('./viewport.js').then(({ addComponent }) => {
+                        addComponent(type);
                         panel.classList.remove('open');
                     });
                 });
-                sectionDiv.appendChild(option);
-            });
-        } else if (section === 'Preview Mode') {
-            ['Live', 'Selectable'].forEach(mode => {
-                const option = document.createElement('div');
-                option.className = 'viewport-option';
-                option.textContent = mode;
-                option.addEventListener('click', () => {
-                    import('./viewport.js').then(({ updatePreviewMode }) => {
-                        updatePreviewMode(mode.toLowerCase());
-                        panel.classList.remove('open');
-                    });
-                });
-                sectionDiv.appendChild(option);
+                panel.appendChild(option);
             });
         }
-    });
+    }
+
+    // Initial panel setup
+    showPanel('layouts');
 
     // Tap-off-to-close functionality
     document.addEventListener('click', (event) => {
-        const panel = document.getElementById('viewport-panel');
-        const toggle = document.getElementById('viewport-toggle');
-        if (!panel.contains(event.target) && !toggle.contains(event.target) && panel.classList.contains('open')) {
+        const panel = document.getElementById('control-panel');
+        const toolbar = document.getElementById('control-toolbar');
+        if (!panel.contains(event.target) && !toolbar.contains(event.target) && panel.classList.contains('open')) {
             panel.classList.remove('open');
+            layoutButton.classList.remove('active');
+            libraryButton.classList.remove('active');
         }
     });
 }
