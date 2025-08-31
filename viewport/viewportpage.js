@@ -2,6 +2,10 @@
  * Initializes the viewport page UI, setting up only the full-screen background, ignoring safe zones.
  */
 export function initViewportPage() {
+    if (!document.body) {
+        console.error("Document body not available.");
+        return;
+    }
     const mainContainer = document.createElement('main');
     mainContainer.id = 'build-environment';
     mainContainer.style.width = '100%';
