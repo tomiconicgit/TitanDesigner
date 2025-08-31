@@ -5,8 +5,8 @@ const layoutStyles = `
         right: 10px;
         transform: translateY(-50%);
         padding: 10px 15px;
-        background-color: #333;
-        color: white;
+        background-colour: #333;
+        colour: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -20,8 +20,8 @@ const layoutStyles = `
         transform: translateY(-50%);
         width: 350px;
         height: 280px; /* 5:4 aspect ratio */
-        background-color: #222;
-        color: white;
+        background-colour: #222;
+        colour: white;
         padding: 20px;
         box-sizing: border-box;
         border-left: 2px solid #444;
@@ -37,14 +37,14 @@ const layoutStyles = `
     .viewport-option {
         padding: 10px;
         margin-bottom: 10px;
-        background-color: #444;
+        background-colour: #444;
         border-radius: 5px;
         cursor: pointer;
-        text-align: center;
+        text-align: centre;
     }
 
     .viewport-option:hover {
-        background-color: #555;
+        background-colour: #555;
     }
 
     .viewport-section {
@@ -66,7 +66,7 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the viewport layouts panel with Xcode-like controls.
+ * Initialises the viewport layouts panel with Xcode-like controls.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
@@ -87,7 +87,7 @@ export function initViewportLayouts() {
     });
 
     // Add sections for Xcode-like options
-    const sections = ['Device', 'Orientation', 'Color Scheme', 'Dynamic Type', 'Preview Mode'];
+    const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
 
     sections.forEach(section => {
         const sectionDiv = document.createElement('div');
@@ -121,14 +121,14 @@ export function initViewportLayouts() {
                 });
                 sectionDiv.appendChild(option);
             });
-        } else if (section === 'Color Scheme') {
+        } else if (section === 'Colour Scheme') {
             ['Light', 'Dark'].forEach(scheme => {
                 const option = document.createElement('div');
                 option.className = 'viewport-option';
                 option.textContent = scheme;
                 option.addEventListener('click', () => {
-                    import('./viewport.js').then(({ updateColorScheme }) => {
-                        updateColorScheme(scheme.toLowerCase());
+                    import('./viewport.js').then(({ updateColourScheme }) => {
+                        updateColourScheme(scheme.toLowerCase());
                         panel.classList.remove('open');
                     });
                 });
