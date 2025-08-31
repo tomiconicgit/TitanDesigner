@@ -38,8 +38,9 @@ function route() {
             type: 'Text',
             props: {
                 text: 'Canvas Ready',
-                x: 125, // Centered for a ~340px wide canvas
-                y: 150
+                x: 100, // Adjusted for better centering on 340px canvas
+                y: 200,
+                color: '#ffffff'
             }
         };
         schema.addComponent(initialComponent);
