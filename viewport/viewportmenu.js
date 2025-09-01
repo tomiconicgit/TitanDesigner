@@ -1,213 +1,128 @@
-const layoutStyles = `
-    #control-bar {
-        position: fixed;
-        top: -50px; /* Above viewport, adjustable */
-        left: 0;
-        right: 0;
-        width: 200px;
-        height: 50px;
-        background: #28282B; /* Flat color */
-        border-radius: 10px 10px 0 0; /* Curved corners at top */
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 15px;
-        box-sizing: border-box;
-        z-index: 1002;
-        transition: top 0.3s ease;
+const menuStyles = `
+    :root {
+        --panel-color: #1c1c1e;
+        --border-color: #3a3a3c;
     }
-
-    #control-bar.open {
-        top: 0; /* Slide down when open */
+    #menu-button-wrapper { position: relative; z-index: 6000; }
+    #menu-button {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        border-radius: 12px; width: 141px; font-size: 16px;
+        background-color: rgb(40, 40, 43); color: white;
+        padding: 10px 20px; cursor: pointer; user-select: none;
     }
-
-    .menu-text {
-        color: #FFFFFF; /* White text */
-        font-size: 16px;
-        font-weight: bold;
+    .menu-arrow { width: 12px; height: 12px; fill: currentColor; transition: transform 0.2s ease-in-out; }
+    #menu-button.open .menu-arrow { transform: rotate(180deg); }
+    #menu-dropdown {
+        position: absolute; top: 110%; left: 50%; transform: translateX(-50%);
+        background-color: #2c2c2e; border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        overflow: hidden; width: 150px;
     }
-
-    .dropdown-icon {
-        width: 0;
-        height: 0;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid #FFFFFF; /* White down triangle */
-        transition: transform 0.3s ease;
+    #menu-dropdown div { padding: 12px 20px; cursor: pointer; }
+    #menu-dropdown div:hover { background-color: var(--border-color); }
+    .panel {
+        position: fixed; bottom: 0; left: 0; width: 100%; max-height: 50%;
+        background-color: var(--panel-color);
+        border-top-left-radius: 20px; border-top-right-radius: 20px;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.5); transform: translateY(100%);
+        transition: transform 0.3s ease-in-out; z-index: 7000;
     }
-
-    #control-bar.open .dropdown-icon {
-        transform: rotate(180deg); /* Rotate up when open */
-    }
-
-    #dropdown {
-        position: fixed;
-        top: 50px; /* Below menu button */
-        left: 0;
-        right: 0;
-        width: 200px;
-        background: #28282B;
-        border-radius: 0 0 10px 10px; /* Curved corners at bottom */
-        display: none;
-        flex-direction: column;
-        padding: 5px 0;
-        z-index: 1001;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    #dropdown.open {
-        display: flex;
-    }
-
-    .dropdown-item {
-        color: #FFFFFF; /* White text */
-        font-size: 14px;
-        padding: 10px 15px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .dropdown-item:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    #control-panel {
-        position: fixed;
-        bottom: -40%; /* Start fully off-screen bottom */
-        left: 0;
-        width: 100%;
-        height: 40%; /* 40% of viewport height */
-        background-color: #1C1B1C; /* Panel background */
-        padding: 20px;
-        box-sizing: border-box;
-        transition: bottom 0.8s ease-out;
-        z-index: 1000;
-        overflow-y: auto;
-    }
-
-    #control-panel.open {
-        bottom: 0; /* Slide up fully */
-    }
-
-    .control-button {
-        width: 100%;
-        height: 50px;
-        background: #28282B;
-        color: #FFFFFF; /* White text */
-        font-size: 16px;
-        border: none;
-        border-radius: 10px;
-        margin-bottom: 10px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .control-button:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .control-button:last-child {
-        margin-bottom: 0;
-    }
+    .panel:not(.hidden) { transform: translateY(0); }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border-color); }
+    .close-btn { background: var(--border-color); border: none; color: white; font-size: 20px; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+    #ui-library-panel .panel-content { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; padding: 20px; }
+    .library-item { background: var(--border-color); border: none; color: white; padding: 15px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 14px; }
+    .hidden { display: none; }
 `;
 
-// Device list from original
-const deviceOptions = {
-    'iPhone SE (3rd gen)': '375 / 667',
-    'iPhone 15': '393 / 852',
-    'iPhone 15 Plus': '430 / 932',
-    'iPhone 15 Pro': '393 / 852',
-    'iPhone 15 Pro Max': '430 / 932',
-    'iPad mini (6th gen)': '744 / 1133',
-    'iPad Air (5th gen)': '820 / 1180',
-    'iPad Pro (11-inch)': '834 / 1194',
-    'iPad Pro (13-inch)': '1024 / 1366'
-};
-
 /**
- * Initializes the control panel with a top menu button, dropdown, and sliding library panel.
+ * Initializes the main menu and UI library panel.
+ * @param {HTMLElement} parentElement The element to prepend the menu wrapper to.
  */
-export function initViewportLayouts() {
+export function initViewportMenu(parentElement) {
     const styleElement = document.createElement('style');
-    styleElement.textContent = layoutStyles;
+    styleElement.textContent = menuStyles;
     document.head.appendChild(styleElement);
 
-    // Control bar (menu button)
-    const controlBar = document.createElement('div');
-    controlBar.id = 'control-bar';
-    const menuText = document.createElement('div');
-    menuText.className = 'menu-text';
-    menuText.textContent = 'Menu';
-    const dropdownIcon = document.createElement('div');
-    dropdownIcon.className = 'dropdown-icon';
-    controlBar.appendChild(menuText);
-    controlBar.appendChild(dropdownIcon);
-    document.body.appendChild(controlBar);
+    // --- Create Menu Button and Dropdown ---
+    const menuWrapper = document.createElement('div');
+    menuWrapper.id = 'menu-button-wrapper';
+    menuWrapper.innerHTML = `
+        <div id="menu-button">
+            Menu
+            <svg class="menu-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"></path></svg>
+        </div>
+        <div id="menu-dropdown" class="hidden">
+            <div id="menu-layouts">Layouts</div>
+            <div id="menu-tools">Tools</div>
+            <div id="menu-fullscreen">Full screen</div>
+        </div>
+    `;
+    parentElement.prepend(menuWrapper); // Use prepend to put it above the iPhone frame
 
-    // Dropdown
-    const dropdown = document.createElement('div');
-    dropdown.id = 'dropdown';
-    const dropdownOptions = ['Library', 'Layouts', 'Fullscreen'];
-    dropdownOptions.forEach(opt => {
-        const item = document.createElement('div');
-        item.className = 'dropdown-item';
-        item.textContent = opt;
-        item.addEventListener('click', () => {
-            controlBar.classList.remove('open');
-            dropdown.classList.remove('open');
-            if (opt === 'Library') {
-                showLibraryPanel();
-            }
-            // Add Layouts and Fullscreen handlers as needed
-        });
-        dropdown.appendChild(item);
-    });
-    document.body.appendChild(dropdown);
+    // --- Create UI Library Panel ---
+    const uiLibraryPanel = document.createElement('div');
+    uiLibraryPanel.id = 'ui-library-panel';
+    uiLibraryPanel.className = 'panel hidden';
+    const libraryItems = ['Button', 'Text', 'Container', 'Card', 'Header', 'Bottom Bar', 'Input', 'Image', 'Avatar', 'Icon'];
+    uiLibraryPanel.innerHTML = `
+        <div class="panel-header">
+            <h3>UI Library</h3>
+            <button class="close-btn">×</button>
+        </div>
+        <div class="panel-content">
+            ${libraryItems.map(item => `<button class="library-item" data-type="${item}">${item}</button>`).join('')}
+        </div>
+    `;
+    document.body.appendChild(uiLibraryPanel);
 
-    // Control panel (library panel)
-    const panel = document.createElement('div');
-    panel.id = 'control-panel';
-    document.body.appendChild(panel);
-
-    // Sync theme with viewport
-    const canvas = document.getElementById('canvas');
-    if (canvas) {
-        canvas.classList.contains('dark') ? controlBar.classList.add('dark') : controlBar.classList.remove('dark');
-    }
-
-    // Toggle menu
-    let isMenuOpen = false;
-    controlBar.addEventListener('click', (e) => {
+    // --- Add Event Listeners ---
+    const menuButton = document.getElementById('menu-button');
+    const menuDropdown = document.getElementById('menu-dropdown');
+    
+    menuButton.addEventListener('click', (e) => {
         e.stopPropagation();
-        isMenuOpen = !isMenuOpen;
-        controlBar.classList.toggle('open', isMenuOpen);
-        dropdown.classList.toggle('open', isMenuOpen);
+        menuDropdown.classList.toggle('hidden');
+        menuButton.classList.toggle('open');
     });
 
-    // Close dropdown on outside click
-    document.addEventListener('click', (event) => {
-        if (!controlBar.contains(event.target) && !dropdown.contains(event.target)) {
-            controlBar.classList.remove('open');
-            dropdown.classList.remove('open');
-            isMenuOpen = false;
+    document.getElementById('menu-tools').addEventListener('click', () => {
+        uiLibraryPanel.classList.remove('hidden');
+        menuDropdown.classList.add('hidden');
+        menuButton.classList.remove('open');
+    });
+
+    document.addEventListener('click', () => {
+        menuDropdown.classList.add('hidden');
+        menuButton.classList.remove('open');
+    });
+
+    uiLibraryPanel.querySelector('.close-btn').addEventListener('click', () => {
+        uiLibraryPanel.classList.add('hidden');
+    });
+
+    uiLibraryPanel.addEventListener('click', (e) => {
+        if (e.target.classList.contains('library-item')) {
+            const type = e.target.dataset.type;
+            addComponentToCanvas(type);
+            uiLibraryPanel.classList.add('hidden');
         }
     });
+}
 
-    function showLibraryPanel() {
-        panel.innerHTML = '';
-        const buttons = ['Button', 'Header', 'Bottom Bar', 'Container', 'Text'];
-        buttons.forEach(buttonText => {
-            const button = document.createElement('button');
-            button.className = 'control-button';
-            button.textContent = buttonText;
-            button.addEventListener('click', () => {
-                import('./viewport.js').then(({ addComponent }) => {
-                    addComponent(buttonText); // Add component to canvas
-                });
-                panel.classList.remove('open'); // Close panel
-            });
-            panel.appendChild(button);
-        });
-        panel.classList.add('open');
-    }
+/**
+ * Adds a new component to the canvas by interacting with the schema.
+ * @param {string} type The component type (e.g., 'Text', 'Button').
+ */
+function addComponentToCanvas(type) {
+    Promise.all([
+        import(`../viewport/components/${type.toLowerCase()}.js`),
+        import('../engine/layoutschema.js'),
+        import('../engine/renderer.js')
+    ]).then(([componentModule, schema, renderer]) => {
+        const template = componentModule.createComponentTemplate();
+        template.id = schema.generateId();
+        schema.addComponent(template);
+        renderer.render();
+    }).catch(error => console.error(`Error adding component of type ${type}:`, error));
 }
