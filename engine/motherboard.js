@@ -1,5 +1,5 @@
 // Import engine modules
-import * as schema from './layoutschema.js';
+import * as schema from './projectschema.js'; // <-- FIXED
 import * as renderer from './renderer.js';
 import * as interactions from './interactions.js';
 
@@ -8,21 +8,21 @@ import { initViewportPage } from '../viewport/viewportpage.js';
 import { initViewport } from '../viewport/viewport.js';
 import { initViewportMenu } from '../viewport/viewportmenu.js';
 import { initCustomisationToolbar } from '../viewport/customisationtoolbar.js';
-import { initUiLibrary } from '../viewport/uilibrary.js'; // <-- ADDED
+import { initUiLibrary } from '../viewport/uilibrary.js';
 
 /**
  * Main application router.
  */
-async function route() { // <-- MADE ASYNC
+async function route() {
     try {
         // 1. Initialize the main page and viewport
         const appContainer = initViewportPage();
         initViewport(appContainer);
 
         // 2. Initialize all UI panels and menus
-        initViewportMenu(); // Note: appContainer not needed here
+        initViewportMenu();
         initCustomisationToolbar();
-        await initUiLibrary(); // <-- ADDED: Loads the UI component library
+        await initUiLibrary();
 
         // 3. Render the initial layout
         renderer.render();
