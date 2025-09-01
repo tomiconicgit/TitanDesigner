@@ -13,7 +13,7 @@ export function initViewportPage() {
     mainContainer.style.position = 'absolute';
     mainContainer.style.top = '0'; // Start at top edge
     mainContainer.style.left = 'env(safe-area-inset-left, 0px)'; // Respect left safe area
-    mainContainer.style.background = '#000000'; // New black background
+    mainContainer.style.background = '#141314'; // New background color
     mainContainer.style.padding = '0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px)'; // No top padding
 
     // Append the main container to the body
