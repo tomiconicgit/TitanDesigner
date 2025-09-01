@@ -1,21 +1,26 @@
 /**
- * Initializes the viewport page UI, setting up the full-screen background with a fade into the top padding.
+ * Initializes the main application page UI, creating a central container
+ * for the viewport and menus.
  */
 export function initViewportPage() {
     if (!document.body) {
         console.error("Document body not available.");
-        return;
+        return null;
     }
-    const mainContainer = document.createElement('main');
-    mainContainer.id = 'build-environment';
-    mainContainer.style.width = '100%';
-    mainContainer.style.height = '100dvh'; // Use dynamic viewport height
-    mainContainer.style.position = 'absolute';
-    mainContainer.style.top = '0'; // Start at top edge
-    mainContainer.style.left = 'env(safe-area-inset-left, 0px)'; // Respect left safe area
-    mainContainer.style.background = '#141314'; // New background color
-    mainContainer.style.padding = '0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px)'; // No top padding
+    document.body.style.background = '#141314';
 
-    // Append the main container to the body
-    document.body.appendChild(mainContainer);
+    const appContainer = document.createElement('div');
+    appContainer.id = 'app-container';
+    appContainer.style.display = 'flex';
+    appContainer.style.flexDirection = 'column';
+    appContainer.style.alignItems = 'center';
+    appContainer.style.justifyContent = 'center';
+    appContainer.style.width = '100%';
+    appContainer.style.height = '100dvh';
+    appContainer.style.gap = '20px';
+    appContainer.style.padding = '20px';
+    appContainer.style.boxSizing = 'border-box';
+
+    document.body.appendChild(appContainer);
+    return appContainer;
 }
