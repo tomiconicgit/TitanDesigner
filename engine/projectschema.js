@@ -32,15 +32,6 @@ let project = {
 // --- HELPER FUNCTIONS ---
 
 /**
- * Generates a unique ID for a component or file.
- * @param {string} prefix - 'comp' for component, 'file' for file, etc.
- * @returns {string} A unique identifier.
- */
-function generateId(prefix = 'comp') {
-    return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-}
-
-/**
  * Recursively finds any node (file or folder) in the file system tree by its ID.
  * @param {string} id The ID of the node to find.
  * @param {Object} node The current node in the tree to search from.
@@ -82,6 +73,15 @@ function findComponentInTree(componentId, node, parent = null) {
 
 
 // --- PUBLIC API ---
+
+/**
+ * Generates a unique ID for a component or file.
+ * @param {string} prefix - 'comp' for component, 'file' for file, etc.
+ * @returns {string} A unique identifier.
+ */
+export function generateId(prefix = 'comp') {
+    return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+}
 
 /**
  * Retrieves the entire project object.
@@ -136,13 +136,11 @@ export function getComponentById(id) {
 /**
  * Adds a component to the ACTIVE view.
  * @param {Object} component The component object to add.
- * @param {string} [parentId] The ID of the parent component.
  */
 export function addComponent(component) {
     const layout = getActiveViewLayout();
     if (layout) {
         // For now, adds to the root of the active view.
-        // This can be enhanced later to add to a specific parentId.
         if (!component.id) component.id = generateId('comp');
         layout.children.push(component);
     }
