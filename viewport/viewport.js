@@ -12,7 +12,7 @@ const canvasStyles = `
     #canvas {
         width: 100%;
         height: auto;
-        max-width: 306px; /* Reduced to 90% of 340px for more room */
+        max-width: 306px; /* Original max-width as reference */
         background-color: #000000;
         border: 8px solid #424242; /* Realistic iPhone frame */
         border-radius: 40px; /* Rounded corners like iPhone */
@@ -100,7 +100,7 @@ export function updateAspectRatio(ratio) {
     const canvas = document.getElementById('canvas');
     if (canvas) {
         const [width, height] = ratio.split('/').map(Number);
-        const scaleFactor = 0.85; // Reduced to 85% (15% reduction)
+        const scaleFactor = 0.595; // Reduced to 59.5% (15% + 30% reduction)
         const baseWidth = 306; // Based on max-width
         const scaledWidth = baseWidth * scaleFactor;
         const scaledHeight = (scaledWidth * height) / width;
