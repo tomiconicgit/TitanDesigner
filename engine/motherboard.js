@@ -9,6 +9,7 @@ import { initViewport } from '../viewport/viewport.js';
 import { initViewportMenu } from '../viewport/viewportmenu.js';
 import { initCustomisationToolbar } from '../viewport/customisationtoolbar.js';
 import { initUiLibrary } from '../viewport/uilibrary.js';
+import { initDeveloperTree } from '../viewport/developertree.js';
 
 /**
  * Main application router.
@@ -23,6 +24,7 @@ async function route() {
         initViewportMenu();
         initCustomisationToolbar();
         await initUiLibrary();
+        initDeveloperTree();
 
         // 3. Render the initial layout
         renderer.render();
@@ -30,7 +32,7 @@ async function route() {
         // 4. Activate drag-and-drop and tap interactions
         interactions.initInteractions();
 
-    } catch (error) {
+    } catch (error)
         console.error("Error during application initialization:", error);
     }
 }
