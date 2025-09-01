@@ -1,123 +1,113 @@
 const layoutStyles = `
     #control-bar {
         position: fixed;
-        top: 0; /* Moved to top of page */
+        top: -50px; /* Above viewport, adjustable */
         left: 0;
         right: 0;
-        width: 100%; /* Touching left and right edges */
-        height: 40px; /* Reduced vertical height */
-        background: linear-gradient(to bottom, #000000, rgba(255, 255, 255, 0.1)); /* Glassmorphic shine at bottom */
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2); /* Changed to bottom border for top placement */
+        width: 200px;
+        height: 50px;
+        background: #28282B; /* Flat color */
+        border-radius: 10px 10px 0 0; /* Curved corners at top */
         display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        z-index: 1002;
-        transition: background-color 0.2s ease;
-    }
-
-    #control-bar.dark {
-        background: linear-gradient(to bottom, #0A0A0A, rgba(255, 255, 255, 0.1));
-    }
-
-    .menu-icon {
-        width: 30px;
-        height: 20px;
-        margin-right: 15px;
-        display: flex;
-        flex-direction: column;
         justify-content: space-between;
-        cursor: pointer;
+        align-items: center;
+        padding: 0 15px;
+        box-sizing: border-box;
+        z-index: 1002;
+        transition: top 0.3s ease;
     }
 
-    .menu-line {
-        width: 100%;
-        height: 3px;
-        background-color: #F8F9FA; /* Off-white lines */
+    #control-bar.open {
+        top: 0; /* Slide down when open */
+    }
+
+    .menu-text {
+        color: #FFFFFF; /* White text */
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .dropdown-icon {
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #FFFFFF; /* White down triangle */
+        transition: transform 0.3s ease;
+    }
+
+    #control-bar.open .dropdown-icon {
+        transform: rotate(180deg); /* Rotate up when open */
+    }
+
+    #dropdown {
+        position: fixed;
+        top: 50px; /* Below menu button */
+        left: 0;
+        right: 0;
+        width: 200px;
+        background: #28282B;
+        border-radius: 0 0 10px 10px; /* Curved corners at bottom */
+        display: none;
+        flex-direction: column;
+        padding: 5px 0;
+        z-index: 1001;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #dropdown.open {
+        display: flex;
+    }
+
+    .dropdown-item {
+        color: #FFFFFF; /* White text */
+        font-size: 14px;
+        padding: 10px 15px;
+        cursor: pointer;
         transition: background-color 0.2s ease;
     }
 
-    .menu-line.dark {
-        background-color: #E9ECEF;
+    .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
     #control-panel {
         position: fixed;
-        right: -100%; /* Start fully off-screen right */
-        top: 0;
-        width: 100%; /* Expanded to touch right side */
-        height: calc(100dvh - 40px); /* Reduced to avoid top bar overlap */
-        background-color: #111111; /* Panel background */
+        bottom: -40%; /* Start fully off-screen bottom */
+        left: 0;
+        width: 100%;
+        height: 40%; /* 40% of viewport height */
+        background-color: #1C1B1C; /* Panel background */
         padding: 20px;
         box-sizing: border-box;
-        transition: right 0.8s ease-out, opacity 0.3s ease; /* Slide and fade */
-        z-index: 1001;
+        transition: bottom 0.8s ease-out;
+        z-index: 1000;
         overflow-y: auto;
-        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.4); /* Drop shadow on left */
-    }
-
-    #control-panel.dark {
-        background-color: #0F0F0F;
     }
 
     #control-panel.open {
-        right: 0; /* Touch right side */
+        bottom: 0; /* Slide up fully */
     }
 
-    #control-panel .header {
-        background-color: #000000; /* Header color */
-        padding: 10px;
-        margin: -20px -20px 20px -20px; /* Extend to panel edges */
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Bottom drop shadow */
-    }
-
-    #control-panel .header h3 {
-        color: #F8F9FA; /* Off-white text */
-        font-size: 14px;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    #control-panel .close-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: #F8F9FA; /* Off-white X */
-        font-size: 18px;
-        padding: 5px;
-    }
-
-    #control-panel .close-btn:hover {
-        color: #E9ECEF; /* Slightly lighter off-white on hover */
-    }
-
-    .control-section {
-        margin-bottom: 10px;
-    }
-
-    .control-item {
-        padding: 8px;
-        cursor: pointer;
-        color: #F8F9FA; /* Off-white text */
-        transition: background-color 0.2s ease, opacity 0.3s ease; /* Fade transition */
-        opacity: 0; /* Initially hidden */
-    }
-
-    .control-item.active {
-        opacity: 1; /* Fade in when active */
-    }
-
-    .control-item:hover {
-        background-color: rgba(248, 249, 250, 0.1); /* Off-white hover */
-    }
-
-    .panel-divider {
+    .control-button {
         width: 100%;
-        height: 1px;
-        background-color: #F8F9FA; /* Off-white divider */
-        margin: 8px 0;
+        height: 50px;
+        background: #28282B;
+        color: #FFFFFF; /* White text */
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .control-button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .control-button:last-child {
+        margin-bottom: 0;
     }
 `;
 
@@ -135,19 +125,46 @@ const deviceOptions = {
 };
 
 /**
- * Initializes the control panel with a fixed top bar and sliding full-screen panel with fade transitions.
+ * Initializes the control panel with a top menu button, dropdown, and sliding library panel.
  */
 export function initViewportLayouts() {
     const styleElement = document.createElement('style');
     styleElement.textContent = layoutStyles;
     document.head.appendChild(styleElement);
 
-    // Control bar
+    // Control bar (menu button)
     const controlBar = document.createElement('div');
     controlBar.id = 'control-bar';
+    const menuText = document.createElement('div');
+    menuText.className = 'menu-text';
+    menuText.textContent = 'Menu';
+    const dropdownIcon = document.createElement('div');
+    dropdownIcon.className = 'dropdown-icon';
+    controlBar.appendChild(menuText);
+    controlBar.appendChild(dropdownIcon);
     document.body.appendChild(controlBar);
 
-    // Control panel
+    // Dropdown
+    const dropdown = document.createElement('div');
+    dropdown.id = 'dropdown';
+    const dropdownOptions = ['Library', 'Layouts', 'Fullscreen'];
+    dropdownOptions.forEach(opt => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.textContent = opt;
+        item.addEventListener('click', () => {
+            controlBar.classList.remove('open');
+            dropdown.classList.remove('open');
+            if (opt === 'Library') {
+                showLibraryPanel();
+            }
+            // Add Layouts and Fullscreen handlers as needed
+        });
+        dropdown.appendChild(item);
+    });
+    document.body.appendChild(dropdown);
+
+    // Control panel (library panel)
     const panel = document.createElement('div');
     panel.id = 'control-panel';
     document.body.appendChild(panel);
@@ -156,132 +173,41 @@ export function initViewportLayouts() {
     const canvas = document.getElementById('canvas');
     if (canvas) {
         canvas.classList.contains('dark') ? controlBar.classList.add('dark') : controlBar.classList.remove('dark');
-        canvas.classList.contains('dark') ? panel.classList.add('dark') : panel.classList.remove('dark');
     }
 
-    // Initialize top bar with menu icon
-    let isOpen = false;
-    let currentPanel = null;
-    const menuIcon = document.createElement('div');
-    menuIcon.className = 'menu-icon';
-    for (let i = 0; i < 3; i++) {
-        const line = document.createElement('div');
-        line.className = 'menu-line';
-        menuIcon.appendChild(line);
-    }
-    menuIcon.addEventListener('click', (e) => {
+    // Toggle menu
+    let isMenuOpen = false;
+    controlBar.addEventListener('click', (e) => {
         e.stopPropagation();
-        isOpen = !isOpen;
-        panel.classList.toggle('open', isOpen);
-        if (isOpen) {
-            currentPanel = 'menu'; // Initial state
-            showPanel(currentPanel);
-        } else {
-            currentPanel = null;
-        }
+        isMenuOpen = !isMenuOpen;
+        controlBar.classList.toggle('open', isMenuOpen);
+        dropdown.classList.toggle('open', isMenuOpen);
     });
-    controlBar.appendChild(menuIcon);
 
-    function showPanel(type) {
-        panel.innerHTML = '';
-        const header = document.createElement('div');
-        header.className = 'header';
-        const title = document.createElement('h3');
-        title.textContent = 'Menu';
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'close-btn';
-        closeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12L12 4M12 12L4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; // X icon
-        closeBtn.addEventListener('click', () => {
-            panel.classList.remove('open');
-            isOpen = false;
-            currentPanel = null;
-        });
-        header.appendChild(title);
-        header.appendChild(closeBtn);
-        panel.appendChild(header);
-
-        if (type === 'menu') {
-            const options = ['Library', 'Layout'];
-            options.forEach((opt, index) => {
-                const item = document.createElement('div');
-                item.className = 'control-item'; // Initially hidden, will fade in
-                item.textContent = opt; // Off-white text for Library and Layout
-                item.dataset.type = opt.toLowerCase();
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    currentPanel = item.dataset.type;
-                    showPanel(currentPanel);
-                });
-                panel.appendChild(item);
-                if (index < options.length - 1) {
-                    const divider = document.createElement('div');
-                    divider.className = 'panel-divider';
-                    panel.appendChild(divider);
-                }
-            });
-            // Force fade-in for menu items
-            const items = panel.getElementsByClassName('control-item');
-            for (let item of items) {
-                item.classList.add('active'); // Ensure menu items are visible
-            }
-        } else if (type === 'library') {
-            const availableComponents = ['Text', 'Button', 'Header'];
-            availableComponents.forEach((component, index) => {
-                const item = document.createElement('div');
-                item.className = 'control-item active'; // Fade in
-                item.textContent = component;
-                item.addEventListener('click', () => {
-                    import('./viewport.js').then(({ addComponent }) => {
-                        addComponent(component);
-                    });
-                });
-                panel.appendChild(item);
-                if (index < availableComponents.length - 1) {
-                    const divider = document.createElement('div');
-                    divider.className = 'panel-divider';
-                    panel.appendChild(divider);
-                }
-            });
-        } else if (type === 'layout') {
-            const sections = ['Device', 'Orientation', 'Colour Scheme', 'Dynamic Type', 'Preview Mode'];
-            sections.forEach((section, index) => {
-                const item = document.createElement('div');
-                item.className = 'control-item active'; // Fade in
-                item.textContent = section;
-                item.addEventListener('click', () => {
-                    if (section === 'Device') {
-                        import('./viewport.js').then(({ updateAspectRatio }) => {
-                            updateAspectRatio('430 / 932'); // Example, adjust as needed
-                        });
-                    }
-                    // Add other section handlers as needed
-                });
-                panel.appendChild(item);
-                if (index < sections.length - 1) {
-                    const divider = document.createElement('div');
-                    divider.className = 'panel-divider';
-                    panel.appendChild(divider);
-                }
-            });
-        }
-
-        // Fade out inactive items
-        const items = panel.getElementsByClassName('control-item');
-        for (let item of items) {
-            if (!item.classList.contains('active')) {
-                item.style.opacity = '0';
-            }
-        }
-    }
-
-    // Tap-off-to-close functionality
+    // Close dropdown on outside click
     document.addEventListener('click', (event) => {
-        const panel = document.getElementById('control-panel');
-        const bar = document.getElementById('control-bar');
-        if (!panel.contains(event.target) && !bar.contains(event.target) && panel.classList.contains('open')) {
-            panel.classList.remove('open');
-            isOpen = false;
-            currentPanel = null;
+        if (!controlBar.contains(event.target) && !dropdown.contains(event.target)) {
+            controlBar.classList.remove('open');
+            dropdown.classList.remove('open');
+            isMenuOpen = false;
         }
     });
+
+    function showLibraryPanel() {
+        panel.innerHTML = '';
+        const buttons = ['Button', 'Header', 'Bottom Bar', 'Container', 'Text'];
+        buttons.forEach(buttonText => {
+            const button = document.createElement('button');
+            button.className = 'control-button';
+            button.textContent = buttonText;
+            button.addEventListener('click', () => {
+                import('./viewport.js').then(({ addComponent }) => {
+                    addComponent(buttonText); // Add component to canvas
+                });
+                panel.classList.remove('open'); // Close panel
+            });
+            panel.appendChild(button);
+        });
+        panel.classList.add('open');
+    }
 }
