@@ -9,12 +9,12 @@ export function render() {
     }
     canvas.innerHTML = ''; // Clear existing content
 
-    // Import the new getLayout function
-    import('./layoutschema.js').then(({ getLayout }) => {
-        const layout = getLayout();
-        // Start rendering recursively from the root's children
-        if (layout.root && layout.root.children) {
-            renderNodeChildren(layout.root, canvas);
+    // Import the new getActiveViewLayout function
+    import('./projectschema.js').then(({ getActiveViewLayout }) => {
+        const layout = getActiveViewLayout();
+        // Start rendering recursively from the layout's children
+        if (layout && layout.children) {
+            renderNodeChildren(layout, canvas);
         }
     });
 }
