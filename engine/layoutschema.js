@@ -97,6 +97,35 @@ export function updateComponent(id, newProps) {
 }
 
 /**
+ * Duplicates a component and all its children by its ID.
+ * @param {string} id The ID of the component to duplicate.
+ */
+export function duplicateComponent(id) {
+    const result = findComponentInTree(id);
+    if (result && result.parent) { // Cannot duplicate the root element
+        // Create a deep copy to avoid shared references
+        const originalNode = result.node;
+        const newNode = JSON.parse(JSON.stringify(originalNode));
+
+        // Recursively assign new unique IDs to the duplicated node and all its children
+        function assignNewIds(node) {
+            node.id = generateId();
+            if (node.children) {
+                node.children.forEach(assignNewIds);
+            }
+        }
+        assignNewIds(newNode);
+        
+        // Slightly offset the new component so it's not directly on top of the old one
+        if (newNode.props.x !== undefined) newNode.props.x += 20;
+        if (newNode.props.y !== undefined) newNode.props.y += 20;
+
+        // Add the fully duplicated node to the same parent
+        result.parent.children.push(newNode);
+    }
+}
+
+/**
  * Deletes a component from the tree by its ID.
  * @param {string} id The ID of the component to delete.
  */
