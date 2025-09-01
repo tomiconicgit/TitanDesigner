@@ -60,7 +60,7 @@ function handleInteractionEnd(event) {
         const id = draggedComponent.element.dataset.componentId;
         const x = parseInt(draggedComponent.element.style.left);
         const y = parseInt(draggedComponent.element.style.top);
-        import('./layoutschema.js').then(({ updateComponent }) => {
+        import('./projectschema.js').then(({ updateComponent }) => {
             updateComponent(id, { x, y });
         });
     } else if (draggedComponent && !isDragging) {
@@ -77,7 +77,7 @@ function handleInteractionEnd(event) {
     document.removeEventListener('touchend', handleInteractionEnd);
 }
 
-// NEW: Central function to manage selection
+// Central function to manage selection
 function selectComponent(element) {
     // Remove selection from previous element
     if (selectedComponentId) {
