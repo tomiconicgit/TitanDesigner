@@ -1,7 +1,7 @@
-import * as schema from '../engine/layoutschema.js';
+import * as schema from '../engine/projectschema.js';
 import { render } from '../engine/renderer.js';
 
-// NEW: All styles for this panel are now self-contained in this file.
+// All styles for this panel are self-contained in this file.
 const panelStyles = `
     #ui-library-panel {
         backdrop-filter: blur(12px);
@@ -124,14 +124,13 @@ export async function initUiLibrary() {
             try {
                 const module = await import(`./components/${fileName}.js`);
                 const newComponent = module.createComponentTemplate();
-                newComponent.id = schema.generateId();
-                schema.addComponent(newComponent);
+                newComponent.id = schema.generateId(); // Assign a unique ID
+                schema.addComponent(newComponent); // Add to the schema
                 render();
-                uiLibraryPanel.classList.add('hidden');
+                uiLibraryePanel.classList.add('hidden');
             } catch (error) {
                 console.error(`Failed to create component of type: ${type}`, error);
             }
         }
     });
 }
-
