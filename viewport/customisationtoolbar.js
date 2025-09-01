@@ -1,5 +1,5 @@
 import { getSelectedComponentId } from '../engine/interactions.js';
-import { getComponentById, updateComponent, deleteComponent, duplicateComponent } from '../engine/layoutschema.js';
+import { getComponentById, updateComponent, deleteComponent, duplicateComponent, generateId } from '../engine/projectschema.js';
 import { render } from '../engine/renderer.js';
 
 const toolbarStyles = `
