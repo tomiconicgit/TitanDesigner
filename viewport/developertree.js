@@ -82,6 +82,7 @@ function renderFileList(container) {
     function renderNode(node) {
         if (node.type === 'file') {
             const isActive = node.id === activeViewId ? 'active' : '';
+            // --- THIS LINE IS THE FIX FOR THE WHITE SCREEN ---
             fileListHTML += `<div class="dt-file-item ${isActive}" data-file-id="${node.id}">📄 ${node.name}</div>`;
         }
         if (node.children) {
@@ -114,18 +115,15 @@ export function initDeveloperTree() {
     
     const fileListContainer = panel.querySelector('.dt-file-list');
 
-    // Event Listener to open the panel
     document.getElementById('bar-btn-repo').addEventListener('click', () => {
         renderFileList(fileListContainer);
         panel.classList.remove('hidden');
     });
 
-    // Event listener for the main close button (we'll make the header act as a close button for now)
     panel.querySelector('.dt-header h3').addEventListener('click', () => {
         panel.classList.add('hidden');
     });
 
-    // Event Listener for switching views
     fileListContainer.addEventListener('click', (e) => {
         const fileItem = e.target.closest('.dt-file-item');
         if (fileItem) {
@@ -136,12 +134,11 @@ export function initDeveloperTree() {
         }
     });
 
-    // Event listener for creating a new file
     document.getElementById('dt-add-file-btn').addEventListener('click', () => {
         const newFileName = prompt("Enter new view name (e.g., ProfileView):");
         if (newFileName && newFileName.trim() !== "") {
             schema.createNewFile(`${newFileName.trim()}.swift`);
-            renderFileList(fileListContainer); // Re-render the list to show the new file
+            renderFileList(fileListContainer);
         }
     });
 }
