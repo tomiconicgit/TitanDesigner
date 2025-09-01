@@ -77,7 +77,7 @@ export function initCustomisationToolbar() {
     toolsPanel.innerHTML = `
         <div class="panel-header">
             <h3 id="panel-title">Customise</h3>
-            <button class="close-btn>×</button>
+            <button class="close-btn">×</button>
         </div>
         <div class="panel-content"></div>
     `;
