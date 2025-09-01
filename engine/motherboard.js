@@ -1,36 +1,33 @@
-// Import engine modules (these remain unchanged)
+// Import engine modules
 import * as schema from './layoutschema.js';
 import * as renderer from './renderer.js';
 import * as interactions from './interactions.js';
 
-// Import NEW/MODIFIED viewport initializers
+// Import all viewport initializers
 import { initViewportPage } from '../viewport/viewportpage.js';
 import { initViewport } from '../viewport/viewport.js';
 import { initViewportMenu } from '../viewport/viewportmenu.js';
 import { initCustomisationToolbar } from '../viewport/customisationtoolbar.js';
+import { initUiLibrary } from '../viewport/uilibrary.js'; // <-- ADDED
 
 /**
  * Main application router.
- * This function now builds the new UI structure.
  */
-function route() {
+async function route() { // <-- MADE ASYNC
     try {
-        // 1. Initialize the main page background and centering container.
+        // 1. Initialize the main page and viewport
         const appContainer = initViewportPage();
-
-        // 2. Initialize the iPhone silhouette and the canvas within it.
         initViewport(appContainer);
 
-        // 3. Initialize the top "Menu" button and the slide-up "UI Library" panel.
-        initViewportMenu(appContainer);
-        
-        // 4. Initialize the hidden context menu and the detailed customization panel.
+        // 2. Initialize all UI panels and menus
+        initViewportMenu(); // Note: appContainer not needed here
         initCustomisationToolbar();
+        await initUiLibrary(); // <-- ADDED: Loads the UI component library
 
-        // 5. Render any components currently in the schema (initially empty).
+        // 3. Render the initial layout
         renderer.render();
 
-        // 6. Initialize interaction listeners on the newly created canvas.
+        // 4. Activate drag-and-drop and tap interactions
         interactions.initInteractions();
 
     } catch (error) {
