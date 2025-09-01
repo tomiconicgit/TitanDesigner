@@ -1,7 +1,46 @@
 /**
- * Layout schema module for managing components.
+ * Layout schema module for managing a hierarchical component tree.
+ * This structure is designed to map directly to UI frameworks like SwiftUI.
  */
-let components = [];
+
+// The entire layout is now a single object with a root component.
+let layout = {
+    // You can add page-level properties here in the future
+    // name: 'MainView',
+    // backgroundColor: '#FFFFFF',
+    root: {
+        id: 'root',
+        type: 'Container', // The base of the view, like a ZStack in SwiftUI
+        props: {},
+        children: []
+    }
+};
+
+// --- Helper Function to search the tree ---
+/**
+ * Recursively finds a component and its parent by ID in the component tree.
+ * @param {string} id The ID of the component to find.
+ * @param {Object} node The current node in the tree to search from.
+ * @param {Object} parent The parent of the current node.
+ * @returns {{node: Object, parent: Object}|null} The found component and its parent, or null.
+ */
+function findComponentInTree(id, node = layout.root, parent = null) {
+    if (node.id === id) {
+        return { node, parent };
+    }
+    if (node.children) {
+        for (const child of node.children) {
+            const found = findComponentInTree(id, child, node);
+            if (found) {
+                return found;
+            }
+        }
+    }
+    return null;
+}
+
+
+// --- Public API ---
 
 /**
  * Generates a unique ID for a component.
@@ -12,31 +51,61 @@ export function generateId() {
 }
 
 /**
- * Adds a component to the schema.
- * @param {Object} component The component object with id, type, and props.
+ * Adds a component to the schema, optionally under a specific parent.
+ * @param {Object} component The component object to add.
+ * @param {string} [parentId='root'] The ID of the parent component.
  */
-export function addComponent(component) {
-    components.push(component);
-}
-
-/**
- * Retrieves all components from the schema.
- * @returns {Array} Array of component objects.
- */
-export function getComponents() {
-    return [...components];
-}
-
-/**
- * Updates a component in the schema.
- * @param {Object} component The updated component object.
- */
-export function updateComponent(component) {
-    const index = components.findIndex(c => c.id === component.id);
-    if (index !== -1) {
-        components[index] = component;
+export function addComponent(component, parentId = 'root') {
+    const parentSearchResult = findComponentInTree(parentId);
+    if (parentSearchResult && parentSearchResult.node.children) {
+        parentSearchResult.node.children.push(component);
+    } else {
+        // Fallback to adding to the root if parent isn't found or can't have children
+        layout.root.children.push(component);
     }
 }
 
-// Export the module
-export default { generateId, addComponent, getComponents, updateComponent };
+/**
+ * Retrieves the entire layout object.
+ * @returns {Object} The complete layout object.
+ */
+export function getLayout() {
+    return layout;
+}
+
+/**
+ * Retrieves a component by its ID.
+ * @param {string} id The ID of the component.
+ * @returns {Object|null} The component object or null if not found.
+ */
+export function getComponentById(id) {
+    const result = findComponentInTree(id);
+    return result ? result.node : null;
+}
+
+/**
+ * Updates specific properties of a component.
+ * @param {string} id The ID of the component to update.
+ * @param {Object} newProps An object with the properties to update.
+ */
+export function updateComponent(id, newProps) {
+    const component = getComponentById(id);
+    if (component) {
+        // Merge the new properties into the existing props
+        Object.assign(component.props, newProps);
+    }
+}
+
+/**
+ * Deletes a component from the tree by its ID.
+ * @param {string} id The ID of the component to delete.
+ */
+export function deleteComponent(id) {
+    const result = findComponentInTree(id);
+    if (result && result.parent) { // Cannot delete the root element
+        const childIndex = result.parent.children.findIndex(child => child.id === id);
+        if (childIndex !== -1) {
+            result.parent.children.splice(childIndex, 1);
+        }
+    }
+}
