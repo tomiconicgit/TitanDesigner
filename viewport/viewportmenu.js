@@ -5,7 +5,8 @@ const menuStyles = `
     }
     #floating-bar {
         position: fixed;
-        top: 20px;
+        /* This uses the device's safe-area inset and adds a 10px margin below it */
+        top: calc(env(safe-area-inset-top, 10px) + 10px);
         left: 50%;
         transform: translateX(-50%);
         width: 90%;
