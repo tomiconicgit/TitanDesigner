@@ -32,9 +32,9 @@ async function route() {
         // 4. Activate drag-and-drop and tap interactions
         interactions.initInteractions();
 
-    } catch (error) { // <-- The curly brace is correctly placed here
+    } catch (error) { // <-- The curly braces are now correctly placed
         console.error("Error during application initialization:", error);
-    } // <-- And here
+    }
 }
 
 // Initialize the application once the DOM is ready.
