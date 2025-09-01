@@ -1,5 +1,5 @@
 /**
- * Renderer module for rendering components onto the canvas.
+ * Renderer module for rendering the hierarchical component tree onto the canvas.
  */
 export function render() {
     const canvas = document.getElementById('canvas');
@@ -8,13 +8,32 @@ export function render() {
         return;
     }
     canvas.innerHTML = ''; // Clear existing content
-    import('./layoutschema.js').then(({ getComponents }) => {
-        getComponents().forEach(component => {
-            const element = createComponentElement(component);
-            if (element) {
-                canvas.appendChild(element);
-            }
-        });
+
+    // Import the new getLayout function
+    import('./layoutschema.js').then(({ getLayout }) => {
+        const layout = getLayout();
+        // Start rendering recursively from the root's children
+        if (layout.root && layout.root.children) {
+            renderNodeChildren(layout.root, canvas);
+        }
+    });
+}
+
+/**
+ * Recursively renders the children of a given component node.
+ * @param {Object} parentNode The parent component from the schema.
+ * @param {HTMLElement} parentElement The parent DOM element to append children to.
+ */
+function renderNodeChildren(parentNode, parentElement) {
+    if (!parentNode.children) return;
+
+    parentNode.children.forEach(component => {
+        const element = createComponentElement(component);
+        if (element) {
+            parentElement.appendChild(element);
+            // If the component has children, render them inside this new element
+            renderNodeChildren(component, element);
+        }
     });
 }
 
@@ -26,7 +45,7 @@ export function render() {
 function createComponentElement(component) {
     let element = document.createElement('div');
     element.dataset.componentId = component.id;
-    element.className = `draggable ui-${component.type.toLowerCase()}`;
+    element.className = `draggable ui-${component.type.toLowerCase().replace(' ', '')}`; // Handle 'Bottom Bar'
     element.style.position = 'absolute';
     element.style.left = `${component.props.x || 0}px`;
     element.style.top = `${component.props.y || 0}px`;
@@ -34,6 +53,11 @@ function createComponentElement(component) {
     element.style.height = component.props.height ? `${component.props.height}px` : null;
     element.style.zIndex = '10';
 
+    // Apply specific styles from props
+    if (component.props.fontSize) element.style.fontSize = `${component.props.fontSize}px`;
+    if (component.props.color) element.style.color = component.props.color;
+    if (component.props.backgroundColor) element.style.backgroundColor = component.props.backgroundColor;
+    
     switch (component.type) {
         case 'Text':
             element.textContent = component.props.text || 'Text';
