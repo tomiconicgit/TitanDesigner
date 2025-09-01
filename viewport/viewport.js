@@ -33,14 +33,47 @@ const iphoneStyles = `
     }
 `;
 
+// NEW: Added styles for all UI components
+const componentStyles = `
+    :root {
+        --panel-color: #1c1c1e;
+        --border-color: #3a3a3c;
+        --primary-blue: #0a84ff;
+        --text-color: #ffffff;
+    }
+    .draggable { border: 1px dashed transparent; }
+    .draggable.selected { border-color: var(--primary-blue); }
+
+    .ui-button { background-color: var(--primary-blue); color: white; border-radius: 8px; padding: 10px 20px; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+    .ui-text { color: white; padding: 5px; height: auto; width: auto; background: transparent; display: flex; align-items: center; justify-content: center; }
+    .ui-container { background-color: rgba(44, 44, 46, 0.2); border: 1px solid var(--border-color); border-radius: 12px; }
+    .ui-header { background: var(--panel-color); color: white; display: flex; align-items: center; justify-content: center; }
+    .ui-bottombar { background: var(--panel-color); color: white; display: flex; align-items: center; justify-content: center; }
+    .ui-input { background-color: transparent; }
+    .ui-input input { width: 100%; height: 100%; background-color: var(--panel-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 12px; color: var(--text-color); font-size: 16px; pointer-events: none; box-sizing: border-box; }
+    .ui-image { background-color: var(--panel-color); border-radius: 12px; overflow: hidden; }
+    .ui-image img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    .ui-card { background-color: var(--panel-color); border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .ui-avatar { background-color: var(--panel-color); border-radius: 50%; overflow: hidden; }
+    .ui-avatar img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    .ui-icon { display: flex; align-items: center; justify-content: center; }
+    .ui-icon svg { width: 100%; height: 100%; fill: #8e8e93; }
+`;
+
 /**
  * Creates the iPhone viewport and the canvas within it.
  * @param {HTMLElement} parentElement The DOM element to attach the viewport to.
  */
 export function initViewport(parentElement) {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = iphoneStyles;
-    document.head.appendChild(styleElement);
+    // Inject iPhone frame styles
+    const iphoneStyleElement = document.createElement('style');
+    iphoneStyleElement.textContent = iphoneStyles;
+    document.head.appendChild(iphoneStyleElement);
+    
+    // Inject UI component styles
+    const componentStyleElement = document.createElement('style');
+    componentStyleElement.textContent = componentStyles;
+    document.head.appendChild(componentStyleElement);
 
     const iphoneFrame = document.createElement('div');
     iphoneFrame.id = 'iphone-frame';
@@ -53,8 +86,6 @@ export function initViewport(parentElement) {
 
     const canvas = document.createElement('div');
     canvas.id = 'canvas';
-    // The 'selectable' class is now controlled by your interactions.js logic
-    // We add it here to enable interactions by default.
     canvas.classList.add('selectable');
 
     iphoneScreen.appendChild(dynamicIsland);
