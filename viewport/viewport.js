@@ -100,7 +100,7 @@ export function updateAspectRatio(ratio) {
     const canvas = document.getElementById('canvas');
     if (canvas) {
         const [width, height] = ratio.split('/').map(Number);
-        const scaleFactor = 0.9; // 90% of original size
+        const scaleFactor = 0.85; // Reduced to 85% (15% reduction)
         const baseWidth = 306; // Based on max-width
         const scaledWidth = baseWidth * scaleFactor;
         const scaledHeight = (scaledWidth * height) / width;
