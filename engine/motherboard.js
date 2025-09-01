@@ -1,5 +1,5 @@
 // Import engine modules
-import * as schema from './projectschema.js'; // <-- FIXED
+import * as schema from './projectschema.js';
 import * as renderer from './renderer.js';
 import * as interactions from './interactions.js';
 
