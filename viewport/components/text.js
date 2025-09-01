@@ -1,6 +1,3 @@
-/**
- * Factory for creating a Text component.
- */
 export function createComponentTemplate() {
     return {
         type: 'Text',
@@ -8,7 +5,10 @@ export function createComponentTemplate() {
             text: 'New Text',
             x: 50,
             y: 50,
-            colour: '#ffffff'
+            width: 100,
+            height: 20,
+            fontSize: 16,
+            color: '#FFFFFF'
         }
     };
 }
