@@ -32,6 +32,15 @@ let project = {
 // --- HELPER FUNCTIONS ---
 
 /**
+ * Generates a unique ID for a component or file.
+ * @param {string} prefix - 'comp' for component, 'file' for file, etc.
+ * @returns {string} A unique identifier.
+ */
+function generateId(prefix = 'comp') {
+    return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+}
+
+/**
  * Recursively finds any node (file or folder) in the file system tree by its ID.
  * @param {string} id The ID of the node to find.
  * @param {Object} node The current node in the tree to search from.
@@ -122,6 +131,32 @@ export function setActiveView(fileId) {
 }
 
 /**
+ * Creates a new, empty view file in the project.
+ * @param {string} name - The name of the file (e.g., "ProfileView.swift").
+ * @param {string} [folderId='root'] - The ID of the parent folder.
+ */
+export function createNewFile(name, folderId = 'root') {
+    const parentFolder = findNodeInTree(folderId);
+    if (parentFolder && parentFolder.type === 'folder') {
+        const newFile = {
+            id: generateId('file'),
+            type: 'file',
+            fileType: 'SwiftUIView',
+            name: name,
+            content: {
+                id: generateId('root'),
+                type: 'Container',
+                props: {},
+                children: []
+            }
+        };
+        parentFolder.children.push(newFile);
+        return newFile; // Return the new file object
+    }
+    return null;
+}
+
+/**
  * Retrieves a component by its ID from the ACTIVE view.
  * @param {string} id The ID of the component.
  * @returns {Object|null}
@@ -140,7 +175,6 @@ export function getComponentById(id) {
 export function addComponent(component) {
     const layout = getActiveViewLayout();
     if (layout) {
-        // For now, adds to the root of the active view.
         if (!component.id) component.id = generateId('comp');
         layout.children.push(component);
     }
