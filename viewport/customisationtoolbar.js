@@ -8,22 +8,43 @@ const toolbarStyles = `
         --border-color: rgba(80, 80, 80, 0.6);
         --text-secondary: #8e8e93;
     }
+
+    /* Styles for the small pop-up menu (Options, Duplicate, Delete) */
     #context-menu {
-        position: absolute; background-color: #2c2c2e; border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 8000; overflow: hidden;
+        position: absolute;
+        background-color: #2c2c2e;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 8000;
+        overflow: hidden;
     }
     #context-menu div { padding: 10px 20px; cursor: pointer; color: white; font-size: 14px; }
     #context-menu div:hover { background-color: var(--border-color); }
     #delete-btn { color: #ff453a; }
 
-    #tools-panel, #ui-library-panel {
+    /* General Panel Styles */
+    .panel {
+        position: fixed;
+        bottom: 0; left: 0; width: 100%;
         backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         background: var(--panel-color);
+        color: white;
+        z-index: 7000;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
     }
-    .panel-header h3 { font-weight: 500; }
-    .hidden { display: none !important; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 1px solid var(--border-color); }
+    .panel-header h3 { margin: 0; font-weight: 500; }
+    .panel-content { padding: 20px; overflow-y: auto; }
+    .close-btn { background: #444; border: none; color: #eee; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+
+    .hidden {
+        display: none !important;
+    }
 
     /* Customisation Panel specific styles */
+    #tools-panel { height: 50%; } /* Example height */
     .tool-group { margin-bottom: 25px; }
     .tool-group h4 { margin-bottom: 15px; color: var(--text-secondary); font-size: 13px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; }
     .control-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -92,12 +113,13 @@ export function initCustomisationToolbar() {
         toolsPanel.classList.add('hidden');
     });
     
-    // THE FIX: Live-update listener that updates the schema and re-renders
     toolsPanel.addEventListener('input', (e) => {
         const selectedId = getSelectedComponentId();
         if (!selectedId) return;
 
         const target = e.target;
+        if (!target.dataset.style) return; // Ignore inputs without a data-style attribute
+        
         const [prop, unit] = target.dataset.style.split(',');
         const value = unit === 'px' ? parseInt(target.value) : target.value;
 
