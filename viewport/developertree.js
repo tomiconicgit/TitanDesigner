@@ -75,7 +75,8 @@ const devTreeStyles = `
 
 function renderFileList(container) {
     const project = schema.getProject();
-    const activeViewId = schema.getActiveView().id;
+    const activeView = schema.getActiveView();
+    const activeViewId = activeView ? activeView.id : null;
     let fileListHTML = '';
 
     function renderNode(node) {
