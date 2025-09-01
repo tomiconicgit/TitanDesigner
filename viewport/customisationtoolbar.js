@@ -1,127 +1,94 @@
-const customStyles = `
-    #customisation-menu {
-        position: absolute;
-        background-colour: #333;
-        colour: white;
-        padding: 10px;
-        border-radius: 5px;
-        z-index: 1001;
-        display: none;
+const toolbarStyles = `
+    :root {
+        --panel-color: #1c1c1e;
+        --border-color: #3a3a3c;
     }
+    #context-menu {
+        position: absolute; background-color: #2c2c2e; border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 8000; overflow: hidden;
+    }
+    #context-menu div { padding: 12px 20px; cursor: pointer; }
+    #context-menu div:hover { background-color: var(--border-color); }
+    #delete-btn { color: #ff453a; }
 
-    #customisation-tools-panel {
-        position: fixed;
-        bottom: 0;
-        left: 400px; /* Position next to library if open */
-        width: 400px;
-        height: 300px;
-        background-colour: #222;
-        colour: white;
-        padding: 20px;
-        box-sizing: border-box;
-        border-top: 2px solid #444;
-        transition: bottom 0.3s ease;
-        z-index: 1000;
-        overflow-y: auto;
-        display: none;
+    #tools-panel {
+        position: fixed; bottom: 0; left: 0; width: 100%; max-height: 70%;
+        background-color: var(--panel-color);
+        border-top-left-radius: 20px; border-top-right-radius: 20px;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.5); transform: translateY(100%);
+        transition: transform 0.3s ease-in-out; z-index: 7000;
     }
-
-    .customisation-option {
-        padding: 5px;
-        cursor: pointer;
-    }
-
-    .customisation-option:hover {
-        background-colour: #444;
-    }
-
-    .tools-section {
-        margin-bottom: 15px;
-    }
+    #tools-panel:not(.hidden) { transform: translateY(0); }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border-color); }
+    .close-btn { background: var(--border-color); border: none; color: white; font-size: 20px; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+    .panel-content { padding: 15px; overflow-y: auto; max-height: calc(70vh - 60px); }
+    .hidden { display: none; }
 `;
 
 /**
- * Initialises the customisation toolbar.
+ * Initializes the context menu and the customization tools panel.
  */
 export function initCustomisationToolbar() {
     const styleElement = document.createElement('style');
-    styleElement.textContent = customStyles;
+    styleElement.textContent = toolbarStyles;
     document.head.appendChild(styleElement);
 
-    const menu = document.createElement('div');
-    menu.id = 'customisation-menu';
-    document.body.appendChild(menu);
+    // Create Context Menu
+    const contextMenu = document.createElement('div');
+    contextMenu.id = 'context-menu';
+    contextMenu.className = 'hidden';
+    contextMenu.innerHTML = `
+        <div id="options-btn">Options</div>
+        <div id="duplicate-btn">Duplicate</div>
+        <div id="delete-btn">Delete</div>
+        <div id="copy-code-btn">Copy Code</div>
+    `;
+    document.body.appendChild(contextMenu);
 
+    // Create Tools Panel
     const toolsPanel = document.createElement('div');
-    toolsPanel.id = 'customisation-tools-panel';
+    toolsPanel.id = 'tools-panel';
+    toolsPanel.className = 'hidden';
+    toolsPanel.innerHTML = `
+        <div class="panel-header">
+            <h3 id="panel-title">Customise Element</h3>
+            <button class="close-btn">×</button>
+        </div>
+        <div class="panel-content"></div>
+    `;
     document.body.appendChild(toolsPanel);
 
-    // Drop-down menu options
-    const options = ['Edit Colour', 'Edit Size', 'Open Tools'];
-    options.forEach(opt => {
-        const option = document.createElement('div');
-        option.className = 'customisation-option';
-        option.textContent = opt;
-        option.addEventListener('click', () => handleCustomisationOption(opt, menu.dataset.componentId));
-        menu.appendChild(option);
+    // Add Event Listeners
+    document.getElementById('options-btn').addEventListener('click', () => {
+        toolsPanel.classList.remove('hidden');
+        contextMenu.classList.add('hidden');
+        // populateToolsPanel(selectedElement); // This part needs to be implemented
     });
-
-    // Deep customisation tools (example options)
-    const toolsOptions = [
-        'Font Family', 'Background Colour', 'Border Radius', 'Shadow', 'Alignment', 'Padding', 'Margin', 'Opacity', 'Rotation', 'Scale'
-    ];
-    const toolsSection = document.createElement('div');
-    toolsSection.className = 'tools-section';
-    toolsSection.innerHTML = '<h3>Tools</h3>';
-    toolsOptions.forEach(tool => {
-        const toolOption = document.createElement('div');
-        toolOption.className = 'customisation-option';
-        toolOption.textContent = tool;
-        toolOption.addEventListener('click', () => console.log(`Customising ${tool} for component ${toolsPanel.dataset.componentId}`)); // Implement customisation logic
-        toolsSection.appendChild(toolOption);
+    toolsPanel.querySelector('.close-btn').addEventListener('click', () => {
+        toolsPanel.classList.add('hidden');
     });
-    toolsPanel.appendChild(toolsSection);
-
-    // Close tools panel
-    const closeButton = document.createElement('button');
-    closeButton.textContent = 'Close';
-    closeButton.addEventListener('click', () => toolsPanel.style.display = 'none');
-    toolsPanel.appendChild(closeButton);
 }
 
 /**
- * Shows the drop-down menu for a component.
+ * Shows the context menu for a component. This is called by interactions.js.
  * @param {HTMLElement} component The selected component element.
  * @param {number} x The x-position for the menu.
  * @param {number} y The y-position for the menu.
  */
 export function showCustomisationMenu(component, x, y) {
-    const menu = document.getElementById('customisation-menu');
+    const menu = document.getElementById('context-menu');
     menu.dataset.componentId = component.dataset.componentId;
     menu.style.left = `${x}px`;
     menu.style.top = `${y}px`;
-    menu.style.display = 'block';
-}
+    menu.classList.remove('hidden');
 
-/**
- * Handles selection from the customisation menu.
- * @param {string} opt The selected option.
- * @param {string} id The component ID.
- */
-function handleCustomisationOption(opt, id) {
-    const menu = document.getElementById('customisation-menu');
-    menu.style.display = 'none';
-
-    if (opt === 'Open Tools') {
-        const toolsPanel = document.getElementById('customisation-tools-panel');
-        toolsPanel.dataset.componentId = id;
-        toolsPanel.style.display = 'block';
-    } else if (opt === 'Edit Colour') {
-        const newColour = prompt('Enter new colour (e.g., #ff0000)');
-        if (newColour) {
-            import('./viewport.js').then(({ updateComponentProps }) => {
-                updateComponentProps(id, { colour: newColour });
-            });
+    // Hide menu on outside click
+    const hideMenu = (e) => {
+        if (!menu.contains(e.target)) {
+            menu.classList.add('hidden');
+            document.removeEventListener('click', hideMenu);
         }
-    } // Add more options as needed
+    };
+    // Use a timeout to prevent the same click from immediately closing the menu
+    setTimeout(() => document.addEventListener('click', hideMenu), 0);
 }
