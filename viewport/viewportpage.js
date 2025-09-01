@@ -19,6 +19,7 @@ export function initViewportPage() {
     appContainer.style.height = '100dvh';
     appContainer.style.gap = '20px';
     appContainer.style.padding = '20px';
+    appContainer.style.paddingTop = '90px'; // <-- Pushes viewport down
     appContainer.style.boxSizing = 'border-box';
 
     document.body.appendChild(appContainer);
