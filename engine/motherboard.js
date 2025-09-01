@@ -1,63 +1,40 @@
-// Import all engine modules
+// Import engine modules (these remain unchanged)
 import * as schema from './layoutschema.js';
-import * as interactions from './interactions.js';
 import * as renderer from './renderer.js';
+import * as interactions from './interactions.js';
 
-// Import viewport initializers
+// Import NEW/MODIFIED viewport initializers
 import { initViewportPage } from '../viewport/viewportpage.js';
-import { createCanvas, updateAspectRatio, updateOrientation, updateColourScheme, updateDynamicType, updatePreviewMode } from '../viewport/viewport.js';
-import { initViewportLayouts } from '../viewport/viewportmenu.js'; // Updated import
+import { initViewport } from '../viewport/viewport.js';
+import { initViewportMenu } from '../viewport/viewportmenu.js';
 import { initCustomisationToolbar } from '../viewport/customisationtoolbar.js';
 
 /**
  * Main application router.
- * Determines which page to load based on URL or state.
+ * This function now builds the new UI structure.
  */
 function route() {
     try {
-        // 1. Initialize the primary viewport page background
-        initViewportPage();
+        // 1. Initialize the main page background and centering container.
+        const appContainer = initViewportPage();
 
-        // 2. Create the canvas inside the build environment
-        const buildEnvironment = document.getElementById('build-environment');
-        if (!buildEnvironment) {
-            console.error("Build environment not found.");
-            return;
-        }
-        createCanvas(buildEnvironment);
+        // 2. Initialize the iPhone silhouette and the canvas within it.
+        initViewport(appContainer);
 
-        // 3. Get a reference to the canvas now that it exists
-        const canvas = document.getElementById('canvas');
-        if (!canvas) {
-            console.error("Canvas element not found after creation.");
-            return;
-        }
-
-        // 4. Initialize toolbars
+        // 3. Initialize the top "Menu" button and the slide-up "UI Library" panel.
+        initViewportMenu(appContainer);
+        
+        // 4. Initialize the hidden context menu and the detailed customization panel.
         initCustomisationToolbar();
 
-        // 5. Define and add the initial component to the schema
-        const initialComponent = {
-            id: schema.generateId(),
-            type: 'Text',
-            props: {
-                text: 'Canvas Ready',
-                x: 170, // Centred horizontally in 340px canvas
-                y: 466  // Centred vertically in 932px aspect ratio, scaled to canvas height
-            }
-        };
-        schema.addComponent(initialComponent);
-
-        // 6. Render the initial component
+        // 5. Render any components currently in the schema (initially empty).
         renderer.render();
 
-        // 7. Initialize the viewport menu panel (Xcode-like controls)
-        initViewportLayouts();
-
-        // 8. Initialize interactions
+        // 6. Initialize interaction listeners on the newly created canvas.
         interactions.initInteractions();
+
     } catch (error) {
-        console.error("Error during route initialization:", error);
+        console.error("Error during application initialization:", error);
     }
 }
 
