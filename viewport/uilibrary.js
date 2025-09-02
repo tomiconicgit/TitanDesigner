@@ -1,6 +1,7 @@
 import * as schema from '../engine/projectschema.js';
 import { render } from '../engine/renderer.js';
 
+// All styles for this panel are now self-contained in this file.
 const panelStyles = `
     #ui-library-panel {
         backdrop-filter: blur(12px);
@@ -76,18 +77,23 @@ const panelStyles = `
     }
 `;
 
+// A list of all available component types.
 const componentTypes = [
     'Header', 'Text', 'Button', 'Container', 'Card', 'Input', 'Image', 'Avatar', 'Icon', 'Bottom Bar'
 ];
 
+/**
+ * Initializes the UI Library panel.
+ */
 export async function initUiLibrary() {
+    // Add the panel's styles to the document's head
     const styleElement = document.createElement('style');
     styleElement.textContent = panelStyles;
     document.head.appendChild(styleElement);
 
     const uiLibraryPanel = document.createElement('div');
     uiLibraryPanel.id = 'ui-library-panel';
-    uiLibraryPanel.className = 'hidden';
+    uiLibraryPanel.className = 'hidden'; // Start hidden
 
     let componentButtonsHTML = '';
     for (const type of componentTypes) {
@@ -95,7 +101,6 @@ export async function initUiLibrary() {
         componentButtonsHTML += `<button class="component-add-btn" data-component-type="${type}">${type}</button>`;
     }
 
-    // --- THIS HTML IS THE FIX ---
     uiLibraryPanel.innerHTML = `
         <div class="panel-header">
             <h3>UI Library</h3>
@@ -107,6 +112,7 @@ export async function initUiLibrary() {
     `;
     document.body.appendChild(uiLibraryPanel);
 
+    // --- Add Event Listeners ---
     uiLibraryPanel.querySelector('.close-btn').addEventListener('click', () => {
         uiLibraryPanel.classList.add('hidden');
     });
@@ -118,8 +124,8 @@ export async function initUiLibrary() {
             try {
                 const module = await import(`./components/${fileName}.js`);
                 const newComponent = module.createComponentTemplate();
-                newComponent.id = schema.generateId();
-                schema.addComponent(newComponent);
+                newComponent.id = schema.generateId(); // Assign a unique ID
+                schema.addComponent(newComponent); // Add to the schema
                 render();
                 uiLibraryPanel.classList.add('hidden');
             } catch (error) {
