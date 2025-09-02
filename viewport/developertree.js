@@ -44,12 +44,12 @@ const treeStyles = `
         width: 18px;
         height: 18px;
         flex-shrink: 0;
-        fill: #8e8e93; /* Default icon color */
+        fill: #8e8e93;
         transition: transform 0.2s ease;
     }
 
     .tree-item.file .tree-item-icon {
-        fill: #0a84ff; /* Blue icon for files */
+        fill: #0a84ff;
     }
 
     .tree-item.folder[data-expanded="true"] .tree-item-icon {
@@ -68,7 +68,6 @@ const treeStyles = `
         display: none;
     }
 
-    /* SVG icons */
     .icon-folder {
         fill: #a0a0a0;
     }
@@ -77,16 +76,9 @@ const treeStyles = `
     }
 `;
 
-// A simple SVG for a folder icon.
 const folderSvg = `<svg class="icon-folder" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`;
-
-// A simple SVG for a file icon.
 const fileSvg = `<svg class="icon-file" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>`;
 
-/**
- * Initializes the developer tree panel.
- * @param {HTMLElement} parentElement The DOM element to attach the tree to.
- */
 export function initDeveloperTree(parentElement) {
     const styleElement = document.createElement('style');
     styleElement.textContent = treeStyles;
@@ -96,10 +88,8 @@ export function initDeveloperTree(parentElement) {
     treeContainer.className = 'developer-tree-panel';
     parentElement.appendChild(treeContainer);
 
-    // Initial render
     renderFileTree(getProject().fileSystem, treeContainer);
 
-    // Add event listener to the container to handle clicks
     treeContainer.addEventListener('click', (e) => {
         const target = e.target.closest('.tree-item');
         if (!target) return;
@@ -112,7 +102,6 @@ export function initDeveloperTree(parentElement) {
             render();
             updateActiveFileHighlight();
         } else if (type === 'folder') {
-            // Toggle folder expansion
             const isExpanded = target.dataset.expanded === 'true';
             target.dataset.expanded = !isExpanded;
             const children = target.nextElementSibling;
@@ -123,11 +112,6 @@ export function initDeveloperTree(parentElement) {
     });
 }
 
-/**
- * Recursively renders the file system tree.
- * @param {Object} node The current node (folder or file) to render.
- * @param {HTMLElement} parentElement The parent DOM element to append to.
- */
 function renderFileTree(node, parentElement) {
     const itemElement = document.createElement('div');
     const nodeTypeClass = node.type === 'folder' ? 'folder' : 'file';
@@ -143,7 +127,7 @@ function renderFileTree(node, parentElement) {
     if (node.children && node.children.length > 0) {
         const childrenContainer = document.createElement('div');
         childrenContainer.className = 'tree-children';
-        childrenContainer.classList.add('hidden'); // Start collapsed
+        childrenContainer.classList.add('hidden');
         parentElement.appendChild(childrenContainer);
 
         node.children.forEach(child => {
@@ -151,13 +135,9 @@ function renderFileTree(node, parentElement) {
         });
     }
 
-    // Initial highlight for the active file
     updateActiveFileHighlight();
 }
 
-/**
- * Updates the highlight on the active file.
- */
 function updateActiveFileHighlight() {
     const allItems = document.querySelectorAll('.tree-item');
     allItems.forEach(item => item.classList.remove('active-file'));
