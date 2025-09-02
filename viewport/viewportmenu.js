@@ -5,7 +5,6 @@ const menuStyles = `
     }
     #floating-bar {
         position: fixed;
-        /* This uses the device's safe-area inset and adds a 10px margin below it */
         top: calc(env(safe-area-inset-top, 10px) + 10px);
         left: 50%;
         transform: translateX(-50%);
@@ -75,7 +74,6 @@ export function initViewportMenu(uiPage, repoPage) {
     `;
     document.body.appendChild(floatingBar);
 
-    // Add event listeners for toggling pages
     document.getElementById('bar-btn-ui').addEventListener('click', () => {
         uiPage.classList.remove('hidden');
         repoPage.classList.add('hidden');
@@ -86,7 +84,6 @@ export function initViewportMenu(uiPage, repoPage) {
         repoPage.classList.remove('hidden');
     });
     
-    // The UI Library button remains the same
     document.getElementById('bar-btn-layout').addEventListener('click', () => {
         const uiPanel = document.getElementById('ui-library-panel');
         if (uiPanel) uiPanel.classList.remove('hidden');
