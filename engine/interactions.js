@@ -1,4 +1,4 @@
-// REMOVED: import { showCustomisationMenu } from '../viewport/customisationtoolbar.js';
+import { showCustomisationMenu } from '../viewport/customisationtoolbar.js';
 
 let draggedComponent = null;
 let isDragging = false;
@@ -8,6 +8,7 @@ export function initInteractions() {
     const canvas = document.getElementById('canvas');
     if (!canvas) return;
 
+    // Use mousedown/touchstart to handle both tap and drag start
     canvas.addEventListener('mousedown', handleInteractionStart);
     canvas.addEventListener('touchstart', handleInteractionStart, { passive: true });
 }
@@ -15,6 +16,7 @@ export function initInteractions() {
 function handleInteractionStart(event) {
     const target = event.target.closest('[data-component-id]');
     
+    // Deselect if clicking on the canvas background
     if (!target) {
         selectComponent(null);
         return;
@@ -39,7 +41,7 @@ function handleInteractionStart(event) {
 
 function handleInteractionMove(event) {
     if (!draggedComponent) return;
-    isDragging = true;
+    isDragging = true; // If we move, it's a drag
 
     event.preventDefault();
     const canvasRect = canvas.getBoundingClientRect();
@@ -53,8 +55,8 @@ function handleInteractionMove(event) {
 }
 
 function handleInteractionEnd(event) {
-    const canvas = document.getElementById('canvas');
     if (draggedComponent && isDragging) {
+        // Update schema with final position after dragging
         const id = draggedComponent.element.dataset.componentId;
         const x = parseInt(draggedComponent.element.style.left);
         const y = parseInt(draggedComponent.element.style.top);
@@ -62,15 +64,10 @@ function handleInteractionEnd(event) {
             updateComponent(id, { x, y });
         });
     } else if (draggedComponent && !isDragging) {
-        // --- THIS IS THE MAJOR CHANGE ---
-        // Instead of calling a function, we dispatch an event that another module can listen for.
+        // If we didn't drag, it's a tap. Show the menu.
         const clientX = event.type.includes('touch') ? event.changedTouches[0].clientX : event.clientX;
         const clientY = event.type.includes('touch') ? event.changedTouches[0].clientY : event.clientY;
-        
-        const tapEvent = new CustomEvent('componentTapped', {
-            detail: { x: clientX, y: clientY }
-        });
-        canvas.dispatchEvent(tapEvent);
+        showCustomisationMenu(draggedComponent.element, clientX, clientY);
     }
     
     draggedComponent = null;
@@ -80,7 +77,9 @@ function handleInteractionEnd(event) {
     document.removeEventListener('touchend', handleInteractionEnd);
 }
 
+// Central function to manage selection
 function selectComponent(element) {
+    // Remove selection from previous element
     if (selectedComponentId) {
         const oldSelected = document.querySelector(`[data-component-id="${selectedComponentId}"]`);
         if (oldSelected) oldSelected.classList.remove('selected');
