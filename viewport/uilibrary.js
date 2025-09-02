@@ -95,6 +95,7 @@ export async function initUiLibrary() {
         componentButtonsHTML += `<button class="component-add-btn" data-component-type="${type}">${type}</button>`;
     }
 
+    // --- THIS HTML IS THE FIX ---
     uiLibraryPanel.innerHTML = `
         <div class="panel-header">
             <h3>UI Library</h3>
