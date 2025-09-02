@@ -1,4 +1,3 @@
-// MODIFIED: We now only need getSelectedComponentId from interactions.js
 import { getSelectedComponentId } from '../engine/interactions.js';
 import { getComponentById, updateComponent, deleteComponent, duplicateComponent, generateId } from '../engine/projectschema.js';
 import { render } from '../engine/renderer.js';
@@ -55,7 +54,6 @@ const toolbarStyles = `
     .color-input-group input[type="color"] { padding: 0; height: 30px; width: 40px; border: none; flex-grow: 0; border-radius: 5px; }
 `;
 
-
 export function initCustomisationToolbar() {
     const styleElement = document.createElement('style');
     styleElement.textContent = toolbarStyles;
@@ -70,11 +68,10 @@ export function initCustomisationToolbar() {
         <div id="delete-btn">Delete</div>
     `;
     document.body.appendChild(contextMenu);
-    
+
     const toolsPanel = document.createElement('div');
     toolsPanel.id = 'tools-panel';
     toolsPanel.className = 'panel hidden';
-    // --- THIS HTML IS THE FIX ---
     toolsPanel.innerHTML = `
         <div class="panel-header">
             <h3 id="panel-title">Customise</h3>
@@ -84,13 +81,7 @@ export function initCustomisationToolbar() {
     `;
     document.body.appendChild(toolsPanel);
 
-    const canvas = document.getElementById('canvas');
-    if (canvas) {
-        canvas.addEventListener('componentTapped', (e) => {
-            showCustomisationMenu(e.detail.x, e.detail.y);
-        });
-    }
-
+    // --- Add Event Listeners ---
     document.getElementById('options-btn').addEventListener('click', () => {
         const selectedId = getSelectedComponentId();
         if (selectedId) {
@@ -125,16 +116,19 @@ export function initCustomisationToolbar() {
     toolsPanel.addEventListener('input', (e) => {
         const selectedId = getSelectedComponentId();
         if (!selectedId) return;
+
         const target = e.target;
-        if (!target.dataset.style) return;
+        if (!target.dataset.style) return; // Ignore inputs without a data-style attribute
+        
         const [prop, unit] = target.dataset.style.split(',');
         const value = unit === 'px' ? parseInt(target.value) : target.value;
+
         updateComponent(selectedId, { [prop]: value });
         render();
     });
 }
 
-export function showCustomisationMenu(x, y) {
+export function showCustomisationMenu(componentEl, x, y) {
     const menu = document.getElementById('context-menu');
     menu.style.left = `${x}px`;
     menu.style.top = `${y}px`;
@@ -152,13 +146,17 @@ export function showCustomisationMenu(x, y) {
 function populateToolsPanel(componentId) {
     const component = getComponentById(componentId);
     if (!component) return;
+
     const content = document.querySelector('#tools-panel .panel-content');
     const props = component.props;
+    
     document.getElementById('panel-title').textContent = `Customise ${component.type}`;
+
     let commonHTML = `<div class="tool-group"><h4>Layout</h4>
         <div class="control-row"><label>Width</label><input type="range" min="10" max="320" value="${props.width || 100}" data-style="width,px"></div>
         <div class="control-row"><label>Height</label><input type="range" min="10" max="400" value="${props.height || 50}" data-style="height,px"></div>
         </div>`;
+        
     let specificHTML = '';
     if (component.type === 'Text' || component.type === 'Button') {
         specificHTML = `<div class="tool-group"><h4>Typography</h4>
@@ -166,5 +164,6 @@ function populateToolsPanel(componentId) {
             <div class="control-row"><label>Font Size</label><input type="range" min="8" max="72" value="${props.fontSize || 16}" data-style="fontSize,px"></div>
         </div>`;
     }
+    
     content.innerHTML = commonHTML + specificHTML;
 }
