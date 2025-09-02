@@ -74,6 +74,7 @@ export function initCustomisationToolbar() {
     const toolsPanel = document.createElement('div');
     toolsPanel.id = 'tools-panel';
     toolsPanel.className = 'panel hidden';
+    // --- THIS HTML IS THE FIX ---
     toolsPanel.innerHTML = `
         <div class="panel-header">
             <h3 id="panel-title">Customise</h3>
