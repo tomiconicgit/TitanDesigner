@@ -82,7 +82,6 @@ function renderFileList(container) {
     function renderNode(node) {
         if (node.type === 'file') {
             const isActive = node.id === activeViewId ? 'active' : '';
-            // --- THIS LINE IS THE FIX FOR THE WHITE SCREEN ---
             fileListHTML += `<div class="dt-file-item ${isActive}" data-file-id="${node.id}">📄 ${node.name}</div>`;
         }
         if (node.children) {
