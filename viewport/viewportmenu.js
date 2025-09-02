@@ -15,7 +15,7 @@ const menuStyles = `
         background: var(--bar-background);
         border: 1px solid var(--bar-border);
         border-radius: 16px;
-        z-index: 6000;
+        z-index: 9000;
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -48,7 +48,7 @@ const menuStyles = `
     }
 `;
 
-export function initViewportMenu() {
+export function initViewportMenu(uiPage, repoPage) {
     const styleElement = document.createElement('style');
     styleElement.textContent = menuStyles;
     document.head.appendChild(styleElement);
@@ -75,8 +75,19 @@ export function initViewportMenu() {
     `;
     document.body.appendChild(floatingBar);
 
-    // Add event listeners
+    // Add event listeners for toggling pages
     document.getElementById('bar-btn-ui').addEventListener('click', () => {
+        uiPage.classList.remove('hidden');
+        repoPage.classList.add('hidden');
+    });
+
+    document.getElementById('bar-btn-repo').addEventListener('click', () => {
+        uiPage.classList.add('hidden');
+        repoPage.classList.remove('hidden');
+    });
+    
+    // The UI Library button remains the same
+    document.getElementById('bar-btn-layout').addEventListener('click', () => {
         const uiPanel = document.getElementById('ui-library-panel');
         if (uiPanel) uiPanel.classList.remove('hidden');
     });
