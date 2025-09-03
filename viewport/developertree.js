@@ -1,4 +1,4 @@
-import { getProject, getActiveView, setActiveView } from '../engine/projectschema.js';
+import { getProject, getActiveView, setActiveView, generateId } from '../engine/projectschema.js';
 import { render } from '../engine/renderer.js';
 
 const treeStyles = `
@@ -20,13 +20,10 @@ const treeStyles = `
         border-radius: 6px;
         transition: background-color 0.2s ease;
         user-select: none;
+        position: relative;
     }
 
-    .tree-item.folder:hover {
-        background-color: rgba(60, 60, 60, 0.4);
-    }
-
-    .tree-item.file:hover {
+    .tree-item.folder:hover, .tree-item.file:hover {
         background-color: rgba(60, 60, 60, 0.4);
     }
 
@@ -64,16 +61,37 @@ const treeStyles = `
         transition: max-height 0.3s ease-out;
     }
 
+    .context-menu {
+        position: absolute;
+        background-color: #2c2c2e;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 8000;
+        overflow: hidden;
+        min-width: 120px;
+    }
+
+    .context-menu div {
+        padding: 10px 20px;
+        cursor: pointer;
+        color: white;
+        font-size: 14px;
+    }
+
+    .context-menu div:hover {
+        background-color: rgba(80, 80, 80, 0.6);
+    }
+
+    .context-menu div.delete {
+        color: #ff453a;
+    }
+
     .hidden {
         display: none;
     }
 
-    .icon-folder {
-        fill: #a0a0a0;
-    }
-    .icon-file {
-        fill: #0a84ff;
-    }
+    .icon-folder { fill: #a0a0a0; }
+    .icon-file { fill: #0a84ff; }
 `;
 
 const folderSvg = `<svg class="icon-folder" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`;
@@ -101,6 +119,7 @@ export function initDeveloperTree(parentElement) {
             setActiveView(id);
             render();
             updateActiveFileHighlight();
+            showCodeEditor(id); // Show code editor for the selected file
         } else if (type === 'folder') {
             const isExpanded = target.dataset.expanded === 'true';
             target.dataset.expanded = !isExpanded;
@@ -110,6 +129,16 @@ export function initDeveloperTree(parentElement) {
             }
         }
     });
+
+    treeContainer.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const target = e.target.closest('.tree-item');
+        if (!target) return;
+
+        const id = target.dataset.id;
+        const type = target.dataset.type;
+        showContextMenu(id, type, e.clientX, e.clientY);
+    });
 }
 
 function renderFileTree(node, parentElement) {
@@ -118,6 +147,7 @@ function renderFileTree(node, parentElement) {
     itemElement.className = `tree-item ${nodeTypeClass}`;
     itemElement.dataset.id = node.id;
     itemElement.dataset.type = node.type;
+    itemElement.dataset.expanded = node.type === 'folder' ? 'false' : undefined;
     itemElement.innerHTML = `
         <span class="tree-item-icon">${node.type === 'folder' ? folderSvg : fileSvg}</span>
         <span class="tree-item-label">${node.name}</span>
@@ -126,8 +156,7 @@ function renderFileTree(node, parentElement) {
 
     if (node.children && node.children.length > 0) {
         const childrenContainer = document.createElement('div');
-        childrenContainer.className = 'tree-children';
-        childrenContainer.classList.add('hidden');
+        childrenContainer.className = 'tree-children hidden';
         parentElement.appendChild(childrenContainer);
 
         node.children.forEach(child => {
@@ -141,9 +170,118 @@ function renderFileTree(node, parentElement) {
 function updateActiveFileHighlight() {
     const allItems = document.querySelectorAll('.tree-item');
     allItems.forEach(item => item.classList.remove('active-file'));
-    const activeViewId = getActiveView().id;
-    const activeFileEl = document.querySelector(`[data-id="${activeViewId}"]`);
-    if (activeFileEl) {
-        activeFileEl.classList.add('active-file');
+    const activeViewId = getActiveView()?.id;
+    if (activeViewId) {
+        const activeFileEl = document.querySelector(`[data-id="${activeViewId}"]`);
+        if (activeFileEl) {
+            activeFileEl.classList.add('active-file');
+        }
+    }
+}
+
+function showContextMenu(id, type, x, y) {
+    let contextMenu = document.getElementById('tree-context-menu');
+    if (!contextMenu) {
+        contextMenu = document.createElement('div');
+        contextMenu.id = 'tree-context-menu';
+        contextMenu.className = 'context-menu hidden';
+        document.body.appendChild(contextMenu);
+    }
+
+    contextMenu.innerHTML = `
+        <div class="new-file">New File</div>
+        <div class="new-folder">New Folder</div>
+        <div class="rename">Rename</div>
+        <div class="delete">Delete</div>
+    `;
+    contextMenu.style.left = `${x}px`;
+    contextMenu.style.top = `${y}px`;
+    contextMenu.classList.remove('hidden');
+
+    const hideMenu = (e) => {
+        if (!contextMenu.contains(e.target)) {
+            contextMenu.classList.add('hidden');
+            document.removeEventListener('click', hideMenu, true);
+        }
+    };
+    setTimeout(() => document.addEventListener('click', hideMenu, true), 0);
+
+    contextMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('new-file')) {
+            promptNewNode(id, 'file');
+        } else if (e.target.classList.contains('new-folder')) {
+            promptNewNode(id, 'folder');
+        } else if (e.target.classList.contains('rename')) {
+            promptRenameNode(id);
+        } else if (e.target.classList.contains('delete')) {
+            deleteNode(id);
+        }
+        contextMenu.classList.add('hidden');
+    });
+}
+
+function promptNewNode(parentId, type) {
+    const name = prompt(`Enter ${type} name:`);
+    if (name) {
+        const newNode = {
+            id: generateId(type),
+            type,
+            name,
+            ...(type === 'folder' ? { children: [] } : { fileType: 'SwiftUIView', content: { id: generateId('comp'), type: 'Container', props: {}, children: [] } })
+        };
+        addNode(parentId, newNode);
+        refreshTree();
+    }
+}
+
+function promptRenameNode(id) {
+    const node = findNodeInTree(id);
+    if (node) {
+        const newName = prompt('Enter new name:', node.name);
+        if (newName) {
+            node.name = newName;
+            refreshTree();
+        }
+    }
+}
+
+function addNode(parentId, newNode) {
+    const parent = findNodeInTree(parentId);
+    if (parent && parent.type === 'folder') {
+        parent.children.push(newNode);
+    }
+}
+
+function deleteNode(id) {
+    const project = getProject();
+    const parent = findParentNode(id, project.fileSystem);
+    if (parent) {
+        parent.children = parent.children.filter(child => child.id !== id);
+        if (getActiveView()?.id === id) {
+            setActiveView(project.fileSystem.id); // Reset to root if active view is deleted
+        }
+        refreshTree();
+        render();
+    }
+}
+
+function findParentNode(id, node, parent = null) {
+    if (node.children) {
+        if (node.children.some(child => child.id === id)) {
+            return node;
+        }
+        for (const child of node.children) {
+            const found = findParentNode(id, child, node);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
+function refreshTree() {
+    const treeContainer = document.querySelector('.developer-tree-panel');
+    if (treeContainer) {
+        treeContainer.innerHTML = '';
+        renderFileTree(getProject().fileSystem, treeContainer);
     }
 }
