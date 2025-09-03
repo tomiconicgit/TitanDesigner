@@ -18,14 +18,16 @@ async function route() {
     try {
         console.log('Initializing app container...');
         const appContainer = initViewportPage();
-        if (!appContainer) throw new Error('Failed to initialize app container');
+        if (!appContainer) {
+            throw new Error('Failed to initialize app container');
+        }
 
-        console.log('Initializing UI page...');
+        console.log('Creating UI page...');
         const uiPage = document.createElement('div');
         uiPage.id = 'ui-page';
         appContainer.appendChild(uiPage);
         
-        console.log('Initializing repo page...');
+        console.log('Creating repo page...');
         const repoPage = document.createElement('div');
         repoPage.id = 'repo-page';
         repoPage.classList.add('hidden');
@@ -34,18 +36,35 @@ async function route() {
         // 1. Initialize the UI (Viewport and Panels)
         console.log('Initializing viewport...');
         initViewport(uiPage);
+        if (!document.getElementById('iphone-frame')) {
+            console.error('Viewport initialization failed: iphone-frame not found');
+        }
+
         console.log('Initializing customisation toolbar...');
         initCustomisationToolbar();
+        if (!document.getElementById('tools-panel')) {
+            console.error('Customisation toolbar initialization failed: tools-panel not found');
+        }
+
         console.log('Initializing UI library...');
         await initUiLibrary();
+        if (!document.getElementById('ui-library-panel')) {
+            console.error('UI library initialization failed: ui-library-panel not found');
+        }
 
         // 2. Initialize the Developer Tree
         console.log('Initializing developer tree...');
         initDeveloperTree(repoPage);
+        if (!document.querySelector('.developer-tree-panel')) {
+            console.error('Developer tree initialization failed: developer-tree-panel not found');
+        }
 
         // 3. Initialize the main menu
         console.log('Initializing viewport menu...');
         initViewportMenu(uiPage, repoPage);
+        if (!document.getElementById('floating-bar')) {
+            console.error('Viewport menu initialization failed: floating-bar not found');
+        }
 
         // 4. Render the initial layout and activate interactions
         console.log('Rendering initial layout...');
