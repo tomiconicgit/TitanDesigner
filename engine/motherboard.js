@@ -15,34 +15,46 @@ import { initDeveloperTree } from '../viewport/developertree.js';
  */
 async function route() {
     try {
+        console.log('Initializing UI page...');
         const uiPage = document.createElement('div');
         uiPage.id = 'ui-page';
         document.body.appendChild(uiPage);
         
+        console.log('Initializing repo page...');
         const repoPage = document.createElement('div');
         repoPage.id = 'repo-page';
-        repoPage.classList.add('hidden'); // Initially hidden
+        repoPage.classList.add('hidden');
         document.body.appendChild(repoPage);
 
         // 1. Initialize the UI (Viewport and Panels)
+        console.log('Initializing viewport...');
         initViewport(uiPage);
+        console.log('Initializing customisation toolbar...');
         initCustomisationToolbar();
+        console.log('Initializing UI library...');
         await initUiLibrary();
 
         // 2. Initialize the Developer Tree
+        console.log('Initializing developer tree...');
         initDeveloperTree(repoPage);
 
         // 3. Initialize the main menu
+        console.log('Initializing viewport menu...');
         initViewportMenu(uiPage, repoPage);
 
         // 4. Render the initial layout and activate interactions
+        console.log('Rendering initial layout...');
         renderer.render();
+        console.log('Initializing interactions...');
         interactions.initInteractions();
 
     } catch (error) {
-        console.error("Error during application initialization:", error);
+        console.error('Error during application initialization:', error);
     }
 }
 
 // Initialize the application once the DOM is ready.
-document.addEventListener('DOMContentLoaded', route);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM content loaded, starting route...');
+    route();
+});
