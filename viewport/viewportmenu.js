@@ -67,9 +67,9 @@ export function initViewportMenu(uiPage, repoPage) {
             <svg viewBox="0 0 24 24"><path d="M19 13H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2zm0 6H5v-4h14v4zM19 3H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 6H5V5h14v4z"></path></svg>
             Layout
         </button>
-        <button class="bar-button" id="bar-btn-fullscreen">
-            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>
-            Fullscreen
+        <button class="bar-button" id="bar-btn-export">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>
+            Export
         </button>
     `;
     document.body.appendChild(floatingBar);
@@ -87,5 +87,10 @@ export function initViewportMenu(uiPage, repoPage) {
     document.getElementById('bar-btn-layout').addEventListener('click', () => {
         const uiPanel = document.getElementById('ui-library-panel');
         if (uiPanel) uiPanel.classList.remove('hidden');
+    });
+
+    document.getElementById('bar-btn-export').addEventListener('click', () => {
+        alert('Export functionality not yet implemented. Coming soon!');
+        // TODO: Implement export logic with transpilation and JSZip
     });
 }
