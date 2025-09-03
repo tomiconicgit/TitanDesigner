@@ -8,13 +8,23 @@ export function render() {
         return;
     }
     canvas.innerHTML = ''; // Clear existing content
+    console.log('Canvas cleared for rendering');
 
     // Import the new getActiveViewLayout function
     import('./projectschema.js').then(({ getActiveViewLayout }) => {
         const layout = getActiveViewLayout();
-        // Start rendering recursively from the layout's children
-        if (layout && layout.children) {
+        console.log('Active view layout:', layout);
+        if (!layout) {
+            console.warn('No active view layout found, rendering empty canvas');
+            canvas.innerHTML = '<div style="color: white; text-align: center; padding: 20px;">No components in active view</div>';
+            return;
+        }
+        if (layout.children && layout.children.length > 0) {
+            console.log('Rendering', layout.children.length, 'components');
             renderNodeChildren(layout, canvas);
+        } else {
+            console.log('No children to render in active view');
+            canvas.innerHTML = '<div style="color: white; text-align: center; padding: 20px;">No components in active view</div>';
         }
     }).catch(error => {
         console.error('Failed to import projectschema.js:', error);
@@ -29,12 +39,14 @@ export function render() {
 function renderNodeChildren(parentNode, parentElement) {
     if (!parentNode.children) return;
 
-    parentNode.children.forEach(component => {
+    parentNode.children.forEach((component, index) => {
+        console.log(`Rendering component ${index + 1}:`, component);
         const element = createComponentElement(component);
         if (element) {
             parentElement.appendChild(element);
-            // If the component has children, render them inside this new element
             renderNodeChildren(component, element);
+        } else {
+            console.warn('Failed to create element for component:', component);
         }
     });
 }
