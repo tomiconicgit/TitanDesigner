@@ -1,5 +1,6 @@
 import { getProject, getActiveView, setActiveView, generateId, addNode, renameNode, deleteNode, findNodeInTree } from '../engine/projectschema.js';
 import { render } from '../engine/renderer.js';
+import { showCodeEditor } from './codeeditor.js';
 
 const treeStyles = `
     .developer-tree-panel {
@@ -119,6 +120,7 @@ export function initDeveloperTree(parentElement) {
             setActiveView(id);
             render();
             updateActiveFileHighlight();
+            showCodeEditor(id); // Show code editor for the selected file
         } else if (type === 'folder') {
             const isExpanded = target.dataset.expanded === 'true';
             target.dataset.expanded = !isExpanded;
