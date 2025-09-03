@@ -16,6 +16,8 @@ export function render() {
         if (layout && layout.children) {
             renderNodeChildren(layout, canvas);
         }
+    }).catch(error => {
+        console.error('Failed to import projectschema.js:', error);
     });
 }
 
@@ -58,6 +60,9 @@ function createComponentElement(component) {
     if (component.props.color) element.style.color = component.props.color;
     if (component.props.backgroundColor) element.style.backgroundColor = component.props.backgroundColor;
     
+    // Fallback image for blocked domains
+    const fallbackImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgG4rWjXjAAAAABJRU5ErkJggg=='; // 1x1 gray pixel
+
     switch (component.type) {
         case 'Text':
             element.textContent = component.props.text || 'Text';
@@ -78,7 +83,7 @@ function createComponentElement(component) {
             break;
         case 'Image':
         case 'Avatar':
-            element.innerHTML = `<img src="${component.props.src || 'https://via.placeholder.com/150'}" alt="placeholder">`;
+            element.innerHTML = `<img src="${component.props.src || fallbackImage}" alt="placeholder">`;
             break;
         case 'Icon':
              element.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`;
