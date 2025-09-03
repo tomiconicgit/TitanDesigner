@@ -1,4 +1,4 @@
-import { getProject, getActiveView, setActiveView, generateId } from '../engine/projectschema.js';
+import { getProject, getActiveView, setActiveView, generateId, addNode, renameNode, deleteNode, findNodeInTree } from '../engine/projectschema.js';
 import { render } from '../engine/renderer.js';
 
 const treeStyles = `
@@ -119,7 +119,6 @@ export function initDeveloperTree(parentElement) {
             setActiveView(id);
             render();
             updateActiveFileHighlight();
-            showCodeEditor(id); // Show code editor for the selected file
         } else if (type === 'folder') {
             const isExpanded = target.dataset.expanded === 'true';
             target.dataset.expanded = !isExpanded;
@@ -239,43 +238,10 @@ function promptRenameNode(id) {
     if (node) {
         const newName = prompt('Enter new name:', node.name);
         if (newName) {
-            node.name = newName;
+            renameNode(id, newName);
             refreshTree();
         }
     }
-}
-
-function addNode(parentId, newNode) {
-    const parent = findNodeInTree(parentId);
-    if (parent && parent.type === 'folder') {
-        parent.children.push(newNode);
-    }
-}
-
-function deleteNode(id) {
-    const project = getProject();
-    const parent = findParentNode(id, project.fileSystem);
-    if (parent) {
-        parent.children = parent.children.filter(child => child.id !== id);
-        if (getActiveView()?.id === id) {
-            setActiveView(project.fileSystem.id); // Reset to root if active view is deleted
-        }
-        refreshTree();
-        render();
-    }
-}
-
-function findParentNode(id, node, parent = null) {
-    if (node.children) {
-        if (node.children.some(child => child.id === id)) {
-            return node;
-        }
-        for (const child of node.children) {
-            const found = findParentNode(id, child, node);
-            if (found) return found;
-        }
-    }
-    return null;
 }
 
 function refreshTree() {
