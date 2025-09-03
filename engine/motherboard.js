@@ -10,6 +10,7 @@ import { initCustomisationToolbar } from '../viewport/customisationtoolbar.js';
 import { initUiLibrary } from '../viewport/uilibrary.js';
 import { initDeveloperTree } from '../viewport/developertree.js';
 import { initViewportPage } from '../viewport/viewportpage.js';
+import { initCodeEditor } from '../viewport/codeeditor.js';
 
 /**
  * Main application router.
@@ -50,6 +51,12 @@ async function route() {
         await initUiLibrary();
         if (!document.getElementById('ui-library-panel')) {
             console.error('UI library initialization failed: ui-library-panel not found');
+        }
+
+        console.log('Initializing code editor...');
+        initCodeEditor();
+        if (!document.getElementById('code-editor-panel')) {
+            console.error('Code editor initialization failed: code-editor-panel not found');
         }
 
         // 2. Initialize the Developer Tree
