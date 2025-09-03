@@ -75,9 +75,74 @@ const panelStyles = `
     .component-add-btn:hover {
         background-color: #555;
     }
+
+    #folder-selection-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(28, 28, 30, 0.95);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 8000;
+        width: 80%;
+        max-width: 400px;
+        color: white;
+        padding: 20px;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .modal-content {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .folder-item {
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+
+    .folder-item:hover {
+        background-color: rgba(60, 60, 60, 0.4);
+    }
+
+    .folder-item.selected {
+        background-color: rgba(10, 132, 255, 0.2);
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .modal-btn {
+        background: #3a3a3c;
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .modal-btn:hover {
+        background: #555;
+    }
+
+    .modal-btn.cancel {
+        background: #ff453a;
+    }
 `;
 
-// A list of all available component types.
 const componentTypes = [
     'Header', 'Text', 'Button', 'Container', 'Card', 'Input', 'Image', 'Avatar', 'Icon', 'Bottom Bar'
 ];
@@ -86,14 +151,13 @@ const componentTypes = [
  * Initializes the UI Library panel.
  */
 export async function initUiLibrary() {
-    // Add the panel's styles to the document's head
     const styleElement = document.createElement('style');
     styleElement.textContent = panelStyles;
     document.head.appendChild(styleElement);
 
     const uiLibraryPanel = document.createElement('div');
     uiLibraryPanel.id = 'ui-library-panel';
-    uiLibraryPanel.className = 'hidden'; // Start hidden
+    uiLibraryPanel.className = 'hidden';
 
     let componentButtonsHTML = '';
     for (const type of componentTypes) {
@@ -112,9 +176,8 @@ export async function initUiLibrary() {
     `;
     document.body.appendChild(uiLibraryPanel);
 
-    // --- Add Event Listeners ---
     uiLibraryPanel.querySelector('.close-btn').addEventListener('click', () => {
-        uiLibraryPanel.classList.add('hidden');
+        uiLibraryPanel.className = 'hidden';
     });
 
     uiLibraryPanel.addEventListener('click', async (e) => {
@@ -124,13 +187,92 @@ export async function initUiLibrary() {
             try {
                 const module = await import(`./components/${fileName}.js`);
                 const newComponent = module.createComponentTemplate();
-                newComponent.id = schema.generateId(); // Assign a unique ID
-                schema.addComponent(newComponent); // Add to the schema
-                render();
-                uiLibraryPanel.classList.add('hidden');
+                newComponent.id = schema.generateId();
+                showFolderSelectionModal(newComponent, uiLibraryPanel);
             } catch (error) {
                 console.error(`Failed to create component of type: ${type}`, error);
             }
         }
     });
+}
+
+function showFolderSelectionModal(component, uiLibraryPanel) {
+    let modal = document.getElementById('folder-selection-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'folder-selection-modal';
+        document.body.appendChild(modal);
+    }
+
+    const folders = collectFolders(schema.getProject().fileSystem);
+    let selectedFolderId = schema.getProject().fileSystem.id; // Default to root
+
+    modal.innerHTML = `
+        <div class="modal-header">
+            <h3>Select Folder</h3>
+            <button class="close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            ${folders.map(folder => `
+                <div class="folder-item" data-folder-id="${folder.id}">
+                    ${'&nbsp;'.repeat(folder.depth * 2)}${folder.name}
+                </div>
+            `).join('')}
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel">Cancel</button>
+            <button class="modal-btn confirm">Confirm</button>
+        </div>
+    `;
+
+    modal.querySelectorAll('.folder-item').forEach(item => {
+        item.addEventListener('click', () => {
+            modal.querySelectorAll('.folder-item').forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+            selectedFolderId = item.dataset.folderId;
+        });
+    });
+
+    modal.querySelector('.close-btn').addEventListener('click', () => {
+        modal.remove();
+        uiLibraryPanel.classList.add('hidden');
+    });
+
+    modal.querySelector('.modal-btn.cancel').addEventListener('click', () => {
+        modal.remove();
+        uiLibraryPanel.classList.add('hidden');
+    });
+
+    modal.querySelector('.modal-btn.confirm').addEventListener('click', () => {
+        const fileName = prompt('Enter file name for the component:', `${component.type}View.swift`);
+        if (fileName) {
+            const newNode = {
+                id: schema.generateId('file'),
+                type: 'file',
+                fileType: 'SwiftUIView',
+                name: fileName,
+                content: {
+                    id: schema.generateId('comp'),
+                    type: 'Container',
+                    props: {},
+                    children: [component]
+                }
+            };
+            schema.addNode(selectedFolderId, newNode);
+            schema.setActiveView(newNode.id);
+            render();
+        }
+        modal.remove();
+        uiLibraryPanel.classList.add('hidden');
+    });
+}
+
+function collectFolders(node, depth = 0, folders = []) {
+    if (node.type === 'folder') {
+        folders.push({ id: node.id, name: node.name, depth });
+        if (node.children) {
+            node.children.forEach(child => collectFolders(child, depth + 1, folders));
+        }
+    }
+    return folders;
 }
