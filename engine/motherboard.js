@@ -9,22 +9,27 @@ import { initViewportMenu } from '../viewport/viewportmenu.js';
 import { initCustomisationToolbar } from '../viewport/customisationtoolbar.js';
 import { initUiLibrary } from '../viewport/uilibrary.js';
 import { initDeveloperTree } from '../viewport/developertree.js';
+import { initViewportPage } from '../viewport/viewportpage.js';
 
 /**
  * Main application router.
  */
 async function route() {
     try {
+        console.log('Initializing app container...');
+        const appContainer = initViewportPage();
+        if (!appContainer) throw new Error('Failed to initialize app container');
+
         console.log('Initializing UI page...');
         const uiPage = document.createElement('div');
         uiPage.id = 'ui-page';
-        document.body.appendChild(uiPage);
+        appContainer.appendChild(uiPage);
         
         console.log('Initializing repo page...');
         const repoPage = document.createElement('div');
         repoPage.id = 'repo-page';
         repoPage.classList.add('hidden');
-        document.body.appendChild(repoPage);
+        appContainer.appendChild(repoPage);
 
         // 1. Initialize the UI (Viewport and Panels)
         console.log('Initializing viewport...');
