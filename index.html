@@ -16,6 +16,7 @@
             height: 100%;
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #141314; /* Ensure background is visible */
         }
 
         /* Container for the UI page */
@@ -29,6 +30,7 @@
             box-sizing: border-box;
             background: #141314;
             padding-top: 90px;
+            visibility: visible !important; /* Force visibility for debugging */
         }
 
         /* Container for the Repo page */
@@ -40,10 +42,17 @@
             top: 0;
             left: 0;
             z-index: 5000;
+            visibility: visible !important; /* Force visibility for debugging */
         }
 
         .hidden {
             display: none !important;
+        }
+
+        /* Debug style to ensure app-container is visible */
+        #app-container {
+            background: #141314;
+            visibility: visible !important;
         }
     </style>
 </head>
